@@ -1,0 +1,2 @@
+docker pull mysql &&
+docker run -d --name mysql_server -e MYSQL_ROOT_PASSWORD=amazingPI2020 -e MYSQL_DATABASE=amazingDB -e MYSQL_USER=amazing -e MYSQL_PASSWORD=amazingPI -e MYSQL_ROOT_HOST=% -p 3306:3306 mysql:latest
