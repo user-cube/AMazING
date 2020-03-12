@@ -1,0 +1,5 @@
+# bin/bash
+docker volume create redis-data &&
+docker run -d -h redis -e REDIS_PASSWORD=amazingPI2020 -v redis-data:/data -p 6379:6379 --name redis --restart always redis:latest /bin/sh -c 'redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}'
+# docker rm -f redis &&
+# docker volume rm redis-data
