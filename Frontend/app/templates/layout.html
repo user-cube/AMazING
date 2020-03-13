@@ -33,12 +33,14 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarDefault">
-            {% if not user.is_superuser %}
+            {% if not user.is_superuser%}
                 <ul class="navbar-nav mr-auto">
                     <li {% if request.resolver_match.url_name == 'home' %}class="nav-item active"{% endif %}
                         {% if request.resolver_match.url_name == 'search' %}class="nav-item active"
                         {% else %}class="nav-item"{% endif %}>
+                        {% if request.user.is_authenticated %}
                         <a class="nav-link" href="{% url 'home' %}">Home</a>
+                            {% endif %}
                     </li>
                 </ul>
             {% endif %}
