@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block headers %}
+    {% load static %}
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/form.css' %}"/>
+{% endblock %}
+
+{% block content %}
+
+    <h2>{{ title }}</h2>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-style-5">
+                <section id="loginForm">
+                    <form action="." method="post">
+                        {% csrf_token %}
+                        <h4></h4>
+                        <hr/>
+                        <div class="form-group">
+                            {{ form.username.label_tag }}
+                            <div class="col-lg-12">
+                                {{ form.username }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form.password.label_tag }}
+                            <div class="col-lg-12">
+                                {{ form.password }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-12">
+                                <input type="hidden" name="next" value="/"/>
+                                <input type="submit" value="Log in" class="btn btn-default"/>
+                            </div>
+                        </div>
+                        {% if form.errors %}
+                            <p class="validation-summary-errors">Please enter a correct user name and password.</p>
+                        {% endif %}
+                    </form>
+                </section>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <section id="socialLoginForm"></section>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {% load static %}
+    <script src="{% static 'scripts/jquery.validate.min.js' %}"></script>
+{% endblock %}

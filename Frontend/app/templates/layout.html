@@ -1,0 +1,78 @@
+﻿<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>AMazING</title>
+
+    {% load static %}
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"/>
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site.css' %}"/>
+    <!-- Custom icons for this template -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/cart.css' %}">
+
+
+    {% block headers %} {% endblock %}
+</head>
+
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">AMazING</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarDefault"
+                    aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarDefault">
+            {% if not user.is_superuser %}
+                <ul class="navbar-nav mr-auto">
+                    <li {% if request.resolver_match.url_name == 'home' %}class="nav-item active"{% endif %}
+                        {% if request.resolver_match.url_name == 'search' %}class="nav-item active"
+                        {% else %}class="nav-item"{% endif %}>
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                </ul>
+            {% endif %}
+                {% if request.user.is_authenticated and not user.is_superuser%}
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="nav-item dropdown">
+                            <div class="dropdown-menu" style="right: 0; left: auto;" aria-labelledby="navbarDropdown">
+                                {% include 'cartpartial.html' %}
+                            </div>
+                        </li>
+                    </ul>
+                {% endif %}
+                {% include 'loginpartial.html' %}
+            </div>
+        </div>
+    </nav>
+</div>
+<main role="main">
+    <div class="container body-content">
+        <br>
+        {% block content %} {% endblock %}
+    </div> <!-- /container -->
+</main>
+
+<footer class="container">
+    <hr/>
+    <p>&copy; {{ year }} - AMazING</p>
+</footer>
+
+<!-- JQuery and Bootstrap core
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{% static 'scripts/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'scripts/popper.min.js' %}"></script>
+<script src="{% static 'scripts/bootstrap.min.js' %}"></script>
+</body>
+</html>
