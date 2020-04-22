@@ -51,7 +51,7 @@ def profile(request):
     if request.user.is_authenticated:
 
         token = genToken.gerateEmailToken(request.user.email)
-        r = requests.get(API + "profile", headers = {'Authorization': token})
+        r = requests.get(API + "profile", headers = {'Authorization': 'Bearer '+ token})
 
         if r.status_code != 200:
             return HttpResponseNotFound()
@@ -89,9 +89,19 @@ def profile(request):
         return redirect('login')
 
 def checkTests(request):
+    """
+    Show tests done by logged user.
+    Args:
+        request: request data;
+
+    Returns:
+        When status code is 200, display
+        user tests page, otherwise
+        404 page.
+    """
     if request.user.is_authenticated:
         token = genToken.gerateEmailToken(request.user.email)
-        r = requests.get(API + "tests", headers={'Authorization': token})
+        r = requests.get(API + "tests", headers={'Authorization': 'Bearer '+ token})
 
         if r.status_code != 200:
             return HttpResponseNotFound()
@@ -102,5 +112,33 @@ def checkTests(request):
             'database' : json,
         }
         return render(request, 'tests/dashboard.html', tparms)
+    else:
+        return redirect('login')
+
+def checkTestInfo(request, testID):
+    """
+    Show info for a specific test.
+    Args:
+        request: request data;
+        testID: test id to search;
+
+    Returns:
+        When status code is 200, display
+        show specific test page, otherwise
+        404 page.
+    """
+    if request.user.is_authenticated:
+        token = genToken.gerateEmailToken(request.user.email)
+        r = requests.get(API + "tests/" + str(testID), headers={'Authorization': 'Bearer '+ token})
+
+        if r.status_code != 200:
+            return HttpResponseNotFound()
+
+        json = r.json()
+
+        tparms = {
+        }
+
+        return render(request, 'tests/testInfo.html', tparms)
     else:
         return redirect('login')
