@@ -4,6 +4,9 @@ cffi==1.14.0
 chardet==3.0.4
 cryptography==2.9.1
 Django==3.0.4
+django-fileprovider==0.1.4
+django-private-files==1.0.1
+django-private-storage==2.2.2
 idna==2.9
 jwt==1.0.0
 mockito==1.2.1
