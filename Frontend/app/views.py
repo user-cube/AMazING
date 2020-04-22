@@ -1,10 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseNotFound
-from datetime import datetime, timedelta, timezone
-import jwt
-# Create your views here
-# 192.168.85.209
-from datetime import datetime
+from django.http import HttpResponseNotFound
 import requests
 from datetime import datetime, timedelta, timezone
 
@@ -15,6 +10,10 @@ from jwt import (
 from jwt.utils import get_int_from_datetime
 from dotenv import load_dotenv
 import os
+
+# Create your views here
+# 192.168.85.209
+
 load_dotenv()
 
 API = os.environ.get("API_LINK")
@@ -73,14 +72,21 @@ def profile(request):
                 role: 1
             }
         """
+
+        if json['picture'] != None:
+            picture = json['picture']
+        else:
+            picture = os.environ.get("NO_PIC")
+
         tparams = {
             'name' : json['name'],
             'email': json['email'],
             'numtests' : json['numtests'],
             'registerdate': json['registerdate'],
-            'role': json['role']
+            'role': json['role'],
+            'picture' : picture
         }
-        print(tparams)
+
         return render(request, 'user/profile.html', tparams)
     else:
         return redirect('login')
