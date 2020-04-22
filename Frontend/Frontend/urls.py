@@ -22,7 +22,7 @@ from datetime import datetime
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
     path('logout', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('profile/', profile, name="profile")
 ]
