@@ -10,15 +10,18 @@ from datetime import datetime, timedelta, timezone
 
 from jwt import (
     JWT,
-    jwk_from_dict,
     jwk_from_pem,
 )
 from jwt.utils import get_int_from_datetime
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
+API = os.environ.get("API_LINK")
 
 jwtManager = JWT()
 with open("app/certificates/privateKey.pem", 'rb') as reader:
-    input_key = jwt.jwk_from_pem(reader.read())
+    input_key = jwk_from_pem(reader.read())
 
 def home(request):
     if request.user.is_authenticated:
@@ -52,7 +55,7 @@ def profile(request):
         }
 
         token = jwtManager.encode(message, input_key, alg='RS256')
-        r = requests.get("http://127.0.0.1:5000/profile", headers = {'Authorization': token})
+        r = requests.get(API + "profile", headers = {'Authorization': token})
 
         if r.status_code != 200:
             return HttpResponseNotFound()
