@@ -81,6 +81,6 @@ def profile(request):
             'role': json['role']
         }
         print(tparams)
-
+        return render(request, 'user/profile.html', tparams)
     else:
         return redirect('login')

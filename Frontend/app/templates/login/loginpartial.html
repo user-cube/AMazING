@@ -10,7 +10,8 @@
             <form id="logoutForm" action="/logout" method="post">
                 {% csrf_token %}
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
+                    <div class="dropdown-divider"> </div>
                     <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Logout</a>
                 </div>
             </form>
