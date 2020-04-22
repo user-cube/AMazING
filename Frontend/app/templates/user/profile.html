@@ -1,3 +1,68 @@
 {% extends 'structure/layout.html' %}
 
-{% block content %} {% endblock %}
+{% block content %}
+        <div class="row">
+        <div class="col-lg-2">
+            <img src="{{ picture}}" class="img-responsive img-thumbnail ">
+            <br>
+            <br>
+            <a href="#" class="btn btn-success"><span
+                    class="glyphicon glyphicon-thumbs-up"></span>
+                Editar perfil</a>
+        </div>
+        <div class="col-lg-10 ">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-lg-4" for="Name">Name</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="name" name="name" type="text"
+                                   placeholder="Nome" class="form-control input-lg" value="{{ name }}" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="Email">Email</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="email" name="email" type="email"
+                                   placeholder="email" class="form-control input-lg" value="{{ email }}" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="NumTests">Number of Tests</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="numtests" name="numtests" type="number"
+                                   placeholder="Number of Tests" class="form-control input-lg" value="{{ numtests }}"
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="Nome">Register Date</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="register" name="register" type="text"
+                                   placeholder="Register Data" class="form-control input-lg" value="{{ row.pais }}" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="Nome">Role</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="register" name="register" type="text"
+                                   placeholder="Register Data" class="form-control input-lg"
+                                   value="{% if role == 1 %} Expert
+                                          {% else %} Beginner
+                                   {% endif %} " readonly>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+</div>
+{% endblock %}
