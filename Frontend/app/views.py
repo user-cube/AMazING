@@ -1,14 +1,106 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseNotFound
+import requests
 
-# Create your views here.
+from dotenv import load_dotenv
+import os
+from app.tools.tokenizer import Tokenizer
 from datetime import datetime
 
+# Create your views here
+# 192.168.85.209
+
+load_dotenv()
+
+API = os.environ.get("API_LINK")
+genToken = Tokenizer()
+
+
 def home(request):
+    """
+    Homepage view.
+    Args:
+        request: request data;
+
+    Returns:
+        If the user is logged in
+        homepage rendered, otherwise,
+        returns login page.
+    """
     if request.user.is_authenticated:
         tparams = {
             'title': 'Home Page',
             'year': datetime.now().year,
         }
         return render(request, 'index.html', tparams)
+    else:
+        return redirect('login')
+
+def profile(request):
+    """
+    User profile view.
+    Args:
+        request: request data;
+
+    Returns:
+        When status code is 200, display
+        user profile page, otherwise
+        404 page.
+
+    """
+    if request.user.is_authenticated:
+
+        token = genToken.gerateEmailToken(request.user.email)
+        r = requests.get(API + "profile", headers = {'Authorization': token})
+
+        if r.status_code != 200:
+            return HttpResponseNotFound()
+
+        json = r.json()
+        """
+        Example of expected reponse:
+            {
+                email: "ruicoelho@ua.pt",
+                id: 200,
+                name: "Rui",
+                numtests: 130,
+                picture: null,
+                registerdate: "03-05-2019",
+                role: 1
+            }
+        """
+
+        if json['picture'] != None:
+            picture = json['picture']
+        else:
+            picture = os.environ.get("NO_PIC")
+
+        tparams = {
+            'name' : json['name'],
+            'email': json['email'],
+            'numtests' : json['numtests'],
+            'registerdate': json['registerdate'],
+            'role': json['role'],
+            'picture' : picture
+        }
+
+        return render(request, 'user/profile.html', tparams)
+    else:
+        return redirect('login')
+
+def checkTests(request):
+    if request.user.is_authenticated:
+        token = genToken.gerateEmailToken(request.user.email)
+        r = requests.get(API + "tests", headers={'Authorization': token})
+
+        if r.status_code != 200:
+            return HttpResponseNotFound()
+
+        json = r.json()
+
+        tparms = {
+            'database' : json,
+        }
+        return render(request, 'tests/dashboard.html', tparms)
     else:
         return redirect('login')
