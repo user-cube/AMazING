@@ -1,15 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotFound
 import requests
-from datetime import datetime, timedelta, timezone
 
-from jwt import (
-    JWT,
-    jwk_from_pem,
-)
-from jwt.utils import get_int_from_datetime
 from dotenv import load_dotenv
 import os
+from app.tools.tokenizer import Tokenizer
+from datetime import datetime
 
 # Create your views here
 # 192.168.85.209
@@ -17,12 +13,20 @@ import os
 load_dotenv()
 
 API = os.environ.get("API_LINK")
+genToken = Tokenizer()
 
-jwtManager = JWT()
-with open("app/certificates/privateKey.pem", 'rb') as reader:
-    input_key = jwk_from_pem(reader.read())
 
 def home(request):
+    """
+    Homepage view.
+    Args:
+        request: request data;
+
+    Returns:
+        If the user is logged in
+        homepage rendered, otherwise,
+        returns login page.
+    """
     if request.user.is_authenticated:
         tparams = {
             'title': 'Home Page',
@@ -46,14 +50,7 @@ def profile(request):
     """
     if request.user.is_authenticated:
 
-        message = {
-            'email': request.user.email,
-            'iat': get_int_from_datetime(datetime.now(timezone.utc)),
-            'exp': get_int_from_datetime(
-                datetime.now(timezone.utc) + timedelta(minutes=1)),
-        }
-
-        token = jwtManager.encode(message, input_key, alg='RS256')
+        token = genToken.gerateEmailToken(request.user.email)
         r = requests.get(API + "profile", headers = {'Authorization': token})
 
         if r.status_code != 200:
@@ -88,5 +85,22 @@ def profile(request):
         }
 
         return render(request, 'user/profile.html', tparams)
+    else:
+        return redirect('login')
+
+def checkTests(request):
+    if request.user.is_authenticated:
+        token = genToken.gerateEmailToken(request.user.email)
+        r = requests.get(API + "tests", headers={'Authorization': token})
+
+        if r.status_code != 200:
+            return HttpResponseNotFound()
+
+        json = r.json()
+
+        tparms = {
+            'database' : json,
+        }
+        return render(request, 'tests/dashboard.html', tparms)
     else:
         return redirect('login')
