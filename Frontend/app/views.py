@@ -136,7 +136,17 @@ def checkTestInfo(request, testID):
 
         json = r.json()
 
+        register_date = datetime.fromtimestamp(json['register_date'])
+        begin_date = datetime.fromtimestamp(json['begin_date'])
+        end_date = datetime.fromtimestamp(json['end_date'])
+
         tparms = {
+            'begin_date': str(begin_date),
+            'end_date': str(end_date),
+            'num_test': json['num_test'],
+            'template': json['template'],
+            'name': json['name'],
+            'register_date': str(register_date)
         }
 
         return render(request, 'tests/testInfo.html', tparms)

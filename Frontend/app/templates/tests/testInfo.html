@@ -1,3 +1,64 @@
 {% extends 'structure/layout.html' %}
 
-{% block content %} {% endblock %}
+{% block headers %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+
+        /* Style the search field */
+        form.example input[type=text] {
+            padding: 10px;
+            font-size: 17px;
+            border: 1px solid grey;
+            float: left;
+            width: 80%;
+            background: #f1f1f1;
+        }
+
+        /* Style the submit button */
+        form.example button {
+            float: left;
+            width: 20%;
+            padding: 10px;
+            background: #2196F3;
+            color: white;
+            font-size: 17px;
+            border: 1px solid grey;
+            border-left: none; /* Prevent double borders */
+            cursor: pointer;
+        }
+
+        form.example button:hover {
+            background: #0b7dda;
+        }
+
+        /* Clear floats */
+        form.example::after {
+            content: "";
+            clear: both;
+            display: table;
+        }</style>
+{% endblock %}
+{% block content %}
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Test Name</th>
+            <th>Begin Date</th>
+            <th>End Date</th>
+            <th>Register Date</th>
+            <th>Test Number</th>
+            <th>Template</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ name }}</td>
+            <td>{{ begin_date }}</td>
+            <td>{{ end_date }}</td>
+            <td>{{ register_date }}</td>
+            <td>{{ num_test }}</td>
+            <td>{{ template }}</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
