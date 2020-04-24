@@ -9,7 +9,7 @@
         {% endfor %}
     {% endif %}
     <div class="row">
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <img src="{{ picture }}" class="img-responsive img-thumbnail ">
             <br>
             <br>
@@ -17,22 +17,23 @@
                     class="glyphicon glyphicon-thumbs-up"></span>
                 Editar perfil</a>
         </div>
-        <div class="col-lg-10 ">
-            <form class="form-horizontal">
-                <div class="form-group">
-                    <label class="col-lg-4" for="Name">Name: {{ name }}</label>
+        <div class="col-lg-auto">
+                <div class="row2">
+                    <label class="col" for="Name">Name: {{ name }}</label>
                 </div>
-                <div class="form-group">
-                    <label class="col-lg-4" for="Email">Email: {{ email }}</label>
+                <div class="row2">
+                    <label class="col" for="Email">Email: {{ email }}</label>
                 </div>
-                <div class="form-group">
-                    <label class="col-lg-4" for="NumTests">Number of Tests: {{ numtests }} </label>
+                <div class="row2">
+                    <label class="col" for="NumTests">Number of Tests: {{ numtests }} </label>
                 </div>
-                <div class="form-group">
-                    <label class="col-lg-4" for="Nome">Register Date: {{ registerdate }} </label>
+        </div>
+        <div class="col-lg-auto">
+                <div class="row2">
+                    <label class="col" for="Nome">Register Date: {{ registerdate }} </label>
                 </div>
-                <div class="form-group">
-                    <label class="col-lg-4" for="Nome">Role:
+                <div class="row2">
+                    <label class="col" for="Nome">Role:
                         {% if role == 1 %}
                             Expert
                         {% else %}
@@ -40,8 +41,11 @@
                         {% endif %}
                     </label>
                 </div>
-            </form>
+                <div class="row2">
+                    <a class="btn btn-link"  id="upRank">
+                        <u>Solicit Rank Up</u>
+                    </a>
+                </div>
         </div>
-
-    </div>
+        </div>
 {% endblock %}
