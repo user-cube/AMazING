@@ -1,5 +1,6 @@
-# DATABASE SETTINGS
 import os
+
+# DATABASE SETTINGS
 
 pg_db_username = os.environ.get('db_username')
 pg_db_password = os.environ.get('db_password')
@@ -18,4 +19,17 @@ SQLALCHEMY_DATABASE_URI = "postgresql://{DB_USER}:{DB_PASS}@{DB_ADDR}/{DB_NAME}"
                                                                                         DB_PASS=pg_db_password,
                                                                                         DB_ADDR=pg_db_hostname,
                                                                                         DB_NAME=pg_db_name)
-print(SQLALCHEMY_DATABASE_URI)
+
+
+
+
+# JWT Decode Algorithm
+
+jwt_cert       = os.environ.get('cert')
+
+
+JWT_DECODE_ALGORITHMS = 'RS256'
+# JWT Decode CERT
+JWT_SECRET_KEY = jwt_cert
+# JWT Identifier
+JWT_IDENTITY_CLAIM = 'email'

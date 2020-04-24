@@ -2,9 +2,9 @@ from flask_sqlalchemy import SQLAlchemy
 from marshmallow import validate
 from marshmallow_jsonapi import Schema, fields
 from flask_marshmallow import Marshmallow
+from marshmallow import Schema, fields, ValidationError, pre_load
 
 db = SQLAlchemy()
-ma = Marshmallow()
 
 class CRUD:
     def add(self, resource):
@@ -21,7 +21,7 @@ class CRUD:
 
 class Role (db.Model, CRUD):
 
-    __tablename__ = 'Role'
+    __tablename__ = 'role'
     id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(20))
 
@@ -31,7 +31,7 @@ class Role (db.Model, CRUD):
 
 class Profile(db.Model, CRUD):
 
-    __tablename__ = 'Profile'
+    __tablename__ = 'profile'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(200), nullable=False, unique=True)
@@ -39,7 +39,7 @@ class Profile(db.Model, CRUD):
     register_date = db.Column(db.TIMESTAMP, nullable=False)
     picture = db.Column(db.LargeBinary)
     last_login = db.Column(db.TIMESTAMP)
-    role = db.Column(db.Integer, db.ForeignKey('Role.id'))
+    role = db.Column(db.Integer, db.ForeignKey('role.id'))
 
     def __init__(self, id, name, email, num_testes, register_date, picture, last_login, role):
         self.id = id
@@ -54,12 +54,12 @@ class Profile(db.Model, CRUD):
 
 class Template(db.Model, CRUD):
 
-    __tablename__ = 'Template'
+    __tablename__ = 'template'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     protocol = db.Column(db.String(50))
     duration = db.Column(db.BIGINT)
-    profile = db.Column(db.Integer, db.ForeignKey('Profile.id'))
+    profile = db.Column(db.Integer, db.ForeignKey('profile.id'))
 
     def __init__(self, id, name, protocol, duration, profile):
         self.id = id
@@ -71,7 +71,7 @@ class Template(db.Model, CRUD):
 
 class Experience(db.Model, CRUD):
 
-    __tablename__ = 'Experience'
+    __tablename__ = 'experience'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     begin_date = db.Column(db.TIMESTAMP, nullable=False)
@@ -79,8 +79,8 @@ class Experience(db.Model, CRUD):
     num_test = db.Column(db.Integer)
     register_date = db.Column(db.TIMESTAMP, nullable=False)
     status = db.Column(db.String(20), nullable=False)
-    profile = db.Column(db.Integer, db.ForeignKey('Profile.id'))
-    template = db.Column(db.Integer, db.ForeignKey('Template.id'))
+    profile = db.Column(db.Integer, db.ForeignKey('profile.id'))
+    template = db.Column(db.Integer, db.ForeignKey('template.id'))
 
     def __init__(self, id, name, begin_date, end_date, num_test, register_date, status, profile, template):
         self.id = id
@@ -96,7 +96,7 @@ class Experience(db.Model, CRUD):
 
 class APU(db.Model, CRUD):
 
-    __tablename__ = 'APU'
+    __tablename__ = 'apu'
     number = db.Column(db.Integer, primary_key=True)
 
     def __init__(self, number):
@@ -105,17 +105,17 @@ class APU(db.Model, CRUD):
 
 class APUConfig(db.Model, CRUD):
 
-    __tablename__ = 'APUConfig'
+    __tablename__ = 'apuconfig'
     id = db.Column(db.Integer, primary_key=True)
 
 
 class APUConfig_Template(db.Model, CRUD):
 
-    __tablename__ = 'APUConfig_Template'
+    __tablename__ = 'apuconfig_template'
     id_nonexistent = db.Column(db.Integer, primary_key=True)
-    apu = db.Column(db.Integer, db.ForeignKey('APU.number'))
-    apu_config = db.Column(db.Integer, db.ForeignKey('APUConfig.id'))
-    template = db.Column(db.Integer, db.ForeignKey('Template.id'))
+    apu = db.Column(db.Integer, db.ForeignKey('apu.number'))
+    apu_config = db.Column(db.Integer, db.ForeignKey('apuconfig.id'))
+    template = db.Column(db.Integer, db.ForeignKey('template.id'))
 
     def __init__(self, apu, apu_config, template):
         self.apu = apu
@@ -123,37 +123,37 @@ class APUConfig_Template(db.Model, CRUD):
         self.template = template
 
 
-class RoleSchema(ma.Schema):
+class RoleSchema(Schema):
     class Meta:
         fields = ('id', 'role_name')
 
 
-class ProfileSchema(ma.Schema):
+class ProfileSchema(Schema):
     class Meta:
         fields = ('id', 'name', 'email', 'num_testes', 'register_date', 'picture', 'last_login', 'role')
 
 
-class TemplateSchema(ma.Schema):
+class TemplateSchema(Schema):
     class Meta:
         fields = ('Template', 'id', 'name', 'protocol', 'duration', 'profile')
 
 
-class ExperienceSchema(ma.Schema):
+class ExperienceSchema(Schema):
     class Meta:
         fields = ('id', 'name', 'begin_date', 'end_date', 'num_test', 'register_date', 'status', 'profile', 'template')
 
 
-class APUSchema(ma.Schema):
+class APUSchema(Schema):
     class Meta:
         fields = ('number',)
 
 
-class APUConfigSchema(ma.Schema):
+class APUConfigSchema(Schema):
     class Meta:
         fields = ('id',)
 
 
-class APUConfig_TemplateSchema(ma.Schema):
+class APUConfig_TemplateSchema(Schema):
     class Meta:
         fields = ('apu', 'apu_config', 'template')
 
