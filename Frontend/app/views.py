@@ -2,7 +2,6 @@ from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotFound, HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
 
 import requests
 
@@ -327,12 +326,95 @@ def rankUp(request):
         newEmail = EmailMessage(
             'AMazING Playground - Rank up',
             'Dear Admin,\n' +
-            'The user' + request.user.email + 'requested a rank up to his account.',
+            'The user' + request.user.email + ' requested a rank up to his account.',
             os.getenv('EMAIL'),
             [request.user.email, os.getenv('EMAIL_ADMIN')]
         )
         newEmail.send(fail_silently=False)
         messages.info(request, "Request sent.")
         return redirect('profile')
+    else:
+        return redirect('login')
+
+def listUsers(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            token = tokenizer.gerateEmailToken(request.user.email)
+            r = requests.get(API + "profile/list",  headers={'Authorization': 'Bearer '+ token})
+
+            if r.status_code != 200:
+                return HttpResponseNotFound()
+
+            json = r.json()
+
+            tparms = {
+                'database' : json
+            }
+            return render(request, 'user/admin/listUsers/allUsers.html', tparms)
+
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
+
+def editUser(request, userId):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            token = tokenizer.gerateEmailToken(request.user.email)
+            r = requests.get(API + "profile/" + str(userId), headers={'Authorization': 'Bearer ' + token})
+
+            if r.status_code != 200:
+                return HttpResponseNotFound()
+
+            json = r.json()
+
+            if json['picture'] != None:
+                picture = json['picture']
+            else:
+                picture = os.environ.get("NO_PIC")
+
+            tparams = {
+                'userID' : json['id'],
+                'name': json['name'],
+                'email': json['email'],
+                'role': json['role'],
+                'picture': picture
+            }
+
+            return render(request, "user/admin/listUsers/edit/editRole.html", tparams)
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
+
+def processUser(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            token = tokenizer.generateValidation(request.user.email)
+
+            try:
+                email = request.GET['email']
+                userID = request.GET['id']
+            except:
+                messages.error(request, "Something went wrong.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+            if email != "" and userID != "":
+                message = {'email' : email, 'id' : userID}
+                r = requests.post(API + "profile/" + str(userID), json=message, headers={'Authorization': 'Bearer ' + token})
+
+                print(r.status_code)
+                if r.status_code != 200:
+                    messages.error(request, "Something went wrong.")
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+                messages.info(request, "User updated.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            else:
+                messages.error(request, "Something went wrong.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            return HttpResponseForbidden()
     else:
         return redirect('login')
