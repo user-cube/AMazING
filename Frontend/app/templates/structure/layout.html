@@ -93,11 +93,12 @@
                             <a class="nav-link" href="#">Statistics</a>
                         </li>
                         <li {% if request.resolver_match.url_name == 'listusers' %}
-                                class="nav-item active"
+                                class="nav-item active" {% endif %}
+                            {% if request.resolver_match.url_name == 'edituser' %} class="nav-item active"
                             {% else %}
                                 class="nav-item"
                             {% endif %}>
-                            <a class="nav-link" href="/users">Users</a>
+                            <a class="nav-link" href="{% url 'listusers' %}">Users</a>
                         </li>
                         <li {% if request.resolver_match.url_name == '#' %}
                                 class="nav-item active"
