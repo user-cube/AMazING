@@ -359,16 +359,18 @@ def listUsers(request):
 
 def searchUser(request):
     if request.user.is_authenticated:
-        if not request.user.is_superuser:
+        if request.user.is_superuser:
             try:
-                content = request.GET['content']
-                typeID = request.GET['type']
+                content = request.POST['content']
+                typeID = request.POST['type']
             except:
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
             token = tokenizer.gerateEmailToken(request.user.email)
+
             if typeID != "" and content != "":
                 message = {'type': typeID, 'content': content}
+
                 r = requests.post(API + "search/profile", json=message,
                                   headers={'Authorization': 'Bearer ' + token})
 

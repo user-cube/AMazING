@@ -50,8 +50,8 @@
     <div class="col-lg-10">
         <form method="post" action="{% url 'searchuser' %}" enctype="multipart/form-data"> {% csrf_token %}
             <div class="input-group-append">
-                <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
-
+                <input type="text" class="form-control" id="content" name="content" aria-label="Text input with segmented dropdown button">
+                <input type="text" id="type" name="type" value="1">
                 <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
@@ -62,7 +62,7 @@
                     <div role="separator" class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">Separated link</a>
                 </div>
-                <input type="submit" class="btn btn-outline-secondary"></input>
+                <input type="submit" class="btn btn-outline-secondary"/>
 
             </div>
         </form>
