@@ -20,6 +20,7 @@ class Tokenizer:
     def gerateEmailToken(self, email):
         message = {
             'email': email,
+            'isAdmin': 1,
             'iat': get_int_from_datetime(datetime.now(timezone.utc)),
             'exp': get_int_from_datetime(
                 datetime.now(timezone.utc) + timedelta(minutes=1)),
@@ -29,6 +30,7 @@ class Tokenizer:
     def generateValidation(self, email):
         message = {
             'email': email,
+            'isAdmin' : 0,
             'iat': get_int_from_datetime(datetime.now(timezone.utc)),
             'exp': get_int_from_datetime(
                 datetime.now(timezone.utc) + timedelta(hours=24)),
