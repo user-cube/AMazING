@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, createUser, userCreation, validateUser, saveUser
+from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, createUser, userCreation, validateUser, saveUser, rankUp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +26,7 @@ urlpatterns = [
     path('profile/', profile, name="profile"),
     path('profile/edit/', editProfile, name="editProfile"),
     path('profile/save/', updateProfile, name="updateProfile"),
+    path('profile/rankup', rankUp, name="rankupreq"),
     path('checkTests/', checkTests, name="tests"),
     path('create/user/', createUser, name="createUser"),
     path('create/user/save', userCreation, name="saveuser"),
