@@ -356,3 +356,65 @@ def listUsers(request):
             return HttpResponseForbidden()
     else:
         return redirect('login')
+
+def editUser(request, userId):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            token = tokenizer.gerateEmailToken(request.user.email)
+            r = requests.get(API + "profile/" + str(userId), headers={'Authorization': 'Bearer ' + token})
+
+            if r.status_code != 200:
+                return HttpResponseNotFound()
+
+            json = r.json()
+
+            if json['picture'] != None:
+                picture = json['picture']
+            else:
+                picture = os.environ.get("NO_PIC")
+
+            tparams = {
+                'userID' : json['id'],
+                'name': json['name'],
+                'email': json['email'],
+                'role': json['role'],
+                'picture': picture
+            }
+
+            return render(request, "user/admin/listUsers/edit/editRole.html", tparams)
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
+
+def processUser(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            token = tokenizer.generateValidation(request.user.email)
+
+            try:
+                email = request.GET['email']
+                userID = request.GET['id']
+            except:
+                messages.error(request, "Something went wrong.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+            if email != "" and userID != "":
+                message = {'email' : email, 'id' : userID}
+                r = requests.post(API + "profile/" + str(userID), json=message, headers={'Authorization': 'Bearer ' + token})
+
+                print(r.status_code)
+                if r.status_code != 200:
+                    messages.error(request, "Something went wrong.")
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+                messages.info(request, "User updated.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            else:
+                messages.error(request, "Something went wrong.")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
