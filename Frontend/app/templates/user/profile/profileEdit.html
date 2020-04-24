@@ -1,23 +1,22 @@
 {% extends 'structure/layout.html' %}
 
 {% block content %}
-        <div class="row">
+    <div class="row">
         <div class="col-lg-2">
-            <img src="{{ picture}}" class="img-responsive img-thumbnail ">
+            <img src="{{ picture }}" class="img-responsive img-thumbnail ">
             <br>
             <br>
-            <a href="#" class="btn btn-success"><span
-                    class="glyphicon glyphicon-thumbs-up"></span>
-                Editar perfil</a>
         </div>
         <div class="col-lg-10 ">
-            <form class="form-horizontal">
+            <form class="form-horizontal" method="post" action="{% url 'updateProfile' %}"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="form-group">
                     <label class="col-lg-4" for="Name">Name</label>
                     <div class="col-lg-6">
                         <div class="input-group">
                             <input id="name" name="name" type="text"
-                                   placeholder="Nome" class="form-control input-lg" value="{{ name }}" readonly>
+                                   placeholder="Nome" class="form-control input-lg" value="{{ name }}">
                         </div>
                     </div>
                 </div>
@@ -45,7 +44,8 @@
                     <div class="col-lg-6">
                         <div class="input-group">
                             <input id="register" name="register" type="text"
-                                   placeholder="Register Data" class="form-control input-lg" value="{{ registerdate }}" readonly>
+                                   placeholder="Register Data" class="form-control input-lg" value="{{ registerdate }}"
+                                   readonly>
                         </div>
                     </div>
                 </div>
@@ -61,8 +61,23 @@
                         </div>
                     </div>
                 </div>
+                <!-- File Button -->
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="Upload photo">Upload photo</label>
+                    <div class="col-md-4">
+                        <input id="picture" name="picture" class="input-file" type="file">
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="col-md-4 control-label"></label>
+                    <div class="col-md-4">
+                        <input type="submit" value="Alterar dados" class="btn btn-success"/>
+                    </div>
+                </div>
             </form>
         </div>
 
-</div>
+    </div>
 {% endblock %}
