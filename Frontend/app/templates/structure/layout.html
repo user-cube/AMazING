@@ -38,8 +38,8 @@
                         {% if request.resolver_match.url_name == 'search' %} class="nav-item active"
                         {% else %} class="nav-item" {% endif %}>
                         {% if request.user.is_authenticated %}
-                            {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
+                            <li {% if request.resolver_match.url_name == '#' %}
+                             class="nav-item active">
                                 <a class="nav-link" href="#">Test Config</a>
                             </li>
                         {% else %}
@@ -79,11 +79,6 @@
                 </ul>
             {% else %}
                 <ul class="navbar-nav mr-auto">
-                    {% if request.resolver_match.url_name == 'home' %}
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">Home</a>
-                        </li>
-                    {% endif %}
                     {% if request.resolver_match.url_name == 'search' %}
                         <li class="nav-item active"></li>
                     {% else %}
@@ -117,24 +112,20 @@
                                 <a class="nav-link" href="#">Statistics</a>
                             </li>
                         {% endif %}
-                        {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Users</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Users</a>
-                            </li>
-                        {% endif %}
-                        {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Templates</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Templates</a>
-                            </li>
-                        {% endif %}
+                        <li {% if request.resolver_match.url_name == 'listUsers' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                            <a class="nav-link" href="/users">Users</a>
+                        </li>
+                        <li {% if request.resolver_match.url_name == 'sasd' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item active"
+                            {% endif %}>
+                            <a class="nav-link" href="#">Templates</a>
+                        </li>
                     {% endif %}
                     </li>
                 </ul>
@@ -161,7 +152,6 @@
 
 <footer class="container">
     <hr/>
-
     <p>&copy; {{ year }} - AMazING</p>
 </footer>
 
