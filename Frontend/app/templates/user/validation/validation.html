@@ -1,0 +1,51 @@
+{% extends 'structure/layout.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-2">
+            <img src="{{ picture }}" class="img-responsive img-thumbnail ">
+            <br>
+            <br>
+        </div>
+        <div class="col-lg-10 ">
+            <form class="form-horizontal" method="post" action="{% url 'savepassword' %}"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="col-lg-4" for="Email">Email</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="email" name="name" type="text"
+                                   placeholder="Email" value="{{ email }}" class="form-control input-lg" required readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="Password">Password</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="password" name="password" type="password"
+                                   placeholder="Insert password" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" hidden>
+                    <label class="col-lg-4" for="Token">Token</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="token" name="token" type="text"
+                                   placeholder="Token" value="{{ token }}" class="form-control input-lg">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-4 control-label"></label>
+                    <div class="col-md-4">
+                        <input type="submit" value="Adicionar utilizador" class="btn btn-success"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

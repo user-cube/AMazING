@@ -1,5 +1,9 @@
+from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponseForbidden, HttpResponseRedirect
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+
 import requests
 
 from dotenv import load_dotenv
@@ -12,10 +16,8 @@ from django.contrib import messages
 # 192.168.85.209
 
 load_dotenv()
-
 API = os.environ.get("API_LINK")
-genToken = Tokenizer()
-
+tokenizer = Tokenizer()
 
 def home(request):
     """
@@ -51,7 +53,7 @@ def profile(request):
     """
     if request.user.is_authenticated:
 
-        token = genToken.gerateEmailToken(request.user.email)
+        token = tokenizer.gerateEmailToken(request.user.email)
         r = requests.get(API + "profile", headers = {'Authorization': 'Bearer '+ token})
 
         if r.status_code != 200:
@@ -103,7 +105,7 @@ def editProfile(request):
     """
     if request.user.is_authenticated:
 
-        token = genToken.gerateEmailToken(request.user.email)
+        token = tokenizer.gerateEmailToken(request.user.email)
         r = requests.get(API + "profile", headers = {'Authorization': 'Bearer '+ token})
 
         if r.status_code != 200:
@@ -143,7 +145,7 @@ def editProfile(request):
 
 def updateProfile(request):
     if request.user.is_authenticated:
-        token = genToken.gerateEmailToken(request.user.email)
+        token = tokenizer.gerateEmailToken(request.user.email)
         name = request.POST['name']
         try:
             pic = request.FILES['picture'].file.read()
@@ -166,8 +168,6 @@ def updateProfile(request):
     else:
         return redirect('login')
 
-
-
 def checkTests(request):
     """
     Show tests done by logged user.
@@ -180,7 +180,7 @@ def checkTests(request):
         404 page.
     """
     if request.user.is_authenticated:
-        token = genToken.gerateEmailToken(request.user.email)
+        token = tokenizer.gerateEmailToken(request.user.email)
         r = requests.get(API + "tests", headers={'Authorization': 'Bearer '+ token})
 
         if r.status_code != 200:
@@ -208,7 +208,7 @@ def checkTestInfo(request, testID):
         404 page.
     """
     if request.user.is_authenticated:
-        token = genToken.gerateEmailToken(request.user.email)
+        token = tokenizer.gerateEmailToken(request.user.email)
         r = requests.get(API + "tests/" + str(testID), headers={'Authorization': 'Bearer '+ token})
 
         if r.status_code != 200:
@@ -230,5 +230,109 @@ def checkTestInfo(request, testID):
         }
 
         return render(request, 'tests/testInfo.html', tparms)
+    else:
+        return redirect('login')
+
+def createUser(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return render(request, 'user/admin/newUser/addUser.html', {'picture': os.environ.get("NO_PIC")})
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
+
+def userCreation(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser and request.method == "POST":
+            email = request.POST['email']
+            name = request.POST['name']
+            role = int (request.POST['role'])
+            password = hash(email)
+
+            token = tokenizer.generateValidation(email)
+
+            message = {'email' : email, 'name' : name, 'role' : role}
+
+            link = 'http://localhost:8000/create/user/validate/'
+
+            r = requests.post(API + "user/", json=message, headers={'Authorization': 'Bearer ' + token})
+
+            if r.status_code != 200:
+                return HttpResponseForbidden()
+
+            user = User.objects.create_user(email, email, password)
+            user.first_name = name
+            user.save()
+
+            newEmail = EmailMessage(
+                'AMazING Playground',
+                'Dear '+ name + ',\n' +
+                'Your account have been created.\n' +
+                'Please use the following link validate your account:\n' +
+                link + token,
+                os.getenv('EMAIL'),
+                [email]
+            )
+            newEmail.send(fail_silently=False)
+
+            messages.info(request, "User successfully created.")
+            return redirect('createUser')
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
+
+def validateUser(request, token):
+    if not request.user.is_authenticated:
+        email = tokenizer.checkToken(token)
+
+        if email == None: return HttpResponseForbidden()
+
+        tparms = {
+            'email' :  email,
+            'token' : token,
+            'picture' : os.getenv('NO_PIC')
+        }
+        return render(request, 'user/validation/validation.html', tparms)
+    else:
+        return redirect('home')
+
+def saveUser(request):
+    if not request.user.is_authenticated:
+        if request.method == "POST":
+            try:
+                password = request.POST['password']
+                token = request.POST['token']
+            except:
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+            decoded = tokenizer.checkToken(token)
+
+            print(password)
+            if decoded != None:
+                user = User.objects.get(email=decoded)
+                user.set_password(password)
+                user.save()
+                return redirect('login')
+            else:
+                return HttpResponseForbidden()
+        else:
+            return redirect('login')
+    else:
+        return redirect('home')
+
+def rankUp(request):
+    if request.user.is_authenticated:
+        newEmail = EmailMessage(
+            'AMazING Playground - Rank up',
+            'Dear Admin,\n' +
+            'The user' + request.user.email + 'requested a rank up to his account.',
+            os.getenv('EMAIL'),
+            [request.user.email, os.getenv('EMAIL_ADMIN')]
+        )
+        newEmail.send(fail_silently=False)
+        messages.info(request, "Request sent.")
+        return redirect('profile')
     else:
         return redirect('login')
