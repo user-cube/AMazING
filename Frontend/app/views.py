@@ -357,6 +357,37 @@ def listUsers(request):
     else:
         return redirect('login')
 
+def searchUser(request):
+    if request.user.is_authenticated:
+        if not request.user.is_superuser:
+            try:
+                content = request.GET['content']
+                typeID = request.GET['type']
+            except:
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+            token = tokenizer.gerateEmailToken(request.user.email)
+            if typeID != "" and content != "":
+                message = {'type': typeID, 'content': content}
+                r = requests.post(API + "search/profile", json=message,
+                                  headers={'Authorization': 'Bearer ' + token})
+
+                if r.status_code != 200:
+                    messages.error(request, "Something went wrong.")
+
+                json = r.json()
+
+                tparms = {
+                    'database': json
+                }
+
+            return render(request, "user/admin/listUsers/allUsers.html", tparms)
+
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
+
 def editUser(request, userId):
     if request.user.is_authenticated:
         if request.user.is_superuser:
@@ -404,7 +435,6 @@ def processUser(request):
                 message = {'email' : email, 'id' : userID}
                 r = requests.post(API + "profile/" + str(userID), json=message, headers={'Authorization': 'Bearer ' + token})
 
-                print(r.status_code)
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
                     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

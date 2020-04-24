@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, \
-    createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser
+    createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, searchUser
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +29,7 @@ urlpatterns = [
     path('profile/save/', updateProfile, name="updateProfile"),
     path('profile/rankup', rankUp, name="rankupreq"),
     path('users/', listUsers, name="listusers"),
+    path('users/search/', searchUser, name="searchuser"),
     path('users/edit/<int:userId>', editUser, name="edituser"),
     path('users/process', processUser, name="processuser"),
     path('checkTests/', checkTests, name="tests"),
