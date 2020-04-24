@@ -256,6 +256,11 @@ def userCreation(request):
 
             link = 'http://localhost:8000/create/user/validate/'
 
+            r = requests.post(API + "user/", json=message, headers={'Authorization': 'Bearer ' + token})
+
+            if r.status_code != 200:
+                return HttpResponseForbidden()
+
             user = User.objects.create_user(email, email, password)
             user.first_name = name
             user.save()
