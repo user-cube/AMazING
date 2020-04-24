@@ -327,7 +327,7 @@ def rankUp(request):
         newEmail = EmailMessage(
             'AMazING Playground - Rank up',
             'Dear Admin,\n' +
-            'The user' + request.user.email + 'requested a rank up to his account.',
+            'The user' + request.user.email + ' requested a rank up to his account.',
             os.getenv('EMAIL'),
             [request.user.email, os.getenv('EMAIL_ADMIN')]
         )
