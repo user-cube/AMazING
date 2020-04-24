@@ -39,90 +39,70 @@
                         {% else %} class="nav-item" {% endif %}>
                         {% if request.user.is_authenticated %}
                             <li {% if request.resolver_match.url_name == '#' %}
-                             class="nav-item active">
-                                <a class="nav-link" href="#">Test Config</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Test Config</a>
-                            </li>
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                            <a class="nav-link" href="#">Config Test</a>
+                        </li>
+                        <li {% if request.resolver_match.url_name == '#' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                            <a class="nav-link" href="#">Reservations</a>
+                        </li>
+                        <li {% if request.resolver_match.url_name == '#' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                            <a class="nav-link" href="#">Test Result</a>
+                        </li>
+                        <li {% if request.resolver_match.url_name == 'tests' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                            <a class="nav-link" href="#">Previous Tests</a>
+                        </li>
                         {% endif %}
-                        {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Reservations</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Reservations</a>
-                            </li>
-                        {% endif %}
-                        {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Results</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Results</a>
-                            </li>
-                        {% endif %}
-                        {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Previous Tests</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Previous Tests</a>
-                            </li>
-                        {% endif %}
-                        {% endif %}
-                    </li>
                 </ul>
             {% else %}
                 <ul class="navbar-nav mr-auto">
-                    {% if request.resolver_match.url_name == 'search' %}
-                        <li class="nav-item active"></li>
-                    {% else %}
-                        <li class="nav-item"></li>
-                    {% endif %}
                     {% if request.user.is_authenticated %}
-                        {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Network Status</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Network Status</a>
-                            </li>
-                        {% endif %}
-                        {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Reservations</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Reservations</a>
-                            </li>
-                        {% endif %}
-                        {% if request.resolver_match.url_name == '#' %}
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Statistics</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Statistics</a>
-                            </li>
-                        {% endif %}
-                        <li {% if request.resolver_match.url_name == 'listUsers' %}
+                        <li {% if request.resolver_match.url_name == '#' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                            <a class="nav-link" href="#">Network Status</a>
+                        </li>
+                        <li {% if request.resolver_match.url_name == '#' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                            <a class="nav-link" href="#">Reservations</a>
+                        </li>
+                        <li {% if request.resolver_match.url_name == '#' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                            <a class="nav-link" href="#">Statistics</a>
+                        </li>
+                        <li {% if request.resolver_match.url_name == 'listusers' %}
                                 class="nav-item active"
                             {% else %}
                                 class="nav-item"
                             {% endif %}>
                             <a class="nav-link" href="/users">Users</a>
                         </li>
-                        <li {% if request.resolver_match.url_name == 'sasd' %}
+                        <li {% if request.resolver_match.url_name == '#' %}
                                 class="nav-item active"
                             {% else %}
-                                class="nav-item active"
+                                class="nav-item"
                             {% endif %}>
                             <a class="nav-link" href="#">Templates</a>
                         </li>
