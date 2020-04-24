@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 import os
 from app.tools.tokenizer import Tokenizer
 from datetime import datetime
-
+from base64 import b64encode
+from django.contrib import messages
 # Create your views here
 # 192.168.85.209
 
@@ -84,9 +85,88 @@ def profile(request):
             'picture' : picture
         }
 
-        return render(request, 'user/profile.html', tparams)
+        return render(request, 'user/profile/profile.html', tparams)
     else:
         return redirect('login')
+
+def editProfile(request):
+    """
+    User profile view.
+    Args:
+        request: request data;
+
+    Returns:
+        When status code is 200, display
+        user profile page, otherwise
+        404 page.
+
+    """
+    if request.user.is_authenticated:
+
+        token = genToken.gerateEmailToken(request.user.email)
+        r = requests.get(API + "profile", headers = {'Authorization': 'Bearer '+ token})
+
+        if r.status_code != 200:
+            return HttpResponseNotFound()
+
+        json = r.json()
+        """
+        Example of expected reponse:
+            {
+                email: "ruicoelho@ua.pt",
+                id: 200,
+                name: "Rui",
+                numtests: 130,
+                picture: null,
+                registerdate: "03-05-2019",
+                role: 1
+            }
+        """
+
+        if json['picture'] != None:
+            picture = json['picture']
+        else:
+            picture = os.environ.get("NO_PIC")
+
+        tparams = {
+            'name' : json['name'],
+            'email': json['email'],
+            'numtests' : json['numtests'],
+            'registerdate': json['registerdate'],
+            'role': json['role'],
+            'picture' : picture
+        }
+
+        return render(request, 'user/profile/profileEdit.html', tparams)
+    else:
+        return redirect('login')
+
+def updateProfile(request):
+    if request.user.is_authenticated:
+        token = genToken.gerateEmailToken(request.user.email)
+        name = request.POST['name']
+        try:
+            pic = request.FILES['picture'].file.read()
+        except:
+            pic = None
+
+        b64pic = b64encode(pic)
+        pic = b64pic.decode("utf-8")
+
+        message = {'name': name, 'pic' : pic}
+
+        r = requests.post(API + "profile/edit", json=message, headers={'Authorization': 'Bearer '+ token})
+
+        if r.status_code != 200:
+            messages.error(request, "Profile did not update.")
+        else:
+            messages.info(request, "Profile updated.")
+        return redirect('profile')
+
+    else:
+        return redirect('login')
+
+
 
 def checkTests(request):
     """

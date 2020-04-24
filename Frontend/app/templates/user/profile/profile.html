@@ -1,12 +1,19 @@
 {% extends 'structure/layout.html' %}
 
 {% block content %}
-        <div class="row">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags %}
+                <script>alert("{{ message }}")</script> {% endif %}
+
+        {% endfor %}
+    {% endif %}
+    <div class="row">
         <div class="col-lg-2">
-            <img src="{{ picture}}" class="img-responsive img-thumbnail ">
+            <img src="{{ picture }}" class="img-responsive img-thumbnail ">
             <br>
             <br>
-            <a href="#" class="btn btn-success"><span
+            <a href="{% url 'editProfile' %}" class="btn btn-success"><span
                     class="glyphicon glyphicon-thumbs-up"></span>
                 Editar perfil</a>
         </div>
@@ -36,5 +43,5 @@
             </form>
         </div>
 
-</div>
+    </div>
 {% endblock %}
