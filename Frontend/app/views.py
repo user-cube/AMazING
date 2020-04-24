@@ -2,7 +2,6 @@ from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotFound, HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
 
 import requests
 
@@ -334,5 +333,26 @@ def rankUp(request):
         newEmail.send(fail_silently=False)
         messages.info(request, "Request sent.")
         return redirect('profile')
+    else:
+        return redirect('login')
+
+def listUsers(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            token = tokenizer.gerateEmailToken(request.user.email)
+            r = requests.get(API + "profile/list",  headers={'Authorization': 'Bearer '+ token})
+
+            if r.status_code != 200:
+                return HttpResponseNotFound()
+
+            json = r.json()
+
+            tparms = {
+                'database' : json
+            }
+            return render(request, 'user/admin/listUsers/allUsers.html', tparms)
+
+        else:
+            return HttpResponseForbidden()
     else:
         return redirect('login')

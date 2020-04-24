@@ -29,6 +29,7 @@
                 <div class="row2">
                     <label class="col" for="Nome">Register Date: {{ registerdate }} </label>
                 </div>
+                {% if not user.is_superuser %}
                 <div class="row2">
                     <label class="col" for="Nome">Role:
                         {% if role == 1 %}
@@ -38,12 +39,15 @@
                         {% endif %}
                     </label>
                 </div>
+                {% endif %}
+                {% if not user.is_superuser %}
                 {% if role == 0 %}
                     <div class="row2">
                         <a class="btn btn-link" id="upRank" href="{% url 'rankupreq' %}">
                             <u>Solicit Rank Up</u>
                         </a>
                     </div>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="col-lg-auto">
