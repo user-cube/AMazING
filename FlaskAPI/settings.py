@@ -1,4 +1,5 @@
 import os
+from Crypto.PublicKey import RSA
 
 # DATABASE SETTINGS
 
@@ -25,11 +26,11 @@ SQLALCHEMY_DATABASE_URI = "postgresql://{DB_USER}:{DB_PASS}@{DB_ADDR}/{DB_NAME}"
 
 # JWT Decode Algorithm
 
-jwt_cert       = os.environ.get('cert')
+with open('.cert', mode='rb') as jwt_cert:
+    JWT_SECRET_KEY = jwt_cert.read()
 
-
-JWT_DECODE_ALGORITHMS = 'RS256'
+JWT_DECODE_ALGORITHMS = ['RS256']
 # JWT Decode CERT
-JWT_SECRET_KEY = jwt_cert
+
 # JWT Identifier
 JWT_IDENTITY_CLAIM = 'email'

@@ -19,8 +19,8 @@ def create_app(config_filename):
 #    db.init_app(app)
 
     # Blueprints
-    from views import users_bp
-    app.register_blueprint(users_bp)
+    from views import schema_blueprint
+    app.register_blueprint(schema_blueprint)
     return app
 
 

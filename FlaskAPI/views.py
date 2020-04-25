@@ -1,4 +1,4 @@
-from flask_jwt_extended import jwt_required, get_raw_jwt
+from flask_jwt_extended import jwt_required, get_raw_jwt, get_jti
 
 from models import *
 from flask import Blueprint, request, jsonify, make_response
@@ -7,29 +7,40 @@ from flask_restful import Api, Resource
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 
-users_bp = Blueprint('users', __name__)
-api = Api(users_bp)
+schema_blueprint = Blueprint('amazing', __name__)
+api = Api(schema_blueprint)
 
 role_schema = RoleSchema()
-profile_schema = ProfileSchema(many=True)
-template_schema = TemplateSchema(many=True)
-experience_schema = ExperienceSchema(many=True)
-apu_schema = APUSchema(many=True)
-apuconfig_schema = APUConfigSchema(many=True)
-apuconfig_template_schema = APUConfig_TemplateSchema(many=True)
+profile_schema = ProfileSchema()
+template_schema = TemplateSchema()
+experience_schema = ExperienceSchema()
+apu_schema = APUSchema()
+apuconfig_schema = APUConfigSchema()
+apuconfig_template_schema = APUConfig_TemplateSchema()
 
-class ProfileList(Resource):
-    @jwt_required
+
+def retrieve_id(email):
+    # email = get_raw_jwt()['jti']
+    users_query = Profile.query.filter_by(email=email)
+    results = profile_schema.dump(users_query, many=True)
+    if results:
+        return results[0]['id']
+    return
+
+email = 'j.brito@ua.pt'
+
+class ProfileSingle(Resource):
+
+    #@jwt_required
     def get(self):
         header = request.headers
-        print(1, header)
-        print(2, get_raw_jwt())
-        print(3, get_raw_jwt()['jti'])
-        users_query = Profile.query.all()
+        #email = get_raw_jwt()['jti']
+
+        users_query = Profile.query.filter_by(email=email)
         results = profile_schema.dump(users_query, many=True)
         return results
 
-    @jwt_required
+    #@jwt_required
     def post(self):
         raw_dict = request.get_json(force=True)
         try:
@@ -52,6 +63,65 @@ class ProfileList(Resource):
             resp.status_code = 403
             return resp
 
+    def put(self):
+        # email = get_raw_jwt()['jti']
+        user_id =  retrieve_id(email)
+
+        if not user_id:
+            resp = jsonify({"error": 'Non-existent user'})
+            resp.status_code = 403
+            return resp
+
+        raw_dict = request.get_json(force=True)
+        try:
+            profile = profile_schema.query.get(user_id)
+            profile_schema.validate(raw_dict)
+            d_profile = raw_dict['data']['attributes']
+
+            profile['name'], profile['email'], profile['num_testes'], profile['register_date'], profile['picture'], profile['last_login'], profile['role'] = d_profile['name'], d_profile['email'], d_profile['num_testes'], d_profile['register_date'], d_profile['picture'], d_profile['last_login'], d_profile['role']
+
+            profile.update(profile)
+            results = profile
+            return results, 201
+
+        except ValidationError as err:
+            resp = jsonify({"error": err.messages})
+            resp.status_code = 403
+            return resp
+
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            resp = jsonify({"error": str(e)})
+            resp.status_code = 403
+            return resp
+
+    def delete(self):
+        #email = get_raw_jwt()['jti']
+        user_id = retrieve_id(email)
+
+        if not user_id:
+            resp = jsonify({"error": 'Non-existent user'})
+            resp.status_code = 403
+            return resp
+
+        try:
+            profile = profile_schema.query.get(user_id)
+
+            profile.delete(profile)
+            results = {profile}
+            return results, 200
+
+        except ValidationError as err:
+            resp = jsonify({"error": err.messages})
+            resp.status_code = 403
+            return resp
+
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            resp = jsonify({"error": str(e)})
+            resp.status_code = 403
+            return resp
+
 class RoleList(Resource):
     def get(self):
         role_query = Role.query.all()
@@ -59,6 +129,17 @@ class RoleList(Resource):
         results = profile_schema.dump(role_query, many=True)
         return results
 
+class ExperienceList(Resource):
 
-api.add_resource(ProfileList, '/user')
+    def get(self):
+        #email = get_raw_jwt()['jti']
+        user_id = retrieve_id(email)
+        experiences = Experience.query.filter_by(profile=user_id)
+        results = experience_schema.dump(experiences, many=True)
+        return results
+
+
+
+api.add_resource(ProfileSingle, '/user')
 api.add_resource(RoleList, '/role')
+api.add_resource(ExperienceList, '/experience')
