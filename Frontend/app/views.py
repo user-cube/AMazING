@@ -479,11 +479,16 @@ def processNode(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         json = r.json()
-
+        print(json)
         tparms = {
-            'database' : json
+            'year': datetime.now().year,
+            'id' : json['id'],
+            'ips' : json['ips'],
+            'mac' : json['mac'],
+            'placas' : json['placas'],
+            'state' : json['state'],
         }
 
-        return render(request, "network/nodeInfo.hml", tparms)
+        return render(request, "network/nodeInfo.html", tparms)
     else:
         return redirect('login')

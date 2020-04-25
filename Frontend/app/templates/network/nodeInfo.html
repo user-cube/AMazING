@@ -1,1 +1,19 @@
 {% extends 'structure/layout.html' %}
+
+{% block content%}
+    <h1>Node {{ id }}</h1>
+    <p>IPS</p>
+    {% for i in ips %}
+        <p>{{ i }}</p>
+    {% endfor %}
+
+    <p>MACS</p>
+    {% for i in mac %}
+        <p>{{ i }}</p>
+    {% endfor %}
+
+    <p>{{ id }}</p>
+    <p>{{ placas }}</p>
+    <p>{{ state }}</p>
+
+{% endblock %}
