@@ -255,11 +255,13 @@ def userCreation(request):
 
             link = 'http://localhost:8000/create/user/validate/'
 
+            """
             r = requests.post(API + "user/", json=message, headers={'Authorization': 'Bearer ' + token})
 
             if r.status_code != 200:
                 return HttpResponseForbidden()
-
+            """
+            
             user = User.objects.create_user(email, email, password)
             user.first_name = name
             user.save()
@@ -379,11 +381,9 @@ def searchUser(request):
 
                 json = r.json()
 
-                tparms = {
-                    'database': json
-                }
+                print(json)
 
-            return render(request, "user/admin/listUsers/allUsers.html", tparms)
+            return render(request, "user/admin/listUsers/allUsers.html", {'database': json})
 
         else:
             return HttpResponseForbidden()
