@@ -364,7 +364,7 @@ def listUsers(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
             token = tokenizer.gerateEmailToken(request.user.email)
-            r = requests.get(API + "profile/list",  headers={'Authorization': 'Bearer '+ token})
+            r = requests.get(API + "user",  headers={'Authorization': 'Bearer '+ token})
 
             if r.status_code != 200:
                 return HttpResponseNotFound()
