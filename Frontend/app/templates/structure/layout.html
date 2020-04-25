@@ -73,8 +73,8 @@
             {% else %}
                 <ul class="navbar-nav mr-auto">
                     {% if request.user.is_authenticated %}
-                        <li {% if request.resolver_match.url_name == 'networkstatus' %}
-                                class="nav-item active"
+                        <li {% if request.resolver_match.url_name == 'networkstatus' %} class="nav-item active" {% endif %}
+                            {% if request.resolver_match.url_name == 'nodestatus' %} class="nav-item active"
                             {% else %}
                                 class="nav-item"
                             {% endif %}>
