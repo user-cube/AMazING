@@ -73,12 +73,12 @@
             {% else %}
                 <ul class="navbar-nav mr-auto">
                     {% if request.user.is_authenticated %}
-                        <li {% if request.resolver_match.url_name == '#' %}
+                        <li {% if request.resolver_match.url_name == 'networkstatus' %}
                                 class="nav-item active"
                             {% else %}
                                 class="nav-item"
                             {% endif %}>
-                            <a class="nav-link" href="#">Network Status</a>
+                            <a class="nav-link" href="/network/status/">Network Status</a>
                         </li>
                         <li {% if request.resolver_match.url_name == '#' %}
                                 class="nav-item active"
