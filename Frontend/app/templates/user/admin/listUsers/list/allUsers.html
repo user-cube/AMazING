@@ -48,6 +48,9 @@
     {% endif %}
 
     <div class="row justify-content-center">
+        <div class="col-lg-2">
+            <a class="btn btn-success" href="{% url 'createUser' %}">Add user</a>
+        </div>
         <div class="col-lg-10">
             <form method="post" action="{% url 'searchuser' %}" enctype="multipart/form-data"> {% csrf_token %}
                 <div class="input-group-append">
@@ -58,12 +61,12 @@
                         <option value="0">Email</option>
                     </select>
 
-                    <input type="submit" class="btn btn-outline-secondary"/>
+                    <input type="submit" class="btn btn-primary"/>
                 </div>
             </form>
         </div>
     </div>
-
+     <br>
     <div class="table-responsive">
         <table class="table">
             <thead>

@@ -43,3 +43,13 @@ class Tokenizer:
             return decoded['email']
         except:
             return None
+
+    def userToken(self, email):
+        message = {
+            'email': email,
+            'isAdmin': 0,
+            'iat': get_int_from_datetime(datetime.now(timezone.utc)),
+            'exp': get_int_from_datetime(
+                datetime.now(timezone.utc) + timedelta(minutes=1)),
+        }
+        return jwtManager.encode(message, self.private_key, alg='RS256')

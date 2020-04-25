@@ -33,9 +33,9 @@ urlpatterns = [
     path('users/edit/<int:userId>', editUser, name="edituser"),
     path('users/process', processUser, name="processuser"),
     path('checkTests/', checkTests, name="tests"),
+    path('checkTests/<int:testID>', checkTestInfo, name="testinfo"),
     path('create/user/', createUser, name="createUser"),
     path('create/user/save', userCreation, name="saveuser"),
     path('create/user/validate/<str:token>', validateUser, name="validateuser"),
     path('create/user/validate/save/', saveUser, name="savepassword"),
-    path('checkTests/<int:testID>', checkTestInfo, name="testinfo"),
 ]
