@@ -466,7 +466,7 @@ def processUser(request):
 
 def networkStatus(request):
     if request.user.is_authenticated:
-        return render(request, 'network/status.html')
+        return render(request, 'network/status.html', {'year': datetime.now().year,})
     else:
         return redirect('login')
 
