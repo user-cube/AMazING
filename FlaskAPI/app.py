@@ -1,42 +1,29 @@
-from flask_jwt_extended import JWTManager
+from flask import Flask, request, render_template, jsonify
+from flask_cors import CORS
+from flask_jwt_extended import JWTManager, jwt_required
+from settings import CERT
 
-from models import db
+import jwt as tokenizer
+import os
+from dotenv import load_dotenv
 
-from flask import Flask, Response
+app = Flask(__name__)
 
+# JWT Decode Algorithm
+app.config['JWT_DECODE_ALGORITHMS'] = ['RS256']
+# JWT Decode CERT
+app.config['JWT_SECRET_KEY'] = CERT
+# JWT Identifier
+app.config['JWT_IDENTITY_CLAIM'] = 'email'
 
-class MyResponse(Response):
-    default_mimetype = 'application/xml'
-
-# http://flask.pocoo.org/docs/0.10/patterns/appfactories/
-def create_app(config_filename):
-    app = Flask(__name__)
-    app.config.from_object(config_filename)
-    app.config['SQLALCHEMY_TRACK_MODIFICATONS'] = False
-    app.response_class = MyResponse
-
-#    from models import db
-#    db.init_app(app)
-
-    # Blueprints
-    from views import schema_blueprint
-    app.register_blueprint(schema_blueprint)
-    return app
-
-
-
-
-
-app = create_app('settings')
-db.init_app(app)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 jwt = JWTManager(app)
 
-@app.before_first_request
-def create_database():
-     db.create_all()
+@app.route('/')
+@jwt_required
+def hello_world():
+    return 'Hello World!'
+
 
 if __name__ == '__main__':
-
-    app.run(host=app.config['HOST'],
-            port=app.config['PORT'],
-            debug=app.config['DEBUG'])
+    app.run()
