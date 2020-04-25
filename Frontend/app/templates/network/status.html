@@ -1,0 +1,43 @@
+{% extends 'structure/layout.html' %}
+
+{% block headers %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 100px 100px 100px;
+            grid-template-rows: 100px 100px 100px 100px;
+
+            padding: 20px;
+        }
+
+        .grid-item-2 {
+
+        }
+
+    </style>
+
+
+{% endblock %}
+
+{% block content %}
+    <h1><b>Network Status</b></h1>
+    <br></br>
+    <div class="row justify-content-center">
+        <div class="grid-container">
+            <div class="grid-item"></div>
+            <div class="grid-item-2">2</div>
+            <div class="grid-item"></div>
+            <div class="grid-item-3">4</div>
+            <div class="grid-item"></div>
+            <div class="grid-item-3">6</div>
+            <div class="grid-item-3">7</div>
+            <div class="grid-item"></div>
+            <div class="grid-item-3">9</div>
+            <div class="grid-item"></div>
+            <div class="grid-item-2">11</div>
+            <div class="grid-item"></div>
+        </div>
+    </div>
+{% endblock %}
