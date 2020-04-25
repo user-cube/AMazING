@@ -38,20 +38,21 @@
             display: table;
         }</style>
 {% endblock %}
+
 {% block content %}
     {% if messages %}
         {% for message in messages %}
             {% if message.tags %}
                 <script>alert("{{ message }}")</script> {% endif %}
-
         {% endfor %}
     {% endif %}
+
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <form method="post" action="{% url 'searchuser' %}" enctype="multipart/form-data"> {% csrf_token %}
                 <div class="input-group-append">
                     <input type="text" class="form-control" id="content" name="content"
-                           aria-label="Text input with segmented dropdown button">
+                           aria-label="Text input with segmented dropdown button" required>
                     <select id="type" name="type">
                         <option value="1">Nome</option>
                         <option value="0">Email</option>
@@ -62,26 +63,29 @@
             </form>
         </div>
     </div>
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Register Date</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for row in database %}
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
             <tr>
-                <td><img src="{{ row.picture }}" class="img-responsive img-thumbnail " alt="user"/></td>
-                <td>{{ row.name }}</td>
-                <td>{{ row.email }}</td>
-                <td>{{ row.registerdate }}</td>
-                <td><a href="/users/edit/{{ row.id }}" class="btn btn-primary"><i class="fa fa-edit"></i></a></td>
+                <th></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Register Date</th>
+                <th></th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for row in database %}
+                <tr>
+                    <td><img src="{{ row.picture }}" class="img-responsive img-thumbnail " alt="user" style="width: 50px; height: 50px"/></td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>{{ row.registerdate }}</td>
+                    <td><a href="/users/edit/{{ row.id }}" class="btn btn-primary"><i class="fa fa-edit"></i></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

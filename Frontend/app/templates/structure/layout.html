@@ -94,6 +94,8 @@
                         </li>
                         <li {% if request.resolver_match.url_name == 'listusers' %}
                                 class="nav-item active" {% endif %}
+                            {% if request.resolver_match.url_name == 'searchuser' %}
+                                class="nav-item active" {% endif %}
                             {% if request.resolver_match.url_name == 'edituser' %} class="nav-item active"
                             {% else %}
                                 class="nav-item"

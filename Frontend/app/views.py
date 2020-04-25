@@ -261,7 +261,7 @@ def userCreation(request):
             if r.status_code != 200:
                 return HttpResponseForbidden()
             """
-            
+
             user = User.objects.create_user(email, email, password)
             user.first_name = name
             user.save()
@@ -352,7 +352,7 @@ def listUsers(request):
             tparms = {
                 'database' : json
             }
-            return render(request, 'user/admin/listUsers/allUsers.html', tparms)
+            return render(request, 'user/admin/listUsers/list/allUsers.html', tparms)
 
         else:
             return HttpResponseForbidden()
@@ -362,6 +362,7 @@ def listUsers(request):
 def searchUser(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
+
             try:
                 content = request.POST['content']
                 typeID = request.POST['type']
@@ -373,17 +374,16 @@ def searchUser(request):
             if typeID != "" and content != "":
                 message = {'type': typeID, 'content': content}
 
-                r = requests.post(API + "search/profile", json=message,
-                                  headers={'Authorization': 'Bearer ' + token})
+                r = requests.get(API + "search/profile/" + typeID + "/" + content , json=message, headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
 
                 json = r.json()
 
-                print(json)
+                return render(request, "user/admin/listUsers/list/allUsers.html", {'database': json})
 
-            return render(request, "user/admin/listUsers/allUsers.html", {'database': json})
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         else:
             return HttpResponseForbidden()
