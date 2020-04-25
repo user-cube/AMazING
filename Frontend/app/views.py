@@ -32,7 +32,7 @@ def home(request):
     if request.user.is_authenticated:
         tparams = {
             'title': 'Home Page',
-            'year': datetime.now().year,
+            'year': datetime.now().year
         }
         return render(request, 'index.html', tparams)
     else:
@@ -83,10 +83,11 @@ def profile(request):
             'numtests' : json['numtests'],
             'registerdate': json['registerdate'],
             'role': json['role'],
-            'picture' : picture
+            'picture' : picture,
+            'year': datetime.now().year
         }
 
-        return render(request, 'user/profile/profile.html', tparams)
+        return render(request, 'user/nonAdmin/profile/profile.html', tparams)
     else:
         return redirect('login')
 
@@ -135,10 +136,11 @@ def editProfile(request):
             'numtests' : json['numtests'],
             'registerdate': json['registerdate'],
             'role': json['role'],
-            'picture' : picture
+            'picture' : picture,
+            'year': datetime.now().year
         }
 
-        return render(request, 'user/profile/profileEdit.html', tparams)
+        return render(request, 'user/nonAdmin/profile/profileEdit.html', tparams)
     else:
         return redirect('login')
 
@@ -179,18 +181,22 @@ def checkTests(request):
         404 page.
     """
     if request.user.is_authenticated:
-        token = tokenizer.gerateEmailToken(request.user.email)
-        r = requests.get(API + "tests", headers={'Authorization': 'Bearer '+ token})
+        if not request.user.is_superuser:
+            token = tokenizer.gerateEmailToken(request.user.email)
+            r = requests.get(API + "tests", headers={'Authorization': 'Bearer '+ token})
 
-        if r.status_code != 200:
-            return HttpResponseNotFound()
+            if r.status_code != 200:
+                return HttpResponseNotFound()
 
-        json = r.json()
+            json = r.json()
 
-        tparms = {
-            'database' : json,
-        }
-        return render(request, 'tests/dashboard.html', tparms)
+            tparms = {
+                'database' : json,
+                'year': datetime.now().year
+            }
+            return render(request, 'user/nonAdmin/tests/previousTests/dashboard.html', tparms)
+        else:
+            return HttpResponseForbidden()
     else:
         return redirect('login')
 
@@ -207,28 +213,32 @@ def checkTestInfo(request, testID):
         404 page.
     """
     if request.user.is_authenticated:
-        token = tokenizer.gerateEmailToken(request.user.email)
-        r = requests.get(API + "tests/" + str(testID), headers={'Authorization': 'Bearer '+ token})
+        if not request.user.is_superuser:
+            token = tokenizer.gerateEmailToken(request.user.email)
+            r = requests.get(API + "tests/" + str(testID), headers={'Authorization': 'Bearer '+ token})
 
-        if r.status_code != 200:
-            return HttpResponseNotFound()
+            if r.status_code != 200:
+                return HttpResponseNotFound()
 
-        json = r.json()
+            json = r.json()
 
-        register_date = datetime.fromtimestamp(json['register_date'])
-        begin_date = datetime.fromtimestamp(json['begin_date'])
-        end_date = datetime.fromtimestamp(json['end_date'])
+            register_date = datetime.fromtimestamp(json['register_date'])
+            begin_date = datetime.fromtimestamp(json['begin_date'])
+            end_date = datetime.fromtimestamp(json['end_date'])
 
-        tparms = {
-            'begin_date': str(begin_date),
-            'end_date': str(end_date),
-            'num_test': json['num_test'],
-            'template': json['template'],
-            'name': json['name'],
-            'register_date': str(register_date)
-        }
+            tparms = {
+                'begin_date': str(begin_date),
+                'end_date': str(end_date),
+                'num_test': json['num_test'],
+                'template': json['template'],
+                'name': json['name'],
+                'register_date': str(register_date),
+                'year': datetime.now().year
+            }
 
-        return render(request, 'tests/testInfo.html', tparms)
+            return render(request, 'user/nonAdmin/tests/previousTests/testInfo.html', tparms)
+        else:
+            return HttpResponseForbidden()
     else:
         return redirect('login')
 
@@ -293,9 +303,10 @@ def validateUser(request, token):
         tparms = {
             'email' :  email,
             'token' : token,
-            'picture' : os.getenv('NO_PIC')
+            'picture' : os.getenv('NO_PIC'),
+            'year': datetime.now().year
         }
-        return render(request, 'user/validation/validation.html', tparms)
+        return render(request, 'user/nonAdmin/validation/validation.html', tparms)
     else:
         return redirect('home')
 
@@ -350,6 +361,7 @@ def listUsers(request):
             json = r.json()
 
             tparms = {
+                'year': datetime.now().year,
                 'database' : json
             }
             return render(request, 'user/admin/listUsers/list/allUsers.html', tparms)
@@ -381,7 +393,7 @@ def searchUser(request):
 
                 json = r.json()
 
-                return render(request, "user/admin/listUsers/list/allUsers.html", {'database': json})
+                return render(request, "user/admin/listUsers/list/allUsers.html", {'year': datetime.now().year, 'database': json})
 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -407,6 +419,7 @@ def editUser(request, userId):
                 picture = os.environ.get("NO_PIC")
 
             tparams = {
+                'year': datetime.now().year,
                 'userID' : json['id'],
                 'name': json['name'],
                 'email': json['email'],
