@@ -22,6 +22,7 @@ jwt = JWTManager(app)
 @app.route('/')
 @jwt_required
 def hello_world():
+    token = request.headers["Authorization"].split()[1]  # Split Bearer from token
     return 'Hello World!'
 
 
