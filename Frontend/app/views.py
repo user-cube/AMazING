@@ -255,10 +255,12 @@ def userCreation(request):
 
             link = 'http://localhost:8000/create/user/validate/'
 
+            """
             r = requests.post(API + "user/", json=message, headers={'Authorization': 'Bearer ' + token})
 
             if r.status_code != 200:
                 return HttpResponseForbidden()
+            """
 
             user = User.objects.create_user(email, email, password)
             user.first_name = name
@@ -350,7 +352,38 @@ def listUsers(request):
             tparms = {
                 'database' : json
             }
-            return render(request, 'user/admin/listUsers/allUsers.html', tparms)
+            return render(request, 'user/admin/listUsers/list/allUsers.html', tparms)
+
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
+
+def searchUser(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+
+            try:
+                content = request.POST['content']
+                typeID = request.POST['type']
+            except:
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+            token = tokenizer.gerateEmailToken(request.user.email)
+
+            if typeID != "" and content != "":
+                message = {'type': typeID, 'content': content}
+
+                r = requests.get(API + "search/profile/" + typeID + "/" + content , json=message, headers={'Authorization': 'Bearer ' + token})
+
+                if r.status_code != 200:
+                    messages.error(request, "Something went wrong.")
+
+                json = r.json()
+
+                return render(request, "user/admin/listUsers/list/allUsers.html", {'database': json})
+
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         else:
             return HttpResponseForbidden()
@@ -404,7 +437,6 @@ def processUser(request):
                 message = {'email' : email, 'id' : userID}
                 r = requests.post(API + "profile/" + str(userID), json=message, headers={'Authorization': 'Bearer ' + token})
 
-                print(r.status_code)
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
                     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
