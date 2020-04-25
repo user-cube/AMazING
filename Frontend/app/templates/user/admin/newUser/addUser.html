@@ -2,13 +2,13 @@
 
 {% block content %}
     <div class="row">
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags %}
-                <script>alert("{{ message }}")</script> {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags %}
+                    <script>alert("{{ message }}")</script> {% endif %}
 
-        {% endfor %}
-    {% endif %}
+            {% endfor %}
+        {% endif %}
         <div class="col-lg-2">
             <img src="{{ picture }}" class="img-responsive img-thumbnail ">
             <br>
