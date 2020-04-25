@@ -492,3 +492,34 @@ def processNode(request, nodeID):
         return render(request, "network/nodeInfo.html", tparms)
     else:
         return redirect('login')
+
+def searchTest(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+
+            try:
+                content = request.POST['content']
+                typeID = request.POST['type']
+            except:
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+            token = tokenizer.gerateEmailToken(request.user.email)
+
+            if typeID != "" and content != "":
+                message = {'type': typeID, 'content': content}
+
+                r = requests.get(API + "search/test/" + typeID + "/" + content , json=message, headers={'Authorization': 'Bearer ' + token})
+
+                if r.status_code != 200:
+                    messages.error(request, "Something went wrong.")
+
+                json = r.json()
+
+                return render(request, "user/nonAdmin/tests/previousTests/dashboard.html", {'year': datetime.now().year, 'database': json})
+
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        else:
+            return HttpResponseForbidden()
+    else:
+        return redirect('login')
