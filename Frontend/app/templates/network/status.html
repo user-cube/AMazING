@@ -1,4 +1,5 @@
 {% extends 'structure/layout.html' %}
+{% load static %}
 
 {% block headers %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -6,14 +7,8 @@
     <style>
         .grid-container {
             display: grid;
-            grid-template-columns: 100px 100px 100px;
-            grid-template-rows: 100px 100px 100px 100px;
-
-            padding: 20px;
-        }
-
-        .grid-item-2 {
-
+            grid-template-columns: 100px 100px 100px 100px 100px;
+            grid-template-rows: 170px 170px 170px 170px;
         }
 
     </style>
@@ -27,16 +22,47 @@
     <div class="row justify-content-center">
         <div class="grid-container">
             <div class="grid-item"></div>
-            <div class="grid-item-2">2</div>
             <div class="grid-item"></div>
-            <div class="grid-item-3">4</div>
+            <div class="grid-item-2">
+                <a href="1">
+                    <img src="{% static 'img/router.png' %}" class="rounded img-thumbnail">
+                </a>
+            </div>
             <div class="grid-item"></div>
-            <div class="grid-item-3">6</div>
-            <div class="grid-item-3">7</div>
             <div class="grid-item"></div>
-            <div class="grid-item-3">9</div>
+            <div class="grid-item-3">
+                <a href="2">
+                    <img src="{% static 'img/router.png' %}" class="rounded img-thumbnail">
+                </a>
+            </div>
             <div class="grid-item"></div>
-            <div class="grid-item-2">11</div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item-3">
+                <a href="3">
+                    <img src="{% static 'img/router.png' %}" class="rounded img-thumbnail">
+                </a>
+            </div>
+            <div class="grid-item-3">
+                <a href="4">
+                    <img src="{% static 'img/router.png' %}" class="rounded img-thumbnail">
+                </a>
+            </div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item-3">
+                <a href="5">
+                    <img src="{% static 'img/router.png' %}" class="rounded img-thumbnail">
+                </a>
+            </div>
+            <div class="grid-item"></div>
+            <div class="grid-item"></div>
+            <div class="grid-item-2">
+                <a href="6">
+                    <img src="{% static 'img/router.png' %}" class="rounded img-thumbnail">
+                </a>
+            </div>
             <div class="grid-item"></div>
         </div>
     </div>

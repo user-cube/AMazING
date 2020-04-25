@@ -466,24 +466,29 @@ def processUser(request):
 
 def networkStatus(request):
     if request.user.is_authenticated:
-        return render(request, 'network/status.html')
+        return render(request, 'network/status.html', {'year': datetime.now().year,})
     else:
         return redirect('login')
 
 def processNode(request, nodeID):
     if request.user.is_authenticated:
         token = tokenizer.nodeToken(request.user.email)
-        r = requests.get(API + "node/" + nodeID, headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         json = r.json()
-
+        print(json)
         tparms = {
-            'database' : json
+            'year': datetime.now().year,
+            'id' : json['id'],
+            'ips' : json['ips'],
+            'mac' : json['mac'],
+            'placas' : json['placas'],
+            'state' : json['state'],
         }
 
-        return render(request, "network/nodeInfo.hml", tparms)
+        return render(request, "network/nodeInfo.html", tparms)
     else:
         return redirect('login')
