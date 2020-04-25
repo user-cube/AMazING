@@ -38,6 +38,7 @@ def home(request):
     else:
         return redirect('login')
 
+#OK
 def profile(request):
     """
     User profile view.
@@ -91,6 +92,7 @@ def profile(request):
     else:
         return redirect('login')
 
+#OK
 def editProfile(request):
     """
     User profile view.
@@ -144,6 +146,7 @@ def editProfile(request):
     else:
         return redirect('login')
 
+#API
 def updateProfile(request):
     if request.user.is_authenticated:
         token = tokenizer.gerateEmailToken(request.user.email)
@@ -158,7 +161,7 @@ def updateProfile(request):
 
         message = {'name': name, 'pic' : pic}
 
-        r = requests.post(API + "profile/edit", json=message, headers={'Authorization': 'Bearer '+ token})
+        r = requests.put(API + "profile/", json=message, headers={'Authorization': 'Bearer '+ token})
 
         if r.status_code != 200:
             messages.error(request, "Profile did not update.")
@@ -169,6 +172,7 @@ def updateProfile(request):
     else:
         return redirect('login')
 
+#API
 def checkTests(request):
     """
     Show tests done by logged user.
@@ -182,8 +186,8 @@ def checkTests(request):
     """
     if request.user.is_authenticated:
         if not request.user.is_superuser:
-            token = tokenizer.gerateEmailToken(request.user.email)
-            r = requests.get(API + "tests", headers={'Authorization': 'Bearer '+ token})
+            token = tokenizer.userToken(request.user.email)
+            r = requests.get(API + "experience", headers={'Authorization': 'Bearer '+ token})
 
             if r.status_code != 200:
                 return HttpResponseNotFound()
@@ -200,6 +204,7 @@ def checkTests(request):
     else:
         return redirect('login')
 
+#API
 def checkTestInfo(request, testID):
     """
     Show info for a specific test.
@@ -215,7 +220,7 @@ def checkTestInfo(request, testID):
     if request.user.is_authenticated:
         if not request.user.is_superuser:
             token = tokenizer.gerateEmailToken(request.user.email)
-            r = requests.get(API + "tests/" + str(testID), headers={'Authorization': 'Bearer '+ token})
+            r = requests.get(API + "experince/" + str(testID), headers={'Authorization': 'Bearer '+ token})
 
             if r.status_code != 200:
                 return HttpResponseNotFound()
@@ -242,6 +247,7 @@ def checkTestInfo(request, testID):
     else:
         return redirect('login')
 
+#OK
 def createUser(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
@@ -251,6 +257,7 @@ def createUser(request):
     else:
         return redirect('login')
 
+#API
 def userCreation(request):
     if request.user.is_authenticated:
         if request.user.is_superuser and request.method == "POST":
@@ -265,12 +272,12 @@ def userCreation(request):
 
             link = 'http://localhost:8000/create/user/validate/'
 
-            """
+
             r = requests.post(API + "user/", json=message, headers={'Authorization': 'Bearer ' + token})
 
             if r.status_code != 200:
                 return HttpResponseForbidden()
-            """
+
 
             user = User.objects.create_user(email, email, password)
             user.first_name = name
@@ -294,6 +301,7 @@ def userCreation(request):
     else:
         return redirect('login')
 
+#OK
 def validateUser(request, token):
     if not request.user.is_authenticated:
         email = tokenizer.checkToken(token)
@@ -310,6 +318,7 @@ def validateUser(request, token):
     else:
         return redirect('home')
 
+#OK
 def saveUser(request):
     if not request.user.is_authenticated:
         if request.method == "POST":
@@ -334,6 +343,7 @@ def saveUser(request):
     else:
         return redirect('home')
 
+#OK
 def rankUp(request):
     if request.user.is_authenticated:
         newEmail = EmailMessage(
@@ -349,6 +359,7 @@ def rankUp(request):
     else:
         return redirect('login')
 
+#TODO
 def listUsers(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
@@ -371,6 +382,7 @@ def listUsers(request):
     else:
         return redirect('login')
 
+#API
 def searchUser(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
@@ -386,10 +398,11 @@ def searchUser(request):
             if typeID != "" and content != "":
                 message = {'type': typeID, 'content': content}
 
-                r = requests.get(API + "search/profile/" + typeID + "/" + content , json=message, headers={'Authorization': 'Bearer ' + token})
+                r = requests.get(API + "user?typeID=" + typeID + "&content=" + content, json=message, headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
                 json = r.json()
 
@@ -402,11 +415,12 @@ def searchUser(request):
     else:
         return redirect('login')
 
+#OK
 def editUser(request, userId):
     if request.user.is_authenticated:
         if request.user.is_superuser:
             token = tokenizer.gerateEmailToken(request.user.email)
-            r = requests.get(API + "profile/" + str(userId), headers={'Authorization': 'Bearer ' + token})
+            r = requests.get(API + "user/" + str(userId), headers={'Authorization': 'Bearer ' + token})
 
             if r.status_code != 200:
                 return HttpResponseNotFound()
@@ -433,6 +447,7 @@ def editUser(request, userId):
     else:
         return redirect('login')
 
+#API
 def processUser(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
@@ -448,7 +463,7 @@ def processUser(request):
 
             if email != "" and userID != "":
                 message = {'email' : email, 'id' : userID}
-                r = requests.post(API + "profile/" + str(userID), json=message, headers={'Authorization': 'Bearer ' + token})
+                r = requests.put(API + "user/" + str(userID), json=message, headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
@@ -464,12 +479,13 @@ def processUser(request):
     else:
         return redirect('login')
 
+#API
 def networkStatus(request):
     if request.user.is_authenticated:
         return render(request, 'network/status.html', {'year': datetime.now().year,})
     else:
         return redirect('login')
-
+#API
 def processNode(request, nodeID):
     if request.user.is_authenticated:
         token = tokenizer.nodeToken(request.user.email)
@@ -493,9 +509,10 @@ def processNode(request, nodeID):
     else:
         return redirect('login')
 
+#API
 def searchTest(request):
     if request.user.is_authenticated:
-        if request.user.is_superuser:
+        if not request.user.is_superuser:
 
             try:
                 content = request.POST['content']
@@ -508,10 +525,11 @@ def searchTest(request):
             if typeID != "" and content != "":
                 message = {'type': typeID, 'content': content}
 
-                r = requests.get(API + "search/test/" + typeID + "/" + content , json=message, headers={'Authorization': 'Bearer ' + token})
+                r = requests.get(API + "experience?typeID=" + typeID + "&content=" + content , json=message, headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
                 json = r.json()
 
