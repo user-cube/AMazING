@@ -473,7 +473,7 @@ def networkStatus(request):
 def processNode(request, nodeID):
     if request.user.is_authenticated:
         token = tokenizer.nodeToken(request.user.email)
-        r = requests.get(API + "node/" + nodeID, headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
