@@ -1,19 +1,60 @@
 {% extends 'structure/layout.html' %}
 
-{% block content%}
-    <h1>Node {{ id }}</h1>
-    <p>IPS</p>
-    {% for i in ips %}
-        <p>{{ i }}</p>
-    {% endfor %}
-
-    <p>MACS</p>
-    {% for i in mac %}
-        <p>{{ i }}</p>
-    {% endfor %}
-
-    <p>{{ id }}</p>
-    <p>{{ placas }}</p>
-    <p>{{ state }}</p>
-
+{% block content %}
+    <div class="container">
+        <h1>Node {{ id }} - Information</h1>
+        <hr>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <td><strong>IP Address</strong></td>
+                {% for i in ips %}
+                    <td></td>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                {% for i in ips %}
+                    <td>{{ i }}</td>
+                {% endfor %}
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <td><strong>MAC Address</strong></td>
+                {% for i in mac %}
+                    <td></td>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                {% for i in ips %}
+                    <td>{{ i }}</td>
+                {% endfor %}
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <td><strong>WIFI Boards</strong></td>
+                <td><strong>State</strong></td>
+                <td><strong>Timestamp</strong></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ placas }}</td>
+                <td>{% if state == 1 %}On going experience{% else %}Available{% endif %}</td>
+                <td>{{ current_time }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
