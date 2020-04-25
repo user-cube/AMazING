@@ -469,3 +469,21 @@ def networkStatus(request):
         return render(request, 'network/status.html')
     else:
         return redirect('login')
+
+def processNode(request, nodeID):
+    if request.user.is_authenticated:
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "node/" + nodeID, headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        json = r.json()
+
+        tparms = {
+            'database' : json
+        }
+
+        return render(request, "network/nodeInfo.hml", tparms)
+    else:
+        return redirect('login')

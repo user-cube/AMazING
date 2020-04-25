@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, \
-    createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, searchUser, networkStatus
+    createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
+    searchUser, networkStatus, processNode
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,5 +39,6 @@ urlpatterns = [
     path('create/user/save', userCreation, name="saveuser"),
     path('create/user/validate/<str:token>', validateUser, name="validateuser"),
     path('create/user/validate/save/', saveUser, name="savepassword"),
-    path('network/status/', networkStatus, name="networkstatus")
+    path('network/status/', networkStatus, name="networkstatus"),
+    path('network/status/<int:nodeID>', processNode, name="nodestatus")
 ]
