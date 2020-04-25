@@ -463,3 +463,9 @@ def processUser(request):
             return HttpResponseForbidden()
     else:
         return redirect('login')
+
+def networkStatus(request):
+    if request.user.is_authenticated:
+        return render(request, 'index.html')
+    else:
+        return redirect('login')
