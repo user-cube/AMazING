@@ -497,6 +497,7 @@ def processNode(request, nodeID):
         json = r.json()
         print(json)
         tparms = {
+            'current_time' : str(datetime.now()),
             'year': datetime.now().year,
             'id' : json['id'],
             'ips' : json['ips'],
