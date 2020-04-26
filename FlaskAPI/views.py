@@ -44,10 +44,16 @@ parser.add_argument('status')
 def get_user_by_email(email):
     users_query = db.session().query(Profile).filter(Profile.email == email).one()
     results = profile_schema.dump(users_query)
-    print(results)
     if results:
         return results
     return
+
+
+class RoleView(Resource):
+    def get(self):
+        role_query = db.session.query(Role).all()
+        results = profile_schema.dump(role_query, many=True)
+        return results
 
 
 class UserView(Resource):
@@ -120,24 +126,13 @@ class UserInfoView(Resource):
             return results
 
         raw_dict = request.get_json(force=True)
-        users_schema = db.session.query(Profile).query.get_or_404(id)
-        user = profile_schema.dump(users_schema)
-        if not user:
-            resp = jsonify({"error": 'Non-existent user'})
-            resp.status_code = 403
-            return resp
-        try:
-            message = raw_dict['data']['message']
-            user['role'] = message['role']
-            return user, status.HTTP_200_OK
+        message = raw_dict['message']
+        profile = db.session.query(Profile).get(id)
 
-
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            resp = jsonify({"error": str(e)})
-            resp.status_code = status.HTTP_401_UNAUTHORIZED
-            return resp
-
+        profile.name = message['name']
+        profile.email = email=message['email']
+        profile.role = message['role']
+        return profile
 
 """
     @jwt_required
@@ -174,12 +169,15 @@ class ProfileView(Resource):
         results = profile_schema.dump(users_query, many=True)
         return results
 
+    def put(self):
+        email = get_raw_jwt()['email']
 
-class RoleView(Resource):
-    def get(self):
-        role_query = db.session.query(Role).all()
-        results = profile_schema.dump(role_query, many=True)
-        return results
+        user = users_query = db.session().query(Profile).filter(Profile.email == email).one()
+        message = request.get_json(force=True)['message']
+        user.picture = message['picture']
+        user.name = message['name']
+        user.update(user)
+        return profile_schema.dump(user)
 
 
 class ExperienceView(Resource):
@@ -217,23 +215,13 @@ class ExperienceView(Resource):
     def post(self):
         raw_data = get_raw_jwt()
         email = raw_data['email']
-        print("here")
         user_id = get_user_by_email(email)['id']
-        print("there")
-        print(request)
         raw_dict = request.get_json(force=True)
-        print(raw_dict)
         try:
             message = raw_dict['message']
-            print(message)
             begin_date = datetime.strptime(message['begin_date'], "%Y-%m-%d %H:%M:%S")
             template = db.session.query(Template).get(message['template'])
-            print(template.duration)
             total_duration = message['num_test'] * (template.duration + 60)  # 1 min for test setup
-
-            print(begin_date)
-            print(template)
-            print(total_duration)
 
             experience = Experience(name=message['name'],
                                     begin_date=begin_date,
@@ -244,7 +232,6 @@ class ExperienceView(Resource):
                                     template=message['template'],
                                     register_date=datetime.now())
 
-            print(experience)
             experience.add(experience)
 
             return experience_schema.dump(experience), status.HTTP_201_CREATED

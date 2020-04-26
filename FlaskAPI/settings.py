@@ -20,7 +20,7 @@ SQLALCHEMY_DATABASE_URI = "postgresql://{DB_USER}:{DB_PASS}@{DB_ADDR}/{DB_NAME}"
 
 
 SQLALCHEMY_TRACK_MODIFICATONS = False
-""""
+"""
 CERT = b-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv
 vkTtwlvBsaJq7S5wA+kzeVOVpVWwkWdVha4s38XM/pa/yr47av7+z3VTmvDRyAHc
@@ -32,6 +32,7 @@ MwIDAQAB
 -----END PUBLIC KEY-----
 """
 
+
 CERT = b'-----BEGIN PUBLIC KEY-----\n' \
        b'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlc6LMgsz5b2m2Q3M/ps2\n' \
        b'XRKIuBRdwOUrY532F9OmkYrrdPsVpDpWTjRsc3Srrc9hUCIWNMQa++Cjq4yMFTHl\n' \
@@ -42,7 +43,7 @@ CERT = b'-----BEGIN PUBLIC KEY-----\n' \
        b'JwIDAQAB\n' \
        b'-----END PUBLIC KEY-----'
 
-
+#"""
 # JWT Decode Algorithm
 JWT_SECRET_KEY = CERT
 
