@@ -48,7 +48,7 @@
 
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <form method="post" action="{% url 'searchtest' %}" enctype="multipart/form-data"> {% csrf_token %}
+            <form method="post" action="{% url 'searchtestAdmin' %}" enctype="multipart/form-data"> {% csrf_token %}
                 <div class="input-group-append">
                     <input type="text" class="form-control" id="content" name="content"
                            aria-label="Text input with segmented dropdown button" required>
@@ -68,6 +68,7 @@
             <th>ID</th>
             <th>Test Name</th>
             <th>Date</th>
+            <th>Author</th>
             <th>Obs.</th>
         </tr>
         </thead>
@@ -77,7 +78,8 @@
                 <td>{{ row.id }}</td>
                 <td>{{ row.name }}</td>
                 <td>{{ row.register_date }}</td>
-                <td><a href="/checkTests/{{ row.id }}" class="btn btn-primary"><i class="fa fa-info"></i></a></td>
+                <td>{{ row.author }}</td>
+                <td><a href="/checkTests/admin/{{ row.id }}" class="btn btn-primary"><i class="fa fa-info"></i></a></td>
             </tr>
         {% endfor %}
         </tbody>
