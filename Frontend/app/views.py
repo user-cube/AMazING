@@ -648,9 +648,9 @@ def checkTestInfoAdmin(request, testID):
 
             experience = json['experience']
 
-            register_date = datetime.fromtimestamp(experience['register_date'])
-            begin_date = datetime.fromtimestamp(experience['begin_date'])
-            end_date = datetime.fromtimestamp(experience['end_date'])
+            register_date = datetime.fromtimestamp(int(experience['register_date']))
+            begin_date = datetime.fromtimestamp(int(experience['begin_date']))
+            end_date = datetime.fromtimestamp(int(experience['end_date']))
 
             tparms = {
                 'begin_date': str(begin_date),
