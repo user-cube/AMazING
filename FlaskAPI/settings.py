@@ -7,7 +7,7 @@ pg_db_password = os.getenv('DB_PASS')
 pg_db_username = os.getenv('DB_USER')
 
 DEBUG = True
-PORT = 5001
+PORT = 5000
 HOST = "127.0.0.1"
 SQLALCHEMY_ECHO = True
 SQLALCHEMY_TRACK_MODIFICATIONS = True

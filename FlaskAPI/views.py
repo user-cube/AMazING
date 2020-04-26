@@ -55,6 +55,7 @@ class UserView(Resource):
     def get(self, *filters):
         parse_data = parser.parse_args()
         raw_data = get_raw_jwt()
+        print("RAW ", raw_data)
         if not raw_data['isAdmin']:
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
@@ -69,6 +70,7 @@ class UserView(Resource):
             users_query = users_query.filter(Profile.name.contains(parse_data['content']))
 
         results = profile_schema.dump(users_query.all(), many=True)
+        print("RESULTS ", results)
         return results
 
     @jwt_required
