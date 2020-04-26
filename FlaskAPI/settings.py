@@ -41,7 +41,7 @@ CERT = b'-----BEGIN PUBLIC KEY-----\n' \
        b'3D7FspI98MOX1lUatEJDq6/xE0JlK111uh24i7aZaZD5Bn3dqZl83zK4PdexXE/z\n' \
        b'JwIDAQAB\n' \
        b'-----END PUBLIC KEY-----'
-"""
+
 
 # JWT Decode Algorithm
 JWT_SECRET_KEY = CERT
