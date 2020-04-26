@@ -1,0 +1,50 @@
+{% extends 'structure/layout.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-10 ">
+            <form class="form-horizontal" method="post" action="{% url 'registertest' %}"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="col-lg-4" for="Name">Title</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="name" name="name" type="text"
+                                   placeholder="Nome" class="form-control input-lg" value="{{ name }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="Email">Test Start Date</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="email" name="email" type="text"
+                                   placeholder="email" class="form-control input-lg" value="{{ email }}">
+                            <div class="invalid-feedback">This date already has an appointed tes</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="NumTests">Test End Date</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="numtests" name="numtests" type="number"
+                                   placeholder="Number of Tests" class="form-control input-lg" value="{{ numtests }}"
+                                   readonly>
+                        <div class="invalid-feedback">This date already has an appointed tes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-4 control-label"></label>
+                    <div class="col-md-4">
+                        <input type="submit" value="Add Test" class="btn btn-success"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}
