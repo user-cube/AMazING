@@ -647,12 +647,16 @@ def checkTestInfoAdmin(request, testID):
             json = r.json()
 
             experience = json['experience']
+            template = json['template']
 
             tparms = {
                 'begin_date': experience['begin_date'],
                 'end_date': experience['end_date'],
                 'num_test': experience['num_test'],
-                'template': json['template'],
+                'id' : template['id'],
+                'duration' : template['duration'],
+                'nameT' : template['name'],
+                'profile' : template['profile'],
                 'name': experience['name'],
                 'register_date': experience['register_date'],
                 'year': datetime.now().year
