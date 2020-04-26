@@ -461,13 +461,14 @@ def processUser(request):
             try:
                 email = request.GET['email']
                 userID = request.GET['id']
+                role = request.POST['role']
             except:
                 messages.error(request, "Something went wrong.")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
             if email != "" and userID != "":
-                message = {'email' : email, 'id' : userID}
+                message = {'email' : email, 'id' : userID, 'role': role}
                 r = requests.put(API + "user/" + str(userID), json=message, headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
