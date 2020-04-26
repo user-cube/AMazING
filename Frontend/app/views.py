@@ -280,7 +280,7 @@ def userCreation(request):
 
             r = requests.post(API + "user", json=message, headers={'Authorization': 'Bearer ' + token})
 
-            if r.status_code != 200:
+            if r.status_code != 201:
                 return HttpResponseForbidden()
 
 
