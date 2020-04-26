@@ -19,7 +19,7 @@ from django.contrib.auth import views as auth_views
 
 from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, \
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
-    searchUser, networkStatus, processNode, searchTest, calendar, registerTest
+    searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, checkTestsAdmin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,7 +36,10 @@ urlpatterns = [
     path('users/process', processUser, name="processuser"),
     path('checkTests/', checkTests, name="tests"),
     path('checkTests/search/', searchTest, name="searchtest"),
+    path('checkTests/admin/', checkTestsAdmin, name="tests"),
+    path('checkTests/admin/search/', searchTestAdmin, name="searchtest"),
     path('checkTests/<int:testID>', checkTestInfo, name="testinfo"),
+    path('checkTests/admin/<int:testID>', checkTestInfoAdmin, name="testinfo"),
     path('create/user/', createUser, name="createUser"),
     path('create/user/save', userCreation, name="saveuser"),
     path('create/user/validate/<str:token>', validateUser, name="validateuser"),
