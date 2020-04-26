@@ -37,7 +37,7 @@ class Profile(db.Model, CRUD):
     email = db.Column(db.String(200), nullable=False, unique=True)
     num_testes = db.Column(db.INTEGER, nullable=True)
     register_date = db.Column(db.TIMESTAMP, nullable=False)
-    picture = db.Column(db.LargeBinary, nullable=True)
+    picture = db.Column(db.String(10485760), nullable=True)
     last_login = db.Column(db.TIMESTAMP, nullable=True)
     role = db.Column(db.Integer, db.ForeignKey('role.id'))
 
@@ -49,6 +49,9 @@ class Profile(db.Model, CRUD):
         self.picture = picture
         self.last_login = last_login
         self.role = role
+
+    def __repr__(self):
+        return
 
 
 class Template(db.Model, CRUD):
@@ -133,7 +136,7 @@ class RoleSchema(Schema):
 
 class ProfileSchema(Schema):
     class Meta:
-        fields = ('id', 'name', 'email', 'num_testes', 'register_date', 'picture', 'last_login', 'role')
+        fields = ('id', 'name', 'email', 'num_test', 'register_date', 'picture', 'last_login', 'role')
 
 
 class TemplateSchema(Schema):
