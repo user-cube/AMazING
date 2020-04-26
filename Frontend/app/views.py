@@ -82,7 +82,7 @@ def profile(request):
             'name' : json['name'],
             'email': json['email'],
             'numtests' : json['num_testes'],
-            'registerdate': json['registerdate'],
+            'registerdate': json['register_date'],
             'role': json['role'],
             'picture' : picture,
             'year': datetime.now().year
@@ -136,7 +136,7 @@ def editProfile(request):
             'name' : json['name'],
             'email': json['email'],
             'numtests' : json['num_testes'],
-            'registerdate': json['registerdate'],
+            'registerdate': json['register_date'],
             'role': json['role'],
             'picture' : picture,
             'year': datetime.now().year
