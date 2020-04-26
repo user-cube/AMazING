@@ -135,7 +135,7 @@ def editProfile(request):
         tparams = {
             'name' : json['name'],
             'email': json['email'],
-            'numtests' : json['numtests'],
+            'numtests' : json['num_tests'],
             'registerdate': json['registerdate'],
             'role': json['role'],
             'picture' : picture,
