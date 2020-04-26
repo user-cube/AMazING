@@ -278,7 +278,7 @@ def userCreation(request):
             link = 'http://localhost:8000/create/user/validate/'
 
 
-            r = requests.post(API + "user/", json=message, headers={'Authorization': 'Bearer ' + token})
+            r = requests.post(API + "user", json=message, headers={'Authorization': 'Bearer ' + token})
 
             if r.status_code != 200:
                 return HttpResponseForbidden()
@@ -552,7 +552,6 @@ def searchTest(request):
             return HttpResponseForbidden()
     else:
         return redirect('login')
-
 
 def calendar(request):
     if request.user.is_authenticated:
