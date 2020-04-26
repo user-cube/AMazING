@@ -5,6 +5,10 @@ from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource, reqparse
 from flask_api import status
 
+from base64 import b64encode
+
+import ast
+
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 
@@ -87,11 +91,12 @@ class UserView(Resource):
             return results
         raw_dict = request.get_json(force=True)
         try:
-            message = raw_dict['message']
+            message = raw_dict
             profile = Profile(name=message['name'], email=message['email'], role=message['role'], num_testes=0,
-                              register_date=datetime.datetime.now())
+                              register_date=datetime.now())
             profile.add(profile)
             results = profile_schema.dump(profile)
+            print("\n\n\n", results)
             return results, 201
 
         except ValidationError as err:
@@ -100,6 +105,7 @@ class UserView(Resource):
             return resp
 
         except SQLAlchemyError as e:
+            print("\n\n\n E", e)
             db.session.rollback()
             resp = jsonify({"error": str(e)})
             resp.status_code = status.HTTP_400_BAD_REQUEST
@@ -113,26 +119,29 @@ class UserInfoView(Resource):
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
             return results
-        user_query = db.session.query(Profile).query.get_or_404(id)
+        user_query = db.session.query(Profile).get_or_404(id)
         user = profile_schema.dump(user_query)
         return user
 
     @jwt_required
     def put(self, id):
         jwt_data = get_raw_jwt()
+        print("\n\n\nAQUI", jwt_data, "\n\n\n")
         if not jwt_data['isAdmin']:
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
             return results
 
         raw_dict = request.get_json(force=True)
-        message = raw_dict['message']
+        print("\n\n\nAQUI", raw_dict, "\n\n\n")
+        message = raw_dict['role']
         profile = db.session.query(Profile).get(id)
 
-        profile.name = message['name']
-        profile.email = email=message['email']
-        profile.role = message['role']
-        return profile
+        # profile.name = message['name']
+        # profile.email = email=message['email']
+        profile.role = message
+        db.session.commit()
+        return profile_schema.dump(profile)
 
 """
     @jwt_required
@@ -165,18 +174,26 @@ class ProfileView(Resource):
     @jwt_required
     def get(self):
         email = get_raw_jwt()['email']
-        users_query = db.session(Profile).query.filter_by(email=email)
-        results = profile_schema.dump(users_query, many=True)
+        users_query = db.session.query(Profile).filter(Profile.email==email).one()
+        results = profile_schema.dump(users_query)
         return results
 
+    @jwt_required
     def put(self):
         email = get_raw_jwt()['email']
 
         user = users_query = db.session().query(Profile).filter(Profile.email == email).one()
-        message = request.get_json(force=True)['message']
-        user.picture = message['picture']
+        message = request.get_json(force=True)
+        # message = request.data.decode("utf-8")
+        # message = ast.literal_eval(message)
+        print("\n\n\nMESSAGE", message)
+        if message['pic']:
+            # msg = bytes(message['pic'], 'utf-8')
+            # msg = b64encode(msg)
+            user.picture = message['pic']
         user.name = message['name']
-        user.update(user)
+        # user.update(user)
+        db.session.commit()
         return profile_schema.dump(user)
 
 
