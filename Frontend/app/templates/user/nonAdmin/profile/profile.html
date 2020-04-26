@@ -8,54 +8,44 @@
 
         {% endfor %}
     {% endif %}
-    <div class="row justify-content-xs-between">
-        <div class="col-lg-3">
-            <img src="{{ picture }}" class="rounded img-responsive img-thumbnail ">
-        </div>
-        <div class="col-lg-auto">
-            <br></br>
-            <br></br>
-            <div class="row2">
-                <label class="col" for="Name">Name: {{ name }}</label>
+    <br></br>
+    <div class="card mb-3" style="max-width: available">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src="{{ picture }}" class="img-responsive img-thumbnail ">
             </div>
-            <div class="row2">
-                <label class="col" for="Email">Email: {{ email }}</label>
-            </div>
-            <div class="row2">
-                <label class="col" for="NumTests">Number of Tests: {{ numtests }} </label>
-            </div>
-        </div>
-        <div class="col-lg-auto">
-            <br></br>
-            <br></br>
-            <div class="row2">
-                <label class="col" for="Nome">Register Date: {{ registerdate }} </label>
-            </div>
-            {% if not user.is_superuser %}
-                <div class="row2">
-                    <label class="col" for="Nome">Role:
+            <div class="col-md-8">
+                <div class="card-body">
+
+                    <h5 class="card-title">User Profile</h5>
+                    <p class="card-text">Name: {{ name }}</p>
+                    <p class="card-text">Email: {{ email }}</p>
+                    <p class="card-text">Number of Tests: {{ numtests }}</p>
+
+
+                    <p class="card-text">Register Date: {{ registerdate }}</p>
+                    <p class="card-text">Role:
                         {% if role == 1 %}
                             Expert
                         {% else %}
                             Beginner
+                        {% endif %}</p>
+                    {% if not user.is_superuser %}
+                        {% if role == 0 %}
+                            <div class="row">
+                                <a class="btn btn-link" id="upRank" href="{% url 'rankupreq' %}">
+                                    <u>Solicit Rank Up</u>
+                                </a>
+                            </div>
                         {% endif %}
-                    </label>
+                    {% endif %}
+
+                    <a href="{% url 'editProfile' %}" class="btn btn-success"><span
+                            class="glyphicon glyphicon-thumbs-up"></span>
+                        Editar perfil</a>
                 </div>
-            {% endif %}
-            {% if not user.is_superuser %}
-                {% if role == 0 %}
-                    <div class="row">
-                        <a class="btn btn-link" id="upRank" href="{% url 'rankupreq' %}">
-                            <u>Solicit Rank Up</u>
-                        </a>
-                    </div>
-                {% endif %}
-            {% endif %}
+            </div>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <a href="{% url 'editProfile' %}" class="btn btn-success"><span
-                class="glyphicon glyphicon-thumbs-up"></span>
-            Editar perfil</a>
-    </div>
+
 {% endblock %}
