@@ -153,11 +153,10 @@ def updateProfile(request):
         name = request.POST['name']
         try:
             pic = request.FILES['picture'].file.read()
+            b64pic = b64encode(pic)
+            pic = b64pic.decode("utf-8")
         except:
             pic = None
-
-        b64pic = b64encode(pic)
-        pic = b64pic.decode("utf-8")
 
         message = {'name': name, 'pic' : pic}
 
