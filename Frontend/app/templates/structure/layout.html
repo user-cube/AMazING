@@ -105,6 +105,16 @@
                                     {% endif %}>
                                 <a class="nav-link" href="{% url 'listusers' %}">Users</a>
                             </li>
+                            <li {% if request.resolver_match.url_name == 'checkTestAdmin' %}
+                                class="nav-item active" {% endif %}
+                                    {% if request.resolver_match.url_name == 'checkTestInfo' %}
+                                class="nav-item active" {% endif %}
+                                    {% if request.resolver_match.url_name == 'checkTestInfoAdmin' %} class="nav-item active"
+                                    {% else %}
+                                class="nav-item"
+                                    {% endif %}>
+                                <a class="nav-link" href="{% url 'listusers' %}">Previous Experiences</a>
+                            </li>
                             <li {% if request.resolver_match.url_name == '#' %}
                                 class="nav-item active"
                             {% else %}
