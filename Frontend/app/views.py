@@ -271,7 +271,7 @@ def userCreation(request):
             role = int (request.POST['role'])
             password = hash(email)
 
-            token = tokenizer.generateValidation(email)
+            token = tokenizer.gerateEmailToken(email)
 
             message = {'email' : email, 'name' : name, 'role' : role}
 
