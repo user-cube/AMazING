@@ -166,7 +166,7 @@ def updateProfile(request):
 
         message = {'name': name, 'pic' : pic}
 
-        r = requests.put(API + "profile/", json=message, headers={'Authorization': 'Bearer '+ token})
+        r = requests.put(API + "profile", json=message, headers={'Authorization': 'Bearer '+ token})
 
         if r.status_code != 200:
             messages.error(request, "Profile did not update.")
