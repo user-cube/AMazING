@@ -19,7 +19,7 @@ from django.contrib.auth import views as auth_views
 
 from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, \
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
-    searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, checkTestsAdmin
+    searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, checkTestsAdmin, searchTestAdmin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
