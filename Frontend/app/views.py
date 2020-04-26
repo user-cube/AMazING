@@ -81,7 +81,7 @@ def profile(request):
         tparams = {
             'name' : json['name'],
             'email': json['email'],
-            'numtests' : json['num_tests'],
+            'numtests' : json['num_testes'],
             'registerdate': json['registerdate'],
             'role': json['role'],
             'picture' : picture,
@@ -135,7 +135,7 @@ def editProfile(request):
         tparams = {
             'name' : json['name'],
             'email': json['email'],
-            'numtests' : json['num_tests'],
+            'numtests' : json['num_testes'],
             'registerdate': json['registerdate'],
             'role': json['role'],
             'picture' : picture,
