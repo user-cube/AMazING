@@ -150,7 +150,13 @@ def editProfile(request):
 def updateProfile(request):
     if request.user.is_authenticated:
         token = tokenizer.gerateEmailToken(request.user.email)
-        name = request.POST['name']
+
+        try:
+            name = request.POST['name']
+        except:
+            messages.error(request, "Profile did not update.")
+            return redirect('profile')
+
         try:
             pic = request.FILES['picture'].file.read()
             b64pic = b64encode(pic)
