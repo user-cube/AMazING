@@ -495,7 +495,9 @@ def processNode(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         json = r.json()
-        print(json)
+
+        password = b64encode(b'amazing')
+
         tparms = {
             'current_time' : str(datetime.now()),
             'year': datetime.now().year,
@@ -504,6 +506,8 @@ def processNode(request, nodeID):
             'mac' : json['mac'],
             'placas' : json['placas'],
             'state' : json['state'],
+            'username' : 'amazing',
+            'password' : password.decode("utf-8")
         }
 
         return render(request, "network/nodeInfo.html", tparms)
