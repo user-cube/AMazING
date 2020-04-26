@@ -45,12 +45,12 @@
                                 {% endif %}>
                                     <a class="nav-link" href="#">Config Test</a>
                                 </li>
-                                <li {% if request.resolver_match.url_name == '#' %}
+                                <li {% if request.resolver_match.url_name == 'calendar' %}
                                     class="nav-item active"
                                 {% else %}
                                     class="nav-item"
                                 {% endif %}>
-                                    <a class="nav-link" href="#">Reservations</a>
+                                    <a class="nav-link" href="{% url 'calendar' %}">Reservations</a>
                                 </li>
                                 <li {% if request.resolver_match.url_name == '#' %}
                                     class="nav-item active"
@@ -79,14 +79,14 @@
                                     {% else %}
                                 class="nav-item"
                                     {% endif %}>
-                                <a class="nav-link" href="/network/status/">Network Status</a>
+                                <a class="nav-link" href="{% url 'networkstatus' %}">Network Status</a>
                             </li>
-                            <li {% if request.resolver_match.url_name == '#' %}
+                            <li {% if request.resolver_match.url_name == 'calendar' %}
                                 class="nav-item active"
                             {% else %}
                                 class="nav-item"
                             {% endif %}>
-                                <a class="nav-link" href="#">Reservations</a>
+                                <a class="nav-link" href="{% url 'calendar' %}">Reservations</a>
                             </li>
                             <li {% if request.resolver_match.url_name == '#' %}
                                 class="nav-item active"

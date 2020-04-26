@@ -542,3 +542,10 @@ def searchTest(request):
             return HttpResponseForbidden()
     else:
         return redirect('login')
+
+
+def calendar(request):
+    if request.user.is_authenticated:
+        return render(request, 'calendar/calendar.html')
+    else:
+        return redirect('login')

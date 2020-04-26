@@ -16,9 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
+
 from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, \
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
-    searchUser, networkStatus, processNode, searchTest
+    searchUser, networkStatus, processNode, searchTest, calendar
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,5 +42,6 @@ urlpatterns = [
     path('create/user/validate/<str:token>', validateUser, name="validateuser"),
     path('create/user/validate/save/', saveUser, name="savepassword"),
     path('network/status/', networkStatus, name="networkstatus"),
-    path('network/status/<int:nodeID>', processNode, name="nodestatus")
+    path('network/status/<int:nodeID>', processNode, name="nodestatus"),
+    path('calendar/', calendar, name='calendar')
 ]
