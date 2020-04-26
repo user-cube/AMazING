@@ -25,13 +25,13 @@
 
                     <p class="card-text">Register Date: {{ registerdate }}</p>
                     <p class="card-text">Role:
-                        {% if role == 1 %}
+                        {% if role == 2 %}
                             Expert
                         {% else %}
                             Beginner
                         {% endif %}</p>
                     {% if not user.is_superuser %}
-                        {% if role == 0 %}
+                        {% if role == 1 %}
                             <div class="row">
                                 <a class="btn btn-link" id="upRank" href="{% url 'rankupreq' %}">
                                     <u>Solicit Rank Up</u>
