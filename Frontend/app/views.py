@@ -128,7 +128,7 @@ def editProfile(request):
         """
 
         if json['picture'] != None:
-            picture = json['picture']
+            picture = "data:image/png;base64,"+ json['picture']
         else:
             picture = os.environ.get("NO_PIC")
 
