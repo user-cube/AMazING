@@ -456,7 +456,7 @@ def editUser(request, userId):
 def processUser(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            token = tokenizer.generateValidation(request.user.email)
+            token = tokenizer.gerateEmailToken(request.user.email)
 
             try:
                 email = request.GET['email']
