@@ -5,7 +5,7 @@ from flask_marshmallow import Marshmallow
 from marshmallow import Schema, fields, ValidationError, pre_load
 
 db = SQLAlchemy()
-
+session = None
 class CRUD:
     def add(self, resource):
         db.session.add(resource)
@@ -25,7 +25,7 @@ class Role (db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(20))
 
-    def __init__(self, id, role_name):
+    def __init__(self, role_name):
         self.role_name = role_name
 
 
@@ -35,14 +35,13 @@ class Profile(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(200), nullable=False, unique=True)
-    num_testes = db.Column(db.INTEGER)
+    num_testes = db.Column(db.INTEGER, nullable=True)
     register_date = db.Column(db.TIMESTAMP, nullable=False)
-    picture = db.Column(db.LargeBinary)
-    last_login = db.Column(db.TIMESTAMP)
+    picture = db.Column(db.LargeBinary, nullable=True)
+    last_login = db.Column(db.TIMESTAMP, nullable=True)
     role = db.Column(db.Integer, db.ForeignKey('role.id'))
 
-    def __init__(self, id, name, email, num_testes, register_date, picture, last_login, role):
-        self.id = id
+    def __init__(self,  name, email, register_date, role, num_testes=None, picture=None, last_login=None):
         self.name = name
         self.email = email
         self.num_testes = num_testes
@@ -57,14 +56,12 @@ class Template(db.Model, CRUD):
     __tablename__ = 'template'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    protocol = db.Column(db.String(50))
     duration = db.Column(db.BIGINT)
     profile = db.Column(db.Integer, db.ForeignKey('profile.id'))
 
-    def __init__(self, id, name, protocol, duration, profile):
+    def __init__(self, id, name, duration, profile):
         self.id = id
         self.name = name
-        self.protocol = protocol
         self.duration = duration
         self.profile = profile
 
@@ -73,17 +70,16 @@ class Experience(db.Model, CRUD):
 
     __tablename__ = 'experience'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), nullable=False)
     begin_date = db.Column(db.TIMESTAMP, nullable=False)
     end_date = db.Column(db.TIMESTAMP, nullable=False)
-    num_test = db.Column(db.Integer)
+    num_test = db.Column(db.Integer, nullable=False)
     register_date = db.Column(db.TIMESTAMP, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     profile = db.Column(db.Integer, db.ForeignKey('profile.id'))
     template = db.Column(db.Integer, db.ForeignKey('template.id'))
 
-    def __init__(self, id, name, begin_date, end_date, num_test, register_date, status, profile, template):
-        self.id = id
+    def __init__(self, name, begin_date, end_date, num_test, register_date, status, profile, template):
         self.name = name
         self.begin_date = begin_date
         self.end_date = end_date
@@ -97,28 +93,35 @@ class Experience(db.Model, CRUD):
 class APU(db.Model, CRUD):
 
     __tablename__ = 'apu'
-    number = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
 
-    def __init__(self, number):
-        self.number = number
+    def __init__(self, id):
+        self.id = id
 
 
 class APUConfig(db.Model, CRUD):
 
     __tablename__ = 'apuconfig'
     id = db.Column(db.Integer, primary_key=True)
+    apu = db.Column(db.Integer, db.ForeignKey('apuconfig.id'))
+    ip = db.Column(db.String(40))
+    protocol = db.Column(db.String(50))
+    base_template = db.Column(db.Integer)
 
+    def __init__(self, apu, ip, protocol, base_template):
+        self.apu = apu
+        self.ip = ip
+        self.protocol = protocol
+        base_template = base_template
 
 class APUConfig_Template(db.Model, CRUD):
 
     __tablename__ = 'apuconfig_template'
     id_nonexistent = db.Column(db.Integer, primary_key=True)
-    apu = db.Column(db.Integer, db.ForeignKey('apu.number'))
     apu_config = db.Column(db.Integer, db.ForeignKey('apuconfig.id'))
     template = db.Column(db.Integer, db.ForeignKey('template.id'))
 
-    def __init__(self, apu, apu_config, template):
-        self.apu = apu
+    def __init__(self, apu_config, template):
         self.apu_config = apu_config
         self.template = template
 
@@ -135,7 +138,7 @@ class ProfileSchema(Schema):
 
 class TemplateSchema(Schema):
     class Meta:
-        fields = ('Template', 'id', 'name', 'protocol', 'duration', 'profile')
+        fields = ('Template', 'id', 'name', 'duration', 'profile')
 
 
 class ExperienceSchema(Schema):
@@ -145,17 +148,21 @@ class ExperienceSchema(Schema):
 
 class APUSchema(Schema):
     class Meta:
-        fields = ('number',)
+        fields = ('id',)
 
 
 class APUConfigSchema(Schema):
     class Meta:
-        fields = ('id',)
+        fields = ('id', 'apu', 'ip', 'protocol', 'base_template')
 
 
 class APUConfig_TemplateSchema(Schema):
     class Meta:
-        fields = ('apu', 'apu_config', 'template')
+        fields = ('apu_config', 'template')
+
+class ExperienceAPUConfig_TemplateSchema(Schema):
+    class Meta:
+        fields = ('id', 'name', 'begin_date', 'end_date', 'num_test', 'register_date', 'status', 'profile', 'template')
 
 
 

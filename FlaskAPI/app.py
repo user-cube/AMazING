@@ -1,6 +1,9 @@
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, jwt_required
+from flask_jwt_extended import JWTManager, jwt_required, get_raw_jwt
+from views import schema_blueprint
+from views import db
+
 from settings import CERT
 
 import jwt as tokenizer
@@ -8,23 +11,23 @@ import os
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-
-# JWT Decode Algorithm
-app.config['JWT_DECODE_ALGORITHMS'] = ['RS256']
-# JWT Decode CERT
-app.config['JWT_SECRET_KEY'] = CERT
-# JWT Identifier
-app.config['JWT_IDENTITY_CLAIM'] = 'email'
+app.config.from_object('settings')
 
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 jwt = JWTManager(app)
+app.config.update(JWT=jwt)
 
-@app.route('/')
-@jwt_required
-def hello_world():
-    token = request.headers["Authorization"].split()[1]  # Split Bearer from token
-    return 'Hello World!'
+app.register_blueprint(schema_blueprint)
+
+db.init_app(app)
+
+
+@app.before_first_request
+def create_database():
+     db.create_all()
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host=app.config['HOST'],
+            port=app.config['PORT'],
+            debug=app.config['DEBUG'])
