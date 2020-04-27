@@ -32,90 +32,101 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarDefault">
-            {% if not user.is_superuser%}
-                <ul class="navbar-nav mr-auto">
-                    <li {% if request.resolver_match.url_name == 'home' %} class="nav-item active" {% endif %}
-                        {% if request.resolver_match.url_name == 'search' %} class="nav-item active"
-                        {% else %} class="nav-item" {% endif %}>
+                {% if not user.is_superuser %}
+                    <ul class="navbar-nav mr-auto">
+                        <li {% if request.resolver_match.url_name == 'home' %} class="nav-item active" {% endif %}
+                                {% if request.resolver_match.url_name == 'search' %} class="nav-item active"
+                                {% else %} class="nav-item" {% endif %}>
+                            {% if request.user.is_authenticated %}
+                                <li {% if request.resolver_match.url_name == '#' %}
+                                    class="nav-item active"
+                                {% else %}
+                                    class="nav-item"
+                                {% endif %}>
+                                    <a class="nav-link" href="#">Config Test</a>
+                                </li>
+                                <li {% if request.resolver_match.url_name == 'calendar' %}
+                                    class="nav-item active"
+                                {% else %}
+                                    class="nav-item"
+                                {% endif %}>
+                                    <a class="nav-link" href="{% url 'calendar' %}">Reservations</a>
+                                </li>
+                                <li {% if request.resolver_match.url_name == '#' %}
+                                    class="nav-item active"
+                                {% else %}
+                                    class="nav-item"
+                                {% endif %}>
+                                    <a class="nav-link" href="#">Test Result</a>
+                                </li>
+                                <li {% if request.resolver_match.url_name == 'tests' %}
+                                    class="nav-item active" {% endif %}
+                                        {% if request.resolver_match.url_name == 'testinfo' %}
+                                    class="nav-item active"
+                                        {% else %}
+                                    class="nav-item"
+                                        {% endif %}>
+                                    <a class="nav-link" href="{% url 'tests' %}">Previous Tests</a>
+                                </li>
+                            {% endif %}
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav mr-auto">
                         {% if request.user.is_authenticated %}
+                            <li {% if request.resolver_match.url_name == 'networkstatus' %}
+                                class="nav-item active" {% endif %}
+                                    {% if request.resolver_match.url_name == 'nodestatus' %} class="nav-item active"
+                                    {% else %}
+                                class="nav-item"
+                                    {% endif %}>
+                                <a class="nav-link" href="{% url 'networkstatus' %}">Network Status</a>
+                            </li>
+                            <li {% if request.resolver_match.url_name == 'calendar' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}>
+                                <a class="nav-link" href="{% url 'calendar' %}">Reservations</a>
+                            </li>
                             <li {% if request.resolver_match.url_name == '#' %}
                                 class="nav-item active"
                             {% else %}
                                 class="nav-item"
                             {% endif %}>
-                            <a class="nav-link" href="#">Config Test</a>
-                        </li>
-                        <li {% if request.resolver_match.url_name == '#' %}
-                                class="nav-item active"
-                            {% else %}
-                                class="nav-item"
-                            {% endif %}>
-                            <a class="nav-link" href="#">Reservations</a>
-                        </li>
-                        <li {% if request.resolver_match.url_name == '#' %}
-                                class="nav-item active"
-                            {% else %}
-                                class="nav-item"
-                            {% endif %}>
-                            <a class="nav-link" href="#">Test Result</a>
-                        </li>
-                        <li {% if request.resolver_match.url_name == 'tests' %}
+                                <a class="nav-link" href="#">Statistics</a>
+                            </li>
+                            <li {% if request.resolver_match.url_name == 'listusers' %}
                                 class="nav-item active" {% endif %}
-                            {% if request.resolver_match.url_name == 'testinfo' %}
-                            class="nav-item active"
+                                    {% if request.resolver_match.url_name == 'searchuser' %}
+                                class="nav-item active" {% endif %}
+                                    {% if request.resolver_match.url_name == 'edituser' %} class="nav-item active"
+                                    {% else %}
+                                class="nav-item"
+                                    {% endif %}>
+                                <a class="nav-link" href="{% url 'listusers' %}">Users</a>
+                            </li>
+                            <li {% if request.resolver_match.url_name == 'checkTestAdmin' %}
+                                class="nav-item active" {% endif %}
+                                    {% if request.resolver_match.url_name == 'checkTestInfo' %}
+                                class="nav-item active" {% endif %}
+                                    {% if request.resolver_match.url_name == 'checkTestInfoAdmin' %} class="nav-item active"
+                                    {% else %}
+                                class="nav-item"
+                                    {% endif %}>
+                                <a class="nav-link" href="{% url 'testsAdmin' %}">Previous Experiences</a>
+                            </li>
+                            <li {% if request.resolver_match.url_name == '#' %}
+                                class="nav-item active"
                             {% else %}
                                 class="nav-item"
                             {% endif %}>
-                            <a class="nav-link" href="{% url 'tests' %}">Previous Tests</a>
-                        </li>
+                                <a class="nav-link" href="#">Templates</a>
+                            </li>
                         {% endif %}
-                </ul>
-            {% else %}
-                <ul class="navbar-nav mr-auto">
-                    {% if request.user.is_authenticated %}
-                        <li {% if request.resolver_match.url_name == 'networkstatus' %} class="nav-item active" {% endif %}
-                            {% if request.resolver_match.url_name == 'nodestatus' %} class="nav-item active"
-                            {% else %}
-                                class="nav-item"
-                            {% endif %}>
-                            <a class="nav-link" href="/network/status/">Network Status</a>
                         </li>
-                        <li {% if request.resolver_match.url_name == '#' %}
-                                class="nav-item active"
-                            {% else %}
-                                class="nav-item"
-                            {% endif %}>
-                            <a class="nav-link" href="#">Reservations</a>
-                        </li>
-                        <li {% if request.resolver_match.url_name == '#' %}
-                                class="nav-item active"
-                            {% else %}
-                                class="nav-item"
-                            {% endif %}>
-                            <a class="nav-link" href="#">Statistics</a>
-                        </li>
-                        <li {% if request.resolver_match.url_name == 'listusers' %}
-                                class="nav-item active" {% endif %}
-                            {% if request.resolver_match.url_name == 'searchuser' %}
-                                class="nav-item active" {% endif %}
-                            {% if request.resolver_match.url_name == 'edituser' %} class="nav-item active"
-                            {% else %}
-                                class="nav-item"
-                            {% endif %}>
-                            <a class="nav-link" href="{% url 'listusers' %}">Users</a>
-                        </li>
-                        <li {% if request.resolver_match.url_name == '#' %}
-                                class="nav-item active"
-                            {% else %}
-                                class="nav-item"
-                            {% endif %}>
-                            <a class="nav-link" href="#">Templates</a>
-                        </li>
-                    {% endif %}
-                    </li>
-                </ul>
-            {% endif %}
-                {% if request.user.is_authenticated and not user.is_superuser%}
+                    </ul>
+                {% endif %}
+                {% if request.user.is_authenticated and not user.is_superuser %}
                     <ul class="nav navbar-nav navbar-right">
                         <li class="nav-item dropdown">
                             <div class="dropdown-menu" style="right: 0; left: auto;" aria-labelledby="navbarDropdown">

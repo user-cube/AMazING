@@ -38,7 +38,6 @@
             display: table;
         }</style>
 {% endblock %}
-
 {% block content %}
     {% if messages %}
         {% for message in messages %}
@@ -48,48 +47,41 @@
     {% endif %}
 
     <div class="row justify-content-center">
-        <div class="col-lg-2">
-            <a class="btn btn-success" href="{% url 'createUser' %}">Add user</a>
-        </div>
         <div class="col-lg-10">
-            <form method="post" action="{% url 'searchuser' %}" enctype="multipart/form-data"> {% csrf_token %}
+            <form method="post" action="{% url 'searchtestAdmin' %}" enctype="multipart/form-data"> {% csrf_token %}
                 <div class="input-group-append">
                     <input type="text" class="form-control" id="content" name="content"
                            aria-label="Text input with segmented dropdown button" required>
                     <select id="type" name="type">
                         <option value="1">Name</option>
-                        <option value="0">Email</option>
+                        <option value="0">Date</option>
                     </select>
-
                     <input type="submit" class="btn btn-primary"/>
                 </div>
             </form>
         </div>
     </div>
     <br>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Test Name</th>
+            <th>Date</th>
+            <th>Author</th>
+            <th>Obs.</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in database %}
             <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Register Date</th>
-                <th></th>
+                <td>{{ row.id }}</td>
+                <td>{{ row.name }}</td>
+                <td>{{ row.register_date }}</td>
+                <td>{{ row.author }}</td>
+                <td><a href="/checkTests/admin/{{ row.id }}" class="btn btn-primary"><i class="fa fa-info"></i></a></td>
             </tr>
-            </thead>
-            <tbody>
-            {% for row in database %}
-                <tr>
-                    <td><img src="{{ row.picture }}" class="img-responsive img-thumbnail " alt="user"
-                             style="width: 50px; height: 50px"/></td>
-                    <td>{{ row.name }}</td>
-                    <td>{{ row.email }}</td>
-                    <td>{{ row.register_date }}</td>
-                    <td><a href="/users/edit/{{ row.id }}" class="btn btn-primary"><i class="fa fa-edit"></i></a></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -2,13 +2,13 @@
 
 {% block content %}
     <div class="row">
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags %}
-                <script>alert("{{ message }}")</script> {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags %}
+                    <script>alert("{{ message }}")</script> {% endif %}
 
-        {% endfor %}
-    {% endif %}
+            {% endfor %}
+        {% endif %}
         <div class="col-lg-2">
             <img src="{{ picture }}" class="img-responsive img-thumbnail ">
             <br>
@@ -42,7 +42,7 @@
                         <div class="input-group">
                             <select id="role" name="role">
                                 <option value="1">Advanced</option>
-                                <option value="0">Beginner</option>
+                                <option value="2">Beginner</option>
                             </select>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                 <div class="form-group">
                     <label class="col-md-4 control-label"></label>
                     <div class="col-md-4">
-                        <input type="submit" value="Adicionar utilizador" class="btn btn-success"/>
+                        <input type="submit" value="Add user" class="btn btn-success"/>
                     </div>
                 </div>
             </form>

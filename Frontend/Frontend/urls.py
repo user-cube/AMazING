@@ -16,13 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
+
 from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, \
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
-    searchUser, networkStatus, processNode, searchTest
+    searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, checkTestsAdmin, searchTestAdmin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home, name='home'),
+    path('', networkStatus, name='home'),
     path('login/', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
     path('logout', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('profile/', profile, name="profile"),
@@ -35,11 +36,16 @@ urlpatterns = [
     path('users/process', processUser, name="processuser"),
     path('checkTests/', checkTests, name="tests"),
     path('checkTests/search/', searchTest, name="searchtest"),
+    path('checkTests/admin/', checkTestsAdmin, name="testsAdmin"),
+    path('checkTests/admin/search/', searchTestAdmin, name="searchtestAdmin"),
     path('checkTests/<int:testID>', checkTestInfo, name="testinfo"),
+    path('checkTests/admin/<int:testID>', checkTestInfoAdmin, name="testinfoAdmin"),
     path('create/user/', createUser, name="createUser"),
     path('create/user/save', userCreation, name="saveuser"),
     path('create/user/validate/<str:token>', validateUser, name="validateuser"),
     path('create/user/validate/save/', saveUser, name="savepassword"),
     path('network/status/', networkStatus, name="networkstatus"),
-    path('network/status/<int:nodeID>', processNode, name="nodestatus")
+    path('network/status/<int:nodeID>', processNode, name="nodestatus"),
+    path('calendar/', calendar, name='calendar'),
+    path('calendar/test', registerTest, name='registertest')
 ]

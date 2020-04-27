@@ -1,0 +1,59 @@
+{% extends 'structure/layout.html' %}
+{% load static %}
+
+{% block headers %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'evo-calendar/css/evo-calendar.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'evo-calendar/css/evo-calendar.royal-navy.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <br>
+        <br>
+
+        <a href="{% url 'registertest' %}" class="btn btn-success">
+            <span class="glyphicon glyphicon-thumbs-up"></span>Register Test</a>
+
+        <div id="calendar"></div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="{% static 'evo-calendar/js/evo-calendar.js' %}"></script>
+
+        <script>
+            // initialize your calendar, once the page's DOM is ready
+            myEvents = [
+                2,
+                { name: "New Year", date: "Wed Jan 01 2020 00:00:00 GMT-0800 (Pacific Standard Time)", type: "holiday", everyYear: true },
+                3,
+                { name: "Valentine's Day", date: "Fri Feb 14 2020 00:00:00 GMT-0800 (Pacific Standard Time)", type: "holiday", everyYear: true },
+                4,
+                { name: "Birthday", date: "February/3/2020", type: "birthday" },
+                5,
+                { name: "Author's Birthday", date: "February/15/2020", type: "birthday", everyYear: true },
+                6,
+                { name: "Holiday", date: "February/15/2020", type: "event" },
+                7
+            ]
+            $('#calendar').evoCalendar({
+                theme: 'Royal Navy',
+                settingName: myEvents,
+                calendarEvents: [
+                    {
+                        id: 'kNybja6',
+                        name: 'Mom\'s Birthday',
+                        date: 'May 27, 1965',
+                        type: 'birthday',
+                        everyYear: true // optional
+                    },
+                    {
+                        id: 'asDf87L',
+                        name: 'Graduation Day!',
+                        date: 'April 26, 2020',
+                        type: 'event'
+                    }],
+            })
+        </script>
+    </div>
+
+{% endblock %}

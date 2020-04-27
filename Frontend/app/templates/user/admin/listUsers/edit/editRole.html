@@ -2,13 +2,13 @@
 
 {% block content %}
     <div class="row">
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags %}
-                <script>alert("{{ message }}")</script> {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags %}
+                    <script>alert("{{ message }}")</script> {% endif %}
 
-        {% endfor %}
-    {% endif %}
+            {% endfor %}
+        {% endif %}
         <div class="col-lg-2">
             <img src="{{ picture }}" class="img-responsive img-thumbnail ">
             <br>
@@ -23,7 +23,8 @@
                     <div class="col-lg-6">
                         <div class="input-group">
                             <input id="name" name="name" type="text"
-                                   placeholder="Nome" value="{{ name }}" class="form-control input-lg" required readonly>
+                                   placeholder="Nome" value="{{ name }}" class="form-control input-lg" required
+                                   readonly>
                         </div>
                     </div>
                 </div>
@@ -32,7 +33,8 @@
                     <div class="col-lg-6">
                         <div class="input-group">
                             <input id="email" name="email" type="email"
-                                   placeholder="Email" value="{{ email }}" class="form-control input-lg" required readonly>
+                                   placeholder="Email" value="{{ email }}" class="form-control input-lg" required
+                                   readonly>
                         </div>
                     </div>
                 </div>
@@ -41,8 +43,8 @@
                     <div class="col-lg-6">
                         <div class="input-group">
                             <select id="role" name="role">
-                                <option value="1" {% if role == 1 %} selected="selected" {% endif %}  >Advanced</option>
-                                <option value="0" {% if role == 0 %} selected="selected" {% endif %}>Beginner</option>
+                                <option value="1" {% if role == 1 %} selected="selected" {% endif %}>Advanced</option>
+                                <option value="2" {% if role == 2 %} selected="selected" {% endif %}>Beginner</option>
                             </select>
                         </div>
                     </div>
@@ -51,7 +53,7 @@
                 <div class="form-group">
                     <label class="col-md-4 control-label"></label>
                     <div class="col-md-4">
-                        <input type="submit" value="Adicionar utilizador" class="btn btn-success"/>
+                        <input type="submit" value="Change role" class="btn btn-success"/>
                     </div>
                 </div>
             </form>

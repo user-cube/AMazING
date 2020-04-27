@@ -1,60 +1,56 @@
 {% extends 'structure/layout.html' %}
 
+{% block headers %}
+    <style>
+        table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        td {
+            width: 25%;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class="container">
-        <h1>Node {{ id }} - Information</h1>
+        <h1>{{ hostname }} - Information</h1>
         <hr>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <td><strong>IP Address</strong></td>
-                {% for i in ips %}
-                    <td></td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                {% for i in ips %}
-                    <td>{{ i }}</td>
-                {% endfor %}
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <td><strong>MAC Address</strong></td>
-                {% for i in mac %}
-                    <td></td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                {% for i in ips %}
-                    <td>{{ i }}</td>
-                {% endfor %}
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <td><strong>WIFI Boards</strong></td>
-                <td><strong>State</strong></td>
-                <td><strong>Timestamp</strong></td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>{{ placas }}</td>
-                <td>{% if state == 1 %}On going experience{% else %}Available{% endif %}</td>
-                <td>{{ current_time }}</td>
-            </tr>
-            </tbody>
-        </table>
+        {% for i in database %}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <td><strong>{{ i.name }}</strong></td>
+                    <td>Address</td>
+                    <td>Broadcast</td>
+                    <td>Netmask</td>
+                    <td>Peer</td>
+                    <td>MAC</td>
+                    <td> {% if i.ip == '127.0.0.1' %} {% else %}
+                        <a href="http://localhost:8888/?hostname={{ i.ip }}&username={{ username }}&password={{ password }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn btn-success">Abrir Terminal</a>{% endif %}
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <tr>
+                    {% for row in i.end %}
+                        <td></td>
+                        <td>{{ row.addr }}</td>
+                        <td>{{ row.broadcast }}</td>
+                        <td>{{ row.netmask }}</td>
+                        <td>{{ row.peer }}</td>
+                        <td>{{ i.mac }}</td>
+                        <td></td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        {% endfor %}
+
     </div>
 {% endblock %}
