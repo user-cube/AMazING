@@ -10,7 +10,7 @@
                 <div class="form-group">
                     <label class="col-lg-4" for="Name">AP SSID</label>
                     <div class="col-lg-6">
-                        <div class="input-group">
+                        <div class="input-group-prepend">
                             <input id="APSSID" name="APSSID" type="text"
                                    placeholder="AP SSID" class="form-control input-lg" required>
                         </div>
@@ -29,7 +29,7 @@
                     <div class="col-lg-6">
                         <label class="col-lg-4" for="APPW">Channel</label>
                         <div class="input-group-prepend">
-                            <input id="Channel" name="Channel" type="text"
+                            <input id="Channel" name="Channel" type="number"
                                    placeholder="AP Channel" class="form-control input-lg" required>
                         </div>
                     </div>
@@ -56,14 +56,16 @@
                     <div class="col-lg-6">
                         <label class="col-lg-4" for="hw_mode">HW Mode</label>
                         <div class="input-group-prepend">
-                            <input id="hw_mode" name="hw_mode" type="text"
-                                   placeholder="AP HW Mode" class="form-control input-lg" required>
+                            <select id="hw_mode" name="hw_mode" required>
+                                <option value="G">G</option>
+                                <option value="A">A</option>
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-lg-6">
-                        <label class="col-lg-4" for="DFGateway">Default Gateway</label>
+                        <label class="col-lg-4" for="DFGateway">DF Gateway</label>
                         <div class="input-group-prepend">
                             <input id="DFGateway" name="DFGateway" type="text"
                                    placeholder="AP Default Gateway" class="form-control input-lg" required>
