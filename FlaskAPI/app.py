@@ -33,22 +33,21 @@ def hello_world():
     token = request.headers["Authorization"].split()[1]  # Split Bearer from token
     return 'Hello World!'
 
-@app.route('/nodes/<nodeID>')
-def node_info(nodeID):
-	r = requests.get('192.168.1.141')
-	if r.status_code == 200:
-		msg = {'msg': 'Erro 200'}
-		return msg
-	return jsonify(r.json())
-
 @app.route('/node/<nodeID>')
-def nodeInfo(nodeID):
-    return jsonify(
-                {'id': 1, 'placas': 2, 'ips': ['192.168.1.141', '192.168.1.03'],
-                'mac': ['00:0a:95:9d:68:16', '00:0a:95:9d:68:17'],
-                'state': 0
-                }
-            )
+def node_info(nodeID):
+    if nodeID=='1':
+    	r = requests.get('http://192.168.1.141:5000/testi')
+    	if r.status_code != 200:
+    		msg = {'msg': 'Erro 200'}
+    		return msg
+    	return jsonify(r.json())
+
+    if nodeID=='2':
+        r = requests.get('http://192.168.1.142:5000/testi')
+        if r.status_code != 200:
+            msg = {'msg': 'Erro 200'}
+            return msg
+        return jsonify(r.json())
 
 
 

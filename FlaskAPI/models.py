@@ -136,7 +136,7 @@ class RoleSchema(Schema):
 
 class ProfileSchema(Schema):
     class Meta:
-        fields = ('id', 'name', 'email', 'num_test', 'register_date', 'picture', 'last_login', 'role')
+        fields = ('id', 'name', 'email', 'num_testes', 'register_date', 'picture', 'last_login', 'role')
 
 
 class TemplateSchema(Schema):
