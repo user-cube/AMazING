@@ -1,16 +1,10 @@
 from flask_jwt_extended import jwt_required, get_raw_jwt, get_jti
 from _datetime import datetime, timedelta
-import json
-from sqlalchemy.ext.declarative import DeclarativeMeta
 
 from models import *
 from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource, reqparse
 from flask_api import status
-
-from base64 import b64encode
-
-import ast
 
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
@@ -56,7 +50,6 @@ class UserView(Resource):
     @jwt_required
     def get(self):
         parse_data = parser.parse_args()
-        print(parse_data)
         jwt_data = get_raw_jwt()
         if not jwt_data['isAdmin']:
             results = jsonify()
@@ -72,7 +65,6 @@ class UserView(Resource):
         if parse_data['content']:
             users_query = users_query.filter(Profile.name.contains(parse_data['content']))
         q = users_query.all()
-        print(q)
         return jsonify([result.serializable for result in q])
 
     @jwt_required
@@ -126,7 +118,7 @@ class UserInfoView(Resource):
 
         profile.role = message
         db.session.commit()
-        return jsonify(profile.serializable)
+        return profile.serializable
 
 """
     @jwt_required
@@ -239,7 +231,6 @@ class ExperienceView(Resource):
                                     register_date=datetime.now())
 
             experience.add(experience)
-            print(experience)
             return experience.serializable, status.HTTP_201_CREATED
 
         except ValidationError as err:
