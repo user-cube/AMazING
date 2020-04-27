@@ -56,6 +56,25 @@
                 </tbody>
             </table>
         {% endfor %}
-
+        {% if ongoing == 1 %}
+        {% if access == 1 %}
+            {% if isAdmin == 1 %}
+                <h5><strong>OBS:</strong> there is on ongoing test you can interact with this node using your admin
+                    permissions.</h5>
+            {% endif %}
+        {% else %}
+            {% if role == 0 %}
+                <h5><strong>OBS:</strong> there is on ongoing test you can't interact with this node beacuse you are
+                    a beginner.</h5>
+            {% endif %}
+        {% endif %}
+        {% else %}
+        {% if isAdmin == 1 %}
+            <h5><strong>OBS:</strong> there is on ongoing test you can interact with this node using your admin
+                permissions.</h5>
+        {% else %}
+            <h5><strong>OBS:</strong> there is no on ongoing test you interact with this node booking up an experience.
+            </h5>
+        {% endif %}
     </div>
 {% endblock %}

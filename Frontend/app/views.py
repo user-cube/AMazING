@@ -562,10 +562,14 @@ def processNode(request, nodeID):
         else:
             access = 0
 
+        isAdmin = 0
+        if request.user.is_superuser: isAdmin = 1
+
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
             'role': role['role'],
+            'isAdmin' : isAdmin,
             'access' : access,
             'database' : lista,
             'hostname': hostname,
