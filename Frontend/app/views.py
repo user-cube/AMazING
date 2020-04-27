@@ -873,6 +873,6 @@ def calendar(request):
             data = test['begin_date']
             tests.append({'name': name, 'data': data, 'id': str(t_id), 'type': 'event'})
 
-        return render(request, 'calendar/calendar.html', {'database':tests})
+        return render(request, 'calendar/calendar.html', {'database': tests})
     else:
         return redirect('login')
