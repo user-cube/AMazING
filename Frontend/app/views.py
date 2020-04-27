@@ -608,6 +608,12 @@ def registerTest(request):
         return redirect('login')
 
 
+
+
+
+
+
+
 # API
 def checkTestsAdmin(request):
     """
