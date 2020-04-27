@@ -32,11 +32,9 @@ parser.add_argument('status')
 
 
 #       BASE Functions
-
 def get_user_by_email(email):
     users_query = db.session().query(Profile).filter(Profile.email == email).one()
     return users_query.serializable
-
 
 
 class RoleView(Resource):
@@ -184,15 +182,16 @@ class ExperienceView(Resource):
             experiences_query = experiences_query.filter(Experience.profile == user_id)
 
         if parse_data['date']:
-            date = datetime.strptime(parse_data['date'], "%Y-%m-%d %H:%M:%H").date()
-            experiences_query = experiences_query.filter(Experience.begin_date >= date >= Experience.end_date)
+            date = datetime.strptime(parse_data['date'], "%Y-%m-%d").date()
+            experiences_query = experiences_query.filter(Experience.begin_date >= date).filter(date >= Experience.end_date)
+            print("\n\n\n\n, experiences_query", experiences_query)
         else:
             if parse_data['begin_date']:
-                date = datetime.strptime(parse_data['begin_date'], "%Y-%m-%d %H:%M:%H").date()
-                experiences_query = experiences_query.filter(Experience.begin_date >= date)
+                date = datetime.strptime(parse_data['begin_date'], "%Y-%m-%d").date()
+                experiences_query = experiences_query.filter(Experience.begin_date.date() >= date)
             if parse_data['end_date']:
-                date = datetime.strptime(parse_data['end_date'], "%Y-%m-%d %H:%M:%H").date()
-                experiences_query = experiences_query.filter(Experience.end_date <= date)
+                date = datetime.strptime(parse_data['end_date'], "%Y-%m-%d").date()
+                experiences_query = experiences_query.filter(Experience.end_date <= date.date())
         if parse_data['status']:
             experiences_query = experiences_query.filter(Experience.status == parse_data['status'])
         if parse_data['content']:
@@ -241,6 +240,7 @@ class ExperienceView(Resource):
             resp.status_code = status.HTTP_400_BAD_REQUEST
             return resp
 
+
 class ExperienceInfoView(Resource):
 
     @jwt_required
@@ -257,27 +257,30 @@ class ExperienceInfoView(Resource):
         results.status_code = status.HTTP_200_OK
         return results
 
+
 class ExperienceScheduleView(Resource):
     def get(self):
 
         date_now = datetime.now()
-        #date_now = datetime.strptime("2020-06-30", "%Y-%m-%d").date()
-        print()
-        experience_schedule_query = db.session.query(Experience, Profile) \
-            .filter(Experience.end_date >= date_now) \
-            .filter(Experience.profile == Profile.id) \
-            .order_by(Experience.begin_date.asc()) \
-            .limit(2) \
+        experience_schedule_query = db.session.query(Experience, Profile)\
+            .filter(Experience.end_date >= date_now)\
+            .filter(Experience.profile == Profile.id)\
+            .order_by(Experience.begin_date.asc())\
+            .limit(2)\
             .all()
         calendar = {'current_experience': None, 'next_experience': None}
-        print(experience_schedule_query)
-        print(len(experience_schedule_query))
+
         if len(experience_schedule_query) == 2:
-            calendar['current_experience'] = self.format_experience_calendar(experience_schedule_query[0])
-            calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[1])
+            if datetime.strptime(experience_schedule_query[0][0].serializable['begin_date'],
+                                 "%Y-%m-%d %H:%M:%S") < date_now:
+                calendar['current_experience'] = self.format_experience_calendar(experience_schedule_query[0])
+                calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[1])
+            else:
+                calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[0])
 
         elif len(experience_schedule_query) == 1:
-            if datetime.strptime(experience_schedule_query[0][0].serializable['begin_date'], "%Y-%m-%d %H:%M:%S").date() < date_now:
+            if datetime.strptime(experience_schedule_query[0][0].serializable['begin_date'],
+                                 "%Y-%m-%d %H:%M:%S") < date_now:
                 calendar['current_experience'] = self.format_experience_calendar(experience_schedule_query[0])
             else:
                 calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[0])
