@@ -19,15 +19,6 @@ from marshmallow import ValidationError
 schema_blueprint = Blueprint('amazing', __name__)
 api = Api(schema_blueprint)
 
-# Schema Config
-
-role_schema = RoleSchema()
-profile_schema = ProfileSchema()
-template_schema = TemplateSchema()
-experience_schema = ExperienceSchema()
-apu_schema = APUSchema()
-apuconfig_schema = APUConfigSchema()
-apuconfig_template_schema = APUConfig_TemplateSchema()
 
 #       Parse definition
 parser = reqparse.RequestParser()
@@ -50,7 +41,7 @@ parser.add_argument('status')
 
 def get_user_by_email(email):
     users_query = db.session().query(Profile).filter(Profile.email == email).one()
-    results = profile_schema.dump(users_query)
+    results = jsonify(users_query.seriable)
     if results:
         return results
     return
@@ -59,7 +50,7 @@ def get_user_by_email(email):
 class RoleView(Resource):
     def get(self):
         role_query = db.session.query(Role).all()
-        results = profile_schema.dump(role_query, many=True)
+        results = jsonify([role.serializable for role in role_query.all()])
         return results
 
 
@@ -95,7 +86,7 @@ class UserView(Resource):
         raw_dict = request.get_json(force=True)
         try:
             message = raw_dict
-            profile = Profile(name=message['name'], email=message['email'], role=message['role'], num_testes=0,
+            profile = Profile(name=message['name'], email=message['email'], role=message['role'], num_test=0,
                               register_date=datetime.now())
             profile.add(profile)
             results = profile_schema.dump(profile)
@@ -233,7 +224,6 @@ class ExperienceView(Resource):
         for experience, profile in q:
             experience = experience.serializable
             profile = profile.serializable
-            print(experience, profile)
             experience['author'] = profile['name']
             response.append(experience)
         return jsonify(response)

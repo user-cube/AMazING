@@ -42,16 +42,16 @@ class Profile(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(200), nullable=False, unique=True)
-    num_testes = db.Column(db.INTEGER, nullable=True)
+    num_test = db.Column(db.INTEGER, nullable=True)
     register_date = db.Column(db.TIMESTAMP, nullable=False)
     picture = db.Column(db.String(10485760), nullable=True)
     last_login = db.Column(db.TIMESTAMP, nullable=True)
     role = db.Column(db.Integer, db.ForeignKey('role.id'))
 
-    def __init__(self,  name, email, register_date, role, num_testes=None, picture=None, last_login=None):
+    def __init__(self,  name, email, register_date, role, num_test=None, picture=None, last_login=None):
         self.name = name
         self.email = email
-        self.num_testes = num_testes
+        self.num_test = num_test
         self.register_date = register_date
         self.picture = picture
         self.last_login = last_login
@@ -66,7 +66,7 @@ class Profile(db.Model, CRUD):
             "id": self.id,
             "name": self.name,
             "email": self.email,
-            "num_testes": self.num_testes,
+            "num_test": self.num_test,
             "register_date": self.register_date,
             "picture": self.picture,
             "last_login": self.last_login,
@@ -87,6 +87,15 @@ class Template(db.Model, CRUD):
         self.name = name
         self.duration = duration
         self.profile = profile
+
+    @property
+    def serializable(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "duration": self.duration,
+            "profile": self.profile
+        }
 
 
 class Experience(db.Model, CRUD):
@@ -134,6 +143,12 @@ class APU(db.Model, CRUD):
     def __init__(self, id):
         self.id = id
 
+    @property
+    def serializable(self):
+        return {
+            "id":self.id
+        }
+
 
 class APUConfig(db.Model, CRUD):
 
@@ -148,7 +163,16 @@ class APUConfig(db.Model, CRUD):
         self.apu = apu
         self.ip = ip
         self.protocol = protocol
-        base_template = base_template
+        self.base_template = base_template
+
+    def serializable(self):
+        return {
+            "id": self.id,
+            "apu": self.apu,
+            "ip": self.ip,
+            "protocol": self.protocol,
+            "base_template": self.base_template
+        }
 
 class APUConfig_Template(db.Model, CRUD):
 
@@ -160,6 +184,13 @@ class APUConfig_Template(db.Model, CRUD):
     def __init__(self, apu_config, template):
         self.apu_config = apu_config
         self.template = template
+
+    @property
+    def serializable(self):
+        return {
+            "apu_config": self.apu_config,
+            "template": self.template
+        }
 
 
 class RoleSchema(Schema):
