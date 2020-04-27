@@ -40,6 +40,7 @@ parser.add_argument('status')
 #       BASE Functions
 
 def get_user_by_email(email):
+    print("\n\n\nEMAIL", email)
     users_query = db.session().query(Profile).filter(Profile.email == email).one()
     return users_query.serializable
 
@@ -184,13 +185,14 @@ class ExperienceView(Resource):
     def get(self):
         parse_data = parser.parse_args()
         jwt_data = get_raw_jwt()
+        print("\n\n\n JWT ", jwt_data)
         experiences_query = db.session.query(Experience, Profile)
         # Apply filters
         if jwt_data['isAdmin']:
             if parse_data['userID']:
                 experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
         else:
-            email = parse_data['email']
+            email = jwt_data['email']
             user_id = get_user_by_email(email)['id']
             experiences_query = experiences_query.filter(Experience.profile == user_id)
 
