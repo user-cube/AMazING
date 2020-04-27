@@ -865,10 +865,13 @@ def calendar(request):
 
         test_info = r.json()
 
-        name = test_info['author'] +' - '+test_info['name']
-        date = test_info['begin_date']
-        event = [name, date]
+        tests = []
 
-        return render(request, 'calendar/calendar.html')
+        for test in test_info:
+            name = test['author'] + ' - ' + test['name']
+            date = test['begin_date']
+            tests.append(name, date)
+
+        return render(request, 'calendar/calendar.html', tests)
     else:
         return redirect('login')

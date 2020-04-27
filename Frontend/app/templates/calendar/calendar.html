@@ -21,24 +21,9 @@
         <script src="{% static 'evo-calendar/js/evo-calendar.js' %}"></script>
 
         <script>
-            // initialize your calendar, once the page's DOM is ready
-            myEvents = [
-                2,
-                { name: "New Year", date: "Wed Jan 01 2020 00:00:00 GMT-0800 (Pacific Standard Time)"},
-                3,
-                { name: "Valentine's Day", date: "Fri Feb 14 2020 00:00:00 GMT-0800 (Pacific Standard Time)"},
-                4,
-                { name: "Birthday", date: "February/3/2020", type: "birthday"},
-                5,
-                { name: "Author's Birthday", date: "February/15/2020" },
-                6,
-                { name: "Holiday", date: "February/15/2020", type: "event" },
-                7
-            ]
             $('#calendar').evoCalendar({
                 theme: 'Royal Navy',
-                settingName: myEvents,
-                calendarEvents: {{ event }},
+                calendarEvents: {{ tests }} ,
             })
         </script>
     </div>
