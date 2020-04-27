@@ -9,7 +9,7 @@ from flask_api import status
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 
-# COnfig Files
+# Config Files
 schema_blueprint = Blueprint('amazing', __name__)
 api = Api(schema_blueprint)
 
@@ -162,11 +162,8 @@ class ProfileView(Resource):
         raw_data = request.get_json(force=True)
 
         if raw_data['pic']:
-            # msg = bytes(raw_data['pic'], 'utf-8')
-            # msg = b64encode(msg)
             user.picture = raw_data['pic']
         user.name = raw_data['name']
-        # user.update(user)
         db.session.commit()
         return user.serializable
 
@@ -187,14 +184,14 @@ class ExperienceView(Resource):
             experiences_query = experiences_query.filter(Experience.profile == user_id)
 
         if parse_data['date']:
-            date = datetime.strptime(parse_data['date'], "%Y-%m-%d").date()
+            date = datetime.strptime(parse_data['date'], "%Y-%m-%d %H:%M:%H").date()
             experiences_query = experiences_query.filter(Experience.begin_date >= date >= Experience.end_date)
         else:
             if parse_data['begin_date']:
-                date = datetime.strptime(parse_data['begin_date'], "%Y-%m-%d").date()
+                date = datetime.strptime(parse_data['begin_date'], "%Y-%m-%d %H:%M:%H").date()
                 experiences_query = experiences_query.filter(Experience.begin_date >= date)
             if parse_data['end_date']:
-                date = datetime.strptime(parse_data['end_date'], "%Y-%m-%d").date()
+                date = datetime.strptime(parse_data['end_date'], "%Y-%m-%d %H:%M:%H").date()
                 experiences_query = experiences_query.filter(Experience.end_date <= date)
         if parse_data['status']:
             experiences_query = experiences_query.filter(Experience.status == parse_data['status'])
@@ -216,7 +213,7 @@ class ExperienceView(Resource):
         user_id = get_user_by_email(email)['id']
         raw_data = request.get_json(force=True)
         try:
-            message = raw_data['message']
+            message = raw_data
             begin_date = datetime.strptime(message['begin_date'], "%Y-%m-%d %H:%M:%S")
             template = db.session.query(Template).get(message['template'])
             total_duration = message['num_test'] * (template.duration + 60)  # 1 min for test setup
@@ -260,10 +257,45 @@ class ExperienceInfoView(Resource):
         results.status_code = status.HTTP_200_OK
         return results
 
+class ExperienceScheduleView(Resource):
+    def get(self):
+
+        date_now = datetime.now()
+        #date_now = datetime.strptime("2020-06-30", "%Y-%m-%d").date()
+        print()
+        experience_schedule_query = db.session.query(Experience, Profile) \
+            .filter(Experience.end_date >= date_now) \
+            .filter(Experience.profile == Profile.id) \
+            .order_by(Experience.begin_date.asc()) \
+            .limit(2) \
+            .all()
+        calendar = {'current_experience': None, 'next_experience': None}
+        print(experience_schedule_query)
+        print(len(experience_schedule_query))
+        if len(experience_schedule_query) == 2:
+            calendar['current_experience'] = self.format_experience_calendar(experience_schedule_query[0])
+            calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[1])
+
+        elif len(experience_schedule_query) == 1:
+            if datetime.strptime(experience_schedule_query[0][0].serializable['begin_date'], "%Y-%m-%d %H:%M:%S").date() < date_now:
+                calendar['current_experience'] = self.format_experience_calendar(experience_schedule_query[0])
+            else:
+                calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[0])
+        return calendar
+
+    @staticmethod
+    def format_experience_calendar(experince_calendar_fragment):
+        experience = experince_calendar_fragment[0].serializable
+        profile = experince_calendar_fragment[1].serializable
+        experience['author'] = profile['name']
+        experience['email'] = profile['email']
+        return experience
+
+
 api.add_resource(UserView, '/user', '/user/')
 api.add_resource(UserInfoView, '/user/<int:id>', '/user/<int:id>/')
 api.add_resource(RoleView, '/role', '/role/')
 api.add_resource(ProfileView, '/profile', '/profile/')
 api.add_resource(ExperienceView, '/experience', '/experience/')
 api.add_resource(ExperienceInfoView, '/experience/<int:id>', '/experience/<int:id>/')
-
+api.add_resource(ExperienceScheduleView, '/experience/now', '/experience/now/')
