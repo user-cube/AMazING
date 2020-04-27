@@ -617,13 +617,6 @@ def searchTest(request):
     else:
         return redirect('login')
 
-
-def calendar(request):
-    if request.user.is_authenticated:
-        return render(request, 'calendar/calendar.html')
-    else:
-        return redirect('login')
-
 # API
 def checkTestsAdmin(request):
     """
@@ -853,7 +846,29 @@ def registerTestSave(request):
             messages.error(request, 'Something went wrong')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        return redirect('calendar')
+        return redirect('calendar/calendar.html')
 
+    else:
+        return redirect('login')
+
+
+def calendar(request):
+    if request.user.is_authenticated:
+
+        token = tokenizer.nodeToken(request.user.email)
+
+        r = requests.get(API + "experience", headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        test_info = r.json()
+
+        name = test_info['author'] +' - '+test_info['name']
+        date = test_info['begin_date']
+        event = [name, date]
+
+        return render(request, 'calendar/calendar.html')
     else:
         return redirect('login')
