@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 import os
 
 pg_db_hostname = os.getenv('DB_HOST')

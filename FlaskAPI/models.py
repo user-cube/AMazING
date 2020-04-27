@@ -1,8 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from marshmallow import validate
-from marshmallow_jsonapi import Schema, fields
-from flask_marshmallow import Marshmallow
-from marshmallow import Schema, fields, ValidationError, pre_load
+from marshmallow import Schema
 
 db = SQLAlchemy()
 session = None
@@ -191,46 +188,3 @@ class APUConfig_Template(db.Model, CRUD):
             "apu_config": self.apu_config,
             "template": self.template
         }
-
-
-class RoleSchema(Schema):
-    class Meta:
-        fields = ('id', 'role_name')
-
-
-class ProfileSchema(Schema):
-    class Meta:
-        fields = ('id', 'name', 'email', 'num_testes', 'register_date', 'picture', 'last_login', 'role')
-
-
-class TemplateSchema(Schema):
-    class Meta:
-        fields = ('Template', 'id', 'name', 'duration', 'profile')
-
-
-class ExperienceSchema(Schema):
-    class Meta:
-        fields = ('id', 'name', 'begin_date', 'end_date', 'num_test', 'register_date', 'status', 'profile', 'template',
-                    'name', 'email', 'num_test', 'register_date', 'picture', 'last_login', 'role')
-
-
-class APUSchema(Schema):
-    class Meta:
-        fields = ('id',)
-
-
-class APUConfigSchema(Schema):
-    class Meta:
-        fields = ('id', 'apu', 'ip', 'protocol', 'base_template')
-
-
-class APUConfig_TemplateSchema(Schema):
-    class Meta:
-        fields = ('apu_config', 'template')
-
-class ExperienceAPUConfig_TemplateSchema(Schema):
-    class Meta:
-        fields = ('id', 'name', 'begin_date', 'end_date', 'num_test', 'register_date', 'status', 'profile', 'template')
-
-
-
