@@ -67,7 +67,7 @@ class Profile(db.Model, CRUD):
             "name": self.name,
             "email": self.email,
             "num_test": self.num_test,
-            "register_date": self.register_date,
+            "register_date": self.register_date.strftime("%Y-%m-%d %H:%M:%S"),
             "picture": self.picture,
             "last_login": self.last_login,
             "role": self.role
@@ -118,7 +118,7 @@ class Experience(db.Model, CRUD):
         self.num_test = num_test
         self.register_date = register_date
         self.status = status
-        self.profile = profile.serializable
+        self.profile = profile
         self.template = template
 
     @property
@@ -126,10 +126,10 @@ class Experience(db.Model, CRUD):
         return {
             "id": self.id,
             "name": self.name,
-            "begin_date": self.begin_date,
-            "end_date": self.end_date,
+            "begin_date": self.begin_date.strftime("%Y-%m-%d %H:%M:%S"),
+            "end_date": self.end_date.strftime("%Y-%m-%d %H:%M:%S"),
             "num_test": self.num_test,
-            "register_date": self.register_date,
+            "register_date": self.register_date.strftime("%Y-%m-%d %H:%M:%S"),
             "status": self.status,
             "profile": self.profile,
             "template": self.template
@@ -210,7 +210,8 @@ class TemplateSchema(Schema):
 
 class ExperienceSchema(Schema):
     class Meta:
-        fields = ('id', 'name', 'begin_date', 'end_date', 'num_test', 'register_date', 'status', 'profile', 'template', 'name', 'email', 'num_test', 'register_date', 'picture', 'last_login', 'role')
+        fields = ('id', 'name', 'begin_date', 'end_date', 'num_test', 'register_date', 'status', 'profile', 'template',
+                    'name', 'email', 'num_test', 'register_date', 'picture', 'last_login', 'role')
 
 
 class APUSchema(Schema):

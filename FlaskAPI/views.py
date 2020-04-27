@@ -41,29 +41,28 @@ parser.add_argument('status')
 
 def get_user_by_email(email):
     users_query = db.session().query(Profile).filter(Profile.email == email).one()
-    results = jsonify(users_query.seriable)
-    if results:
-        return results
-    return
+    return users_query.serializable
+
 
 
 class RoleView(Resource):
     def get(self):
         role_query = db.session.query(Role).all()
-        results = jsonify([role.serializable for role in role_query.all()])
+        results = jsonify([role.serializable for role in role_query])
         return results
 
 
 class UserView(Resource):
     @jwt_required
-    def get(self, *filters):
+    def get(self):
         parse_data = parser.parse_args()
-        raw_data = get_raw_jwt()
-        print("RAW ", raw_data)
-        if not raw_data['isAdmin']:
+        print(parse_data)
+        jwt_data = get_raw_jwt()
+        if not jwt_data['isAdmin']:
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
             return results
+
         users_query = db.session().query(Profile)
 
         if parse_data['typeID']:
@@ -73,8 +72,7 @@ class UserView(Resource):
         if parse_data['content']:
             users_query = users_query.filter(Profile.name.contains(parse_data['content']))
         q = users_query.all()
-        #results = profile_schema.dump(q, many=True)
-        #print("RESULTS ", results)
+        print(q)
         return jsonify([result.serializable for result in q])
 
     @jwt_required
@@ -83,15 +81,13 @@ class UserView(Resource):
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
             return results
-        raw_dict = request.get_json(force=True)
+        raw_data = request.get_json(force=True)
         try:
-            message = raw_dict
+            message = raw_data
             profile = Profile(name=message['name'], email=message['email'], role=message['role'], num_test=0,
                               register_date=datetime.now())
             profile.add(profile)
-            results = profile_schema.dump(profile)
-            print("\n\n\n", results)
-            return results, 201
+            return profile.serializable, status.HTTP_201_CREATED
 
         except ValidationError as err:
             resp = jsonify({"error": err.messages})
@@ -99,7 +95,6 @@ class UserView(Resource):
             return resp
 
         except SQLAlchemyError as e:
-            print("\n\n\n E", e)
             db.session.rollback()
             resp = jsonify({"error": str(e)})
             resp.status_code = status.HTTP_400_BAD_REQUEST
@@ -113,29 +108,25 @@ class UserInfoView(Resource):
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
             return results
-        user_query = db.session.query(Profile).get_or_404(id)
-        user = profile_schema.dump(user_query)
+        user_query = db.session.query(Profile).get(id)
+        user = jsonify(user_query.serializable)
         return user
 
     @jwt_required
     def put(self, id):
         jwt_data = get_raw_jwt()
-        print("\n\n\nAQUI", jwt_data, "\n\n\n")
         if not jwt_data['isAdmin']:
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
             return results
 
-        raw_dict = request.get_json(force=True)
-        print("\n\n\nAQUI", raw_dict, "\n\n\n")
-        message = raw_dict['role']
+        raw_data = request.get_json(force=True)
+        message = raw_data['role']
         profile = db.session.query(Profile).get(id)
 
-        # profile.name = message['name']
-        # profile.email = email=message['email']
         profile.role = message
         db.session.commit()
-        return profile_schema.dump(profile)
+        return jsonify(profile.serializable)
 
 """
     @jwt_required
@@ -169,35 +160,33 @@ class ProfileView(Resource):
     def get(self):
         email = get_raw_jwt()['email']
         users_query = db.session.query(Profile).filter(Profile.email==email).one()
-        results = profile_schema.dump(users_query)
-        return results
+        results = users_query.serializable
+        return jsonify(results)
 
     @jwt_required
     def put(self):
         email = get_raw_jwt()['email']
         user = users_query = db.session().query(Profile).filter(Profile.email == email).one()
-        message = request.get_json(force=True)
-        # message = request.data.decode("utf-8")
-        # message = ast.literal_eval(message)
-        print("\n\n\nMESSAGE", message)
-        if message['pic']:
-            # msg = bytes(message['pic'], 'utf-8')
+        raw_data = request.get_json(force=True)
+
+        if raw_data['pic']:
+            # msg = bytes(raw_data['pic'], 'utf-8')
             # msg = b64encode(msg)
-            user.picture = message['pic']
-        user.name = message['name']
+            user.picture = raw_data['pic']
+        user.name = raw_data['name']
         # user.update(user)
         db.session.commit()
-        return profile_schema.dump(user)
+        return user.serializable
 
 
 class ExperienceView(Resource):
     @jwt_required
     def get(self):
         parse_data = parser.parse_args()
-        raw_data = get_raw_jwt()
+        jwt_data = get_raw_jwt()
         experiences_query = db.session.query(Experience, Profile)
         # Apply filters
-        if raw_data['isAdmin']:
+        if jwt_data['isAdmin']:
             if parse_data['userID']:
                 experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
         else:
@@ -230,12 +219,12 @@ class ExperienceView(Resource):
 
     @jwt_required
     def post(self):
-        raw_data = get_raw_jwt()
-        email = raw_data['email']
+        jwt_data = get_raw_jwt()
+        email = jwt_data['email']
         user_id = get_user_by_email(email)['id']
-        raw_dict = request.get_json(force=True)
+        raw_data = request.get_json(force=True)
         try:
-            message = raw_dict['message']
+            message = raw_data['message']
             begin_date = datetime.strptime(message['begin_date'], "%Y-%m-%d %H:%M:%S")
             template = db.session.query(Template).get(message['template'])
             total_duration = message['num_test'] * (template.duration + 60)  # 1 min for test setup
@@ -250,8 +239,8 @@ class ExperienceView(Resource):
                                     register_date=datetime.now())
 
             experience.add(experience)
-
-            return experience_schema.dump(experience), status.HTTP_201_CREATED
+            print(experience)
+            return experience.serializable, status.HTTP_201_CREATED
 
         except ValidationError as err:
             resp = jsonify({"error": err.messages})
@@ -268,12 +257,12 @@ class ExperienceInfoView(Resource):
 
     @jwt_required
     def get(self, id):
-        claims = get_raw_jwt()
-        user_id = get_user_by_email(claims['email'])
+        jwt_data = get_raw_jwt()
+        user_id = get_user_by_email(jwt_data['email'])['id']
         query = db.session.query(Experience, Template).filter(Experience.id==id).filter(Experience.template == Template.id).one()
-        experience = experience_schema.dump(query[0])
-        template = template_schema.dump(query[1])
-        if not claims['isAdmin'] and experience.profile != user_id:
+        experience = query[0].serializable
+        template = query[1].serializable
+        if not jwt_data['isAdmin'] and experience.profile != user_id:
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
         results = make_response({"experience": experience, "template": template})
