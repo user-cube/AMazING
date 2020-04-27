@@ -855,7 +855,7 @@ def registerTestSave(request):
 def calendar(request):
     if request.user.is_authenticated:
 
-        token = tokenizer.nodeToken(request.user.email)
+        token = tokenizer.gerateEmailToken(request.user.email)
 
         r = requests.get(API + "experience", headers={'Authorization': 'Bearer ' + token})
 
