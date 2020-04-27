@@ -873,6 +873,6 @@ def calendar(request):
             tests.append(name)
             tests.append(data)
 
-        return render(request, 'calendar/calendar.html', tests)
+        return render(request, 'calendar/calendar.html', {'tests' : tests})
     else:
         return redirect('login')
