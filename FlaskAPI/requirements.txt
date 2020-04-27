@@ -28,3 +28,4 @@ gunicorn
 pyjwt[crypto]
 flask_api
 requests
+PyJWT==1.6.1

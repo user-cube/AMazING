@@ -28,6 +28,13 @@ class Role (db.Model, CRUD):
     def __init__(self, role_name):
         self.role_name = role_name
 
+    @property
+    def serializable(self):
+        return {
+            'id': self.id,
+            'role_name': self.role_name,
+        }
+
 
 class Profile(db.Model, CRUD):
 
@@ -51,7 +58,20 @@ class Profile(db.Model, CRUD):
         self.role = role
 
     def __repr__(self):
-        return
+        return '<user: {}, Email: {}, Role: {}'.format(self.name, self.email, self.role)
+
+    @property
+    def serializable(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "num_testes": self.num_testes,
+            "register_date": self.register_date,
+            "picture": self.picture,
+            "last_login": self.last_login,
+            "role": self.role
+        }
 
 
 class Template(db.Model, CRUD):
@@ -89,9 +109,22 @@ class Experience(db.Model, CRUD):
         self.num_test = num_test
         self.register_date = register_date
         self.status = status
-        self.profile = profile
+        self.profile = profile.serializable
         self.template = template
 
+    @property
+    def serializable(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "begin_date": self.begin_date,
+            "end_date": self.end_date,
+            "num_test": self.num_test,
+            "register_date": self.register_date,
+            "status": self.status,
+            "profile": self.profile,
+            "template": self.template
+        }
 
 class APU(db.Model, CRUD):
 
@@ -146,7 +179,7 @@ class TemplateSchema(Schema):
 
 class ExperienceSchema(Schema):
     class Meta:
-        fields = ('id', 'name', 'begin_date', 'end_date', 'num_test', 'register_date', 'status', 'profile', 'template')
+        fields = ('id', 'name', 'begin_date', 'end_date', 'num_test', 'register_date', 'status', 'profile', 'template', 'name', 'email', 'num_test', 'register_date', 'picture', 'last_login', 'role')
 
 
 class APUSchema(Schema):
