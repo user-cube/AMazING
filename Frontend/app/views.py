@@ -552,7 +552,12 @@ def processNode(request, nodeID):
             lista.append(dic)
             dic = {}
 
-        if request.user.is_superuser or ongoing['email'] == request.user.email:
+        try:
+            uEmail = ongoing['email']
+        except:
+            uEmail = None
+
+        if request.user.is_superuser or uEmail == request.user.email:
             access = 1
         else:
             access = 0
