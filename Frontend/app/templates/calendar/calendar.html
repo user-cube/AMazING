@@ -27,7 +27,7 @@
         <script>
             $('#calendar').evoCalendar({
                 theme: 'Royal Navy',
-                {% for i in tests %}
+                {% for i in database %}
                     calendarEvents: [ {
                         id: {{ i.t_id }},
                         name: {{ i.name }},
