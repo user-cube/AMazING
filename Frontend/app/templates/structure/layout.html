@@ -38,6 +38,14 @@
                                 {% if request.resolver_match.url_name == 'search' %} class="nav-item active"
                                 {% else %} class="nav-item" {% endif %}>
                             {% if request.user.is_authenticated %}
+                                <li {% if request.resolver_match.url_name == 'networkstatus' %}
+                                class="nav-item active" {% endif %}
+                                    {% if request.resolver_match.url_name == 'nodestatus' %} class="nav-item active"
+                                    {% else %}
+                                class="nav-item"
+                                    {% endif %}>
+                                <a class="nav-link" href="{% url 'networkstatus' %}">Network Status</a>
+                            </li>
                                 <li {% if request.resolver_match.url_name == '#' %}
                                     class="nav-item active"
                                 {% else %}
