@@ -870,9 +870,8 @@ def calendar(request):
         for test in test_info:
             name = test['author'] + ' - ' + test['name']
             data = test['begin_date']
-            tests.append(name)
-            tests.append(data)
+            tests.append({'name':name, 'data':data})
 
-        return render(request, 'calendar/calendar.html', {'tests' : tests})
+        return render(request, 'calendar/calendar.html', {'database':tests})
     else:
         return redirect('login')
