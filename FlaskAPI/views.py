@@ -33,7 +33,6 @@ parser.add_argument('status')
 
 #       BASE Functions
 def get_user_by_email(email):
-    print("\n\n\nEMAIL", email)
     users_query = db.session().query(Profile).filter(Profile.email == email).one()
     return users_query.serializable
 
@@ -172,8 +171,7 @@ class ExperienceView(Resource):
     def get(self):
         parse_data = parser.parse_args()
         jwt_data = get_raw_jwt()
-        print("\n\n\n JWT ", jwt_data)
-        experiences_query = db.session.query(Experience, Profile)
+        experiences_query = db.session.query(Experience, Profile).filter(Experience.profile == Profile.id)
         # Apply filters
         if jwt_data['isAdmin']:
             if parse_data['userID']:
@@ -184,21 +182,22 @@ class ExperienceView(Resource):
             experiences_query = experiences_query.filter(Experience.profile == user_id)
 
         if parse_data['date']:
-            date = datetime.strptime(parse_data['date'], "%Y-%m-%d").date()
-            experiences_query = experiences_query.filter(Experience.begin_date >= date).filter(date >= Experience.end_date)
-            print("\n\n\n\n, experiences_query", experiences_query)
+            date_start = datetime.strptime(parse_data['date'], "%Y-%m-%d").date()
+            date_finish = date_start + timedelta(days=1)
+            experiences_query = experiences_query.filter(Experience.begin_date >= date_start).filter( date_finish >= Experience.end_date)
+
         else:
             if parse_data['begin_date']:
                 date = datetime.strptime(parse_data['begin_date'], "%Y-%m-%d").date()
-                experiences_query = experiences_query.filter(Experience.begin_date.date() >= date)
+                experiences_query = experiences_query.filter(Experience.begin_date >= date)
             if parse_data['end_date']:
                 date = datetime.strptime(parse_data['end_date'], "%Y-%m-%d").date()
-                experiences_query = experiences_query.filter(Experience.end_date <= date.date())
+                experiences_query = experiences_query.filter(Experience.end_date <= date)
         if parse_data['status']:
             experiences_query = experiences_query.filter(Experience.status == parse_data['status'])
         if parse_data['content']:
             experiences_query = experiences_query.filter(Experience.name.contains(parse_data['content']))
-        q = experiences_query.join(Profile).filter(Experience.profile == Profile.id).all()
+        q = experiences_query.all()
         response = []
         for experience, profile in q:
             experience = experience.serializable
