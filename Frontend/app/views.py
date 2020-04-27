@@ -525,7 +525,7 @@ def processNode(request, nodeID):
 
         hostname = json['hostname']
         interfaces = json['interfaces']
-        print(json)
+
         lista = []
         dic = {}
         for i in interfaces:
@@ -535,7 +535,7 @@ def processNode(request, nodeID):
             dic['mac'] = interfaces[i]['mac']
             lista.append(dic)
             dic = {}
-        print(lista)
+
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,

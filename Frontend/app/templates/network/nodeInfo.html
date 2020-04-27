@@ -27,11 +27,11 @@
                     <td>Netmask</td>
                     <td>Peer</td>
                     <td>MAC</td>
-                    <td>
+                    <td> {% if i.ip == '127.0.0.1' %} {% else %}
                         <a href="http://localhost:8888/?hostname={{ i.ip }}&username={{ username }}&password={{ password }}"
                            target="_blank"
                            rel="noopener noreferrer"
-                           class="btn btn-success">Abrir Terminal</a>
+                           class="btn btn-success">Abrir Terminal</a>{% endif %}
                     </td>
                 </tr>
                 </thead>
