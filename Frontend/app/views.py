@@ -750,3 +750,90 @@ def searchTestAdmin(request):
             return HttpResponseForbidden()
     else:
         return redirect('login')
+
+def createAcessPoint(request):
+    if request.user.is_authenticated:
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        ongoing = r.json()
+
+        ongoing = ongoing['current_experience']
+
+        try:
+            uEmail = ongoing['email']
+        except:
+            uEmail = None
+
+        if request.user.is_superuser or uEmail == request.user.email:
+            access = 1
+        else:
+            access = 0
+
+        if access == 0:
+            return HttpResponseForbidden("No access")
+
+        return render(request, "network/create/AP.html")
+
+    else:
+        return redirect('login')
+
+def processAP(request):
+    if request.user.is_authenticated:
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        ongoing = r.json()
+
+        ongoing = ongoing['current_experience']
+
+        try:
+            uEmail = ongoing['email']
+        except:
+            uEmail = None
+
+        if request.user.is_superuser or uEmail == request.user.email:
+            access = 1
+        else:
+            access = 0
+
+        if access == 0:
+            return HttpResponseForbidden("No access")
+
+        try:
+            APSSID = request.POST['APSSID']
+            APPW = request.POST['APPW']
+            Channel = request.POST['Channel']
+            RangeStart = request.POST['RangeStart']
+            RangeEnd = request.POST['RangeEnd']
+            hw_mode = request.POST['hw_mode']
+            DFGateway = request.POST['DFGateway']
+            Netmask = request.POST['Netmask']
+        except Exception as e:
+            print(e)
+            return redirect('networkstatus')
+
+        msg = {
+            'APSSID' : APSSID,
+            'APPW': APPW,
+            'Channel' : Channel,
+            'RangeStart' : RangeStart,
+            'RangeEnd' : RangeEnd,
+            'hw_mode' : hw_mode,
+            'DFGateway' : DFGateway,
+            'Netmask': Netmask
+        }
+
+        r = requests.post(API + "createAP", json=msg)
+
+        if r.status_code != 200:
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('networkstatus')
+    else:
+        return redirect('login')

@@ -1,0 +1,91 @@
+{% extends 'structure/layout.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-10 ">
+            <form class="form-horizontal" method="post" action="{% url 'saveap' %}"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <br>
+                <div class="form-group">
+                    <label class="col-lg-4" for="Name">AP SSID</label>
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input id="APSSID" name="APSSID" type="text"
+                                   placeholder="AP SSID" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6">
+                        <label class="col-lg-4" for="APPW">AP Password</label>
+                        <div class="input-group-prepend">
+                            <input id="APPW" name="APPW" type="password"
+                                   placeholder="AP Password" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6">
+                        <label class="col-lg-4" for="APPW">Channel</label>
+                        <div class="input-group-prepend">
+                            <input id="Channel" name="Channel" type="text"
+                                   placeholder="AP Channel" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6">
+                        <label class="col-lg-4" for="RangeStart">Range Start</label>
+                        <div class="input-group-prepend">
+                            <input id="RangeStart" name="RangeStart" type="text"
+                                   placeholder="AP Range Start" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6">
+                        <label class="col-lg-4" for="RangeEnd">Range End</label>
+                        <div class="input-group-prepend">
+                            <input id="RangeEnd" name="RangeEnd" type="text"
+                                   placeholder="AP Range End" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6">
+                        <label class="col-lg-4" for="hw_mode">HW Mode</label>
+                        <div class="input-group-prepend">
+                            <input id="hw_mode" name="hw_mode" type="text"
+                                   placeholder="AP HW Mode" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6">
+                        <label class="col-lg-4" for="DFGateway">Default Gateway</label>
+                        <div class="input-group-prepend">
+                            <input id="DFGateway" name="DFGateway" type="text"
+                                   placeholder="AP Default Gateway" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6">
+                        <label class="col-lg-4" for="Netmask">Netmask</label>
+                        <div class="input-group-prepend">
+                            <input id="Netmask" name="Netmask" type="text"
+                                   placeholder="AP Netmask" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-4 control-label"></label>
+                    <div class="col-md-4">
+                        <input type="submit" value="Add Test" class="btn btn-success"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

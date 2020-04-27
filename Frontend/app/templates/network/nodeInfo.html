@@ -14,6 +14,13 @@
 {% endblock %}
 
 {% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags %}
+                <script>alert("{{ message }}")</script> {% endif %}
+        {% endfor %}
+    {% endif %}
+
     <div class="container">
         <h1>{{ hostname }} - Information</h1>
         <hr>
@@ -78,6 +85,9 @@
                 </h5>
                 <h5>To interact with this node please <a href="{% url 'calendar' %}">book an experience.</a></h5>
             {% endif %}
+        {% endif %}
+        {% if access == 1 %}
+            <a class="btn btn-primary" href="{% url 'createAccessPoint' %}">Create Access Point</a>
         {% endif %}
     </div>
 {% endblock %}

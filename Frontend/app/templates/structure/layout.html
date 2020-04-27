@@ -39,19 +39,12 @@
                                 {% else %} class="nav-item" {% endif %}>
                             {% if request.user.is_authenticated %}
                                 <li {% if request.resolver_match.url_name == 'networkstatus' %}
-                                class="nav-item active" {% endif %}
-                                    {% if request.resolver_match.url_name == 'nodestatus' %} class="nav-item active"
-                                    {% else %}
-                                class="nav-item"
-                                    {% endif %}>
-                                <a class="nav-link" href="{% url 'networkstatus' %}">Network Status</a>
-                            </li>
-                                <li {% if request.resolver_match.url_name == '#' %}
-                                    class="nav-item active"
-                                {% else %}
+                                    class="nav-item active" {% endif %}
+                                        {% if request.resolver_match.url_name == 'nodestatus' %} class="nav-item active"
+                                        {% else %}
                                     class="nav-item"
-                                {% endif %}>
-                                    <a class="nav-link" href="#">Config Test</a>
+                                        {% endif %}>
+                                    <a class="nav-link" href="{% url 'networkstatus' %}">Network Status</a>
                                 </li>
                                 <li {% if request.resolver_match.url_name == 'calendar' %}
                                     class="nav-item active"
@@ -117,7 +110,8 @@
                                 class="nav-item active" {% endif %}
                                     {% if request.resolver_match.url_name == 'checkTestInfo' %}
                                 class="nav-item active" {% endif %}
-                                    {% if request.resolver_match.url_name == 'checkTestInfoAdmin' %} class="nav-item active"
+                                    {% if request.resolver_match.url_name == 'checkTestInfoAdmin' %}
+                                class="nav-item active"
                                     {% else %}
                                 class="nav-item"
                                     {% endif %}>
