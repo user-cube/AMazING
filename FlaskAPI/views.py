@@ -1,5 +1,8 @@
 from flask_jwt_extended import jwt_required, get_raw_jwt, get_jti
 from _datetime import datetime, timedelta
+import json
+from sqlalchemy.ext.declarative import DeclarativeMeta
+
 from models import *
 from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource, reqparse
@@ -16,15 +19,6 @@ from marshmallow import ValidationError
 schema_blueprint = Blueprint('amazing', __name__)
 api = Api(schema_blueprint)
 
-# Schema Config
-
-role_schema = RoleSchema()
-profile_schema = ProfileSchema()
-template_schema = TemplateSchema()
-experience_schema = ExperienceSchema()
-apu_schema = APUSchema()
-apuconfig_schema = APUConfigSchema()
-apuconfig_template_schema = APUConfig_TemplateSchema()
 
 #       Parse definition
 parser = reqparse.RequestParser()
@@ -47,7 +41,7 @@ parser.add_argument('status')
 
 def get_user_by_email(email):
     users_query = db.session().query(Profile).filter(Profile.email == email).one()
-    results = profile_schema.dump(users_query)
+    results = jsonify(users_query.seriable)
     if results:
         return results
     return
@@ -56,7 +50,7 @@ def get_user_by_email(email):
 class RoleView(Resource):
     def get(self):
         role_query = db.session.query(Role).all()
-        results = profile_schema.dump(role_query, many=True)
+        results = jsonify([role.serializable for role in role_query.all()])
         return results
 
 
@@ -75,13 +69,13 @@ class UserView(Resource):
         if parse_data['typeID']:
             users_query = users_query.filter(Profile.role == parse_data['typeID'])
         if parse_data['email']:
-            users_query = users_query.filter(Profile.email == parse_data['email'])
+            users_query = users_query.filter(Profile.email.contains(parse_data['email']))
         if parse_data['content']:
             users_query = users_query.filter(Profile.name.contains(parse_data['content']))
-
-        results = profile_schema.dump(users_query.all(), many=True)
-        print("RESULTS ", results)
-        return results
+        q = users_query.all()
+        #results = profile_schema.dump(q, many=True)
+        #print("RESULTS ", results)
+        return jsonify([result.serializable for result in q])
 
     @jwt_required
     def post(self):
@@ -92,7 +86,7 @@ class UserView(Resource):
         raw_dict = request.get_json(force=True)
         try:
             message = raw_dict
-            profile = Profile(name=message['name'], email=message['email'], role=message['role'], num_testes=0,
+            profile = Profile(name=message['name'], email=message['email'], role=message['role'], num_test=0,
                               register_date=datetime.now())
             profile.add(profile)
             results = profile_schema.dump(profile)
@@ -181,7 +175,6 @@ class ProfileView(Resource):
     @jwt_required
     def put(self):
         email = get_raw_jwt()['email']
-
         user = users_query = db.session().query(Profile).filter(Profile.email == email).one()
         message = request.get_json(force=True)
         # message = request.data.decode("utf-8")
@@ -202,7 +195,7 @@ class ExperienceView(Resource):
     def get(self):
         parse_data = parser.parse_args()
         raw_data = get_raw_jwt()
-        experiences_query = db.session.query(Experience)
+        experiences_query = db.session.query(Experience, Profile)
         # Apply filters
         if raw_data['isAdmin']:
             if parse_data['userID']:
@@ -224,9 +217,16 @@ class ExperienceView(Resource):
                 experiences_query = experiences_query.filter(Experience.end_date <= date)
         if parse_data['status']:
             experiences_query = experiences_query.filter(Experience.status == parse_data['status'])
-
-        results = experience_schema.dump(experiences_query.all(), many=True)
-        return results
+        if parse_data['content']:
+            experiences_query = experiences_query.filter(Experience.name.contains(parse_data['content']))
+        q = experiences_query.join(Profile).filter(Experience.profile == Profile.id).all()
+        response = []
+        for experience, profile in q:
+            experience = experience.serializable
+            profile = profile.serializable
+            experience['author'] = profile['name']
+            response.append(experience)
+        return jsonify(response)
 
     @jwt_required
     def post(self):
@@ -280,9 +280,10 @@ class ExperienceInfoView(Resource):
         results.status_code = status.HTTP_200_OK
         return results
 
-api.add_resource(UserView, '/user')
-api.add_resource(UserInfoView, '/user/<int:id>')
-api.add_resource(RoleView, '/role')
-api.add_resource(ProfileView, '/profile')
-api.add_resource(ExperienceView, '/experience')
-api.add_resource(ExperienceInfoView, '/experience/<int:id>')
+api.add_resource(UserView, '/user', '/user/')
+api.add_resource(UserInfoView, '/user/<int:id>', '/user/<int:id>/')
+api.add_resource(RoleView, '/role', '/role/')
+api.add_resource(ProfileView, '/profile', '/profile/')
+api.add_resource(ExperienceView, '/experience', '/experience/')
+api.add_resource(ExperienceInfoView, '/experience/<int:id>', '/experience/<int:id>/')
+
