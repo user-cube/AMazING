@@ -523,14 +523,24 @@ def processNode(request, nodeID):
 
         password = b64encode(b'amazing')
 
+        hostname = json['hostname']
+        interfaces = json['interfaces']
+        print(json)
+        lista = []
+        dic = {}
+        for i in interfaces:
+            dic['name'] = i
+            dic['end'] = interfaces[i]['addrs']
+            dic['ip']= interfaces[i]['ip']
+            dic['mac'] = interfaces[i]['mac']
+            lista.append(dic)
+            dic = {}
+        print(lista)
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
-            'id': json['id'],
-            'ips': json['ips'],
-            'mac': json['mac'],
-            'placas': json['placas'],
-            'state': json['state'],
+            'database' : lista,
+            'hostname': hostname,
             'username': 'amazing',
             'password': password.decode("utf-8")
         }
