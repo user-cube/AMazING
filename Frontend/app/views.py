@@ -528,6 +528,15 @@ def processNode(request, nodeID):
 
         role = r.json()
 
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        ongoing = r.json()
+
+        ongoing = ongoing['current_experience']
+
         password = b64encode(b'amazing')
 
         hostname = json['hostname']
@@ -543,10 +552,16 @@ def processNode(request, nodeID):
             lista.append(dic)
             dic = {}
 
+        if request.user.is_superuser or ongoing['email'] == request.user.email:
+            access = 1
+        else:
+            access = 0
+
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
             'role': role['role'],
+            'access' : access,
             'database' : lista,
             'hostname': hostname,
             'username': 'amazing',
