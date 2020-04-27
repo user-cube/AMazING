@@ -317,8 +317,9 @@ def userCreation(request):
 # OK
 def validateUser(request, token):
     if not request.user.is_authenticated:
+        print(token)
         email = tokenizer.checkToken(token)
-
+        print(email)
         if email == None: return HttpResponseForbidden()
 
         tparms = {
