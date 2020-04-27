@@ -869,8 +869,9 @@ def calendar(request):
 
         for test in test_info:
             name = test['author'] + ' - ' + test['name']
-            date = test['begin_date']
-            tests.append(name, date)
+            data = test['begin_date']
+            tests.append(name)
+            tests.append(data)
 
         return render(request, 'calendar/calendar.html', tests)
     else:
