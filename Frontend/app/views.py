@@ -624,20 +624,6 @@ def calendar(request):
     else:
         return redirect('login')
 
-
-def registerTest(request):
-    if request.user.is_authenticated:
-        return render(request, 'calendar/registerTest.html')
-    else:
-        return redirect('login')
-
-
-
-
-
-
-
-
 # API
 def checkTestsAdmin(request):
     """
@@ -835,5 +821,39 @@ def processAP(request):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         return redirect('networkstatus')
+    else:
+        return redirect('login')
+
+
+def registerTest(request):
+    if request.user.is_authenticated:
+        return render(request, 'calendar/registerTest.html')
+    else:
+        return redirect('login')
+
+
+def registerTestSave(request):
+    if request.user.is_authenticated:
+
+        try:
+           name = request.POST['name']
+           begin_date = request.POST['start_time']
+           end_date = request.POST['end_time']
+        except  Exception as e:
+            print(e)
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        token = tokenizer.nodeToken(request.user.email)
+        message = {'name': name, 'begin_date': begin_date, 'end_date': end_date}
+
+        r = requests.post(API + "experience", json=message, headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 201:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('calendar')
+
     else:
         return redirect('login')
