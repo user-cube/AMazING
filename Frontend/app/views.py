@@ -317,9 +317,7 @@ def userCreation(request):
 # OK
 def validateUser(request, token):
     if not request.user.is_authenticated:
-        print(token)
         email = tokenizer.checkToken(token)
-        print(email)
         if email == None: return HttpResponseForbidden()
 
         tparms = {
@@ -517,10 +515,18 @@ def processNode(request, nodeID):
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
+
         if r.status_code != 200:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         json = r.json()
+
+        token = tokenizer.gerateEmailToken(request.user.email)
+        r = requests.get(API + "profile", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        role = r.json()
 
         password = b64encode(b'amazing')
 
@@ -540,6 +546,7 @@ def processNode(request, nodeID):
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
+            'role': role['role'],
             'database' : lista,
             'hostname': hostname,
             'username': 'amazing',
