@@ -11,29 +11,21 @@
     <div class="container">
         <br>
         <br>
-
-        {% for i in database %}
-            {{ i }}
-        {% endfor %}
-
         <a href="{% url 'registertest' %}" class="btn btn-success">
             <span class="glyphicon glyphicon-thumbs-up"></span>Register Test</a>
 
-        <div id="calendar"></div>
+        <div id="evoCalendar"></div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="{% static 'evo-calendar/js/evo-calendar.js' %}"></script>
 
         <script>
-            $('#calendar').evoCalendar({
+
+
+            $('#evoCalendar').evoCalendar({
                 theme: 'Royal Navy',
-                {% for i in database %}
-                    calendarEvents: [ {
-                        id: {{ i.t_id }},
-                        name: {{ i.name }},
-                        date: {{ i.data }},
-                        type: {{ i.type }} }]
-                {% endfor %}
+                    calendarEvents: {% autoescape off %} {{ database }}
+            {% endautoescape %}
             })
         </script>
     </div>

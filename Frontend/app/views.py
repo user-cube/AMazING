@@ -871,8 +871,8 @@ def calendar(request):
             t_id = test['id']
             name = test['author'] + ' - ' + test['name']
             data = test['begin_date']
-            tests.append({'name': name, 'data': data, 'id': str(t_id), 'type': 'event'})
-
+            tests.append({'name': name, 'date': data, 'id': str(t_id), 'type': 'event'})
+        print(tests)
         return render(request, 'calendar/calendar.html', {'database': tests})
     else:
         return redirect('login')
