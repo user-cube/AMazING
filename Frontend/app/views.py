@@ -868,9 +868,10 @@ def calendar(request):
         tests = []
 
         for test in test_info:
+            t_id = test['id']
             name = test['author'] + ' - ' + test['name']
             data = test['begin_date']
-            tests.append({'name':name, 'data':data})
+            tests.append({'name': name, 'data': data, 'id': t_id, 'type': 'event'})
 
         return render(request, 'calendar/calendar.html', {'database':tests})
     else:
