@@ -1,9 +1,14 @@
 {% extends 'structure/layout.html' %}
-{% block headers %}
-{% endblock %}
-
 
 {% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags %}
+                <script>alert("{{ message }}")</script> {% endif %}
+        {% endfor %}
+    {% endif %}
+
     <div class="row">
         <div class="col-lg-10 ">
             <form class="form-horizontal" method="post" action="{% url 'registertest' %}"
@@ -15,7 +20,7 @@
                     <div class="col-lg-6">
                         <div class="input-group">
                             <input id="name" name="name" type="text"
-                                   placeholder="Nome" class="form-control input-lg" value="{{ name }}">
+                                   placeholder="Nome" class="form-control input-lg" value="{{ name }}" required>
                         </div>
                     </div>
                 </div>
@@ -23,10 +28,7 @@
                     <div class="col-lg-6">
                         <label>Start Date of the Test</label>
                         <div class="input-group-prepend">
-                            <button type="button" id="toggle_start" class="input-group-text">
-                                <i class="fa fa-calendar"></i>
-                            </button>
-                            <input type="text" id="start_time" class="form-control" placeholder="05/16/2018 12:31">
+                            <input type="datetime-local" id="start_time" class="form-control" placeholder="05/16/2018 12:31" required>
                         </div>
                     </div>
                 </div>
@@ -34,10 +36,7 @@
                     <label class="col-lg-4" for="NumTests">End Date of the Test</label>
                     <div class="col-lg-6">
                         <div class="input-group-prepend">
-                            <button type="button" id="toggle_start" class="input-group-text">
-                                <i class="fa fa-calendar"></i>
-                            </button>
-                            <input type="text" id="end_time" class="form-control" placeholder="05/16/2018 12:31">
+                            <input type="datetime-local" id="end_time" class="form-control" placeholder="05/16/2018 12:31" required>
                         </div>
                     </div>
                 </div>
@@ -50,13 +49,4 @@
             </form>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script>
-        $( function() {
-            $( "#start_time" ).datetimepicker();
-        } );
-    </script>
-
 {% endblock %}

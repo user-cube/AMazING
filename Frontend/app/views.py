@@ -318,7 +318,6 @@ def userCreation(request):
 def validateUser(request, token):
     if not request.user.is_authenticated:
         email = tokenizer.checkToken(token)
-
         if email == None: return HttpResponseForbidden()
 
         tparms = {
@@ -516,10 +515,27 @@ def processNode(request, nodeID):
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
+
         if r.status_code != 200:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         json = r.json()
+
+        token = tokenizer.gerateEmailToken(request.user.email)
+        r = requests.get(API + "profile", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        role = r.json()
+
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        ongoing = r.json()
+
+        ongoing = ongoing['current_experience']
 
         password = b64encode(b'amazing')
 
@@ -536,9 +552,25 @@ def processNode(request, nodeID):
             lista.append(dic)
             dic = {}
 
+        try:
+            uEmail = ongoing['email']
+        except:
+            uEmail = None
+
+        if request.user.is_superuser or uEmail == request.user.email:
+            access = 1
+        else:
+            access = 0
+
+        isAdmin = 0
+        if request.user.is_superuser: isAdmin = 1
+
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
+            'role': role['role'],
+            'isAdmin' : isAdmin,
+            'access' : access,
             'database' : lista,
             'hostname': hostname,
             'username': 'amazing',
@@ -584,21 +616,6 @@ def searchTest(request):
             return HttpResponseForbidden()
     else:
         return redirect('login')
-
-
-def calendar(request):
-    if request.user.is_authenticated:
-        return render(request, 'calendar/calendar.html')
-    else:
-        return redirect('login')
-
-
-def registerTest(request):
-    if request.user.is_authenticated:
-        return render(request, 'calendar/registerTest.html')
-    else:
-        return redirect('login')
-
 
 # API
 def checkTestsAdmin(request):
@@ -710,5 +727,152 @@ def searchTestAdmin(request):
 
         else:
             return HttpResponseForbidden()
+    else:
+        return redirect('login')
+
+def createAcessPoint(request):
+    if request.user.is_authenticated:
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        ongoing = r.json()
+
+        ongoing = ongoing['current_experience']
+
+        try:
+            uEmail = ongoing['email']
+        except:
+            uEmail = None
+
+        if request.user.is_superuser or uEmail == request.user.email:
+            access = 1
+        else:
+            access = 0
+
+        if access == 0:
+            return HttpResponseForbidden("No access")
+
+        return render(request, "network/create/AP.html")
+
+    else:
+        return redirect('login')
+
+def processAP(request):
+    if request.user.is_authenticated:
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        ongoing = r.json()
+
+        ongoing = ongoing['current_experience']
+
+        try:
+            uEmail = ongoing['email']
+        except:
+            uEmail = None
+
+        if request.user.is_superuser or uEmail == request.user.email:
+            access = 1
+        else:
+            access = 0
+
+        if access == 0:
+            return HttpResponseForbidden("No access")
+
+        try:
+            APSSID = request.POST['APSSID']
+            APPW = request.POST['APPW']
+            Channel = request.POST['Channel']
+            RangeStart = request.POST['RangeStart']
+            RangeEnd = request.POST['RangeEnd']
+            hw_mode = request.POST['hw_mode']
+            DFGateway = request.POST['DFGateway']
+            Netmask = request.POST['Netmask']
+        except Exception as e:
+            print(e)
+            return redirect('networkstatus')
+
+        msg = {
+            'APSSID' : APSSID,
+            'APPW': APPW,
+            'Channel' : Channel,
+            'RangeStart' : RangeStart,
+            'RangeEnd' : RangeEnd,
+            'hw_mode' : hw_mode,
+            'DFGateway' : DFGateway,
+            'Netmask': Netmask
+        }
+
+        r = requests.post(API + "createAP", json=msg)
+
+        if r.status_code != 200:
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('networkstatus')
+    else:
+        return redirect('login')
+
+
+def registerTest(request):
+    if request.user.is_authenticated:
+        return render(request, 'calendar/registerTest.html')
+    else:
+        return redirect('login')
+
+
+def registerTestSave(request):
+    if request.user.is_authenticated:
+
+        try:
+           name = request.POST['name']
+           begin_date = request.POST['start_time']
+           end_date = request.POST['end_time']
+        except  Exception as e:
+            print(e)
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        token = tokenizer.nodeToken(request.user.email)
+        message = {'name': name, 'begin_date': begin_date, 'end_date': end_date}
+
+        r = requests.post(API + "experience", json=message, headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 201:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('calendar/calendar.html')
+
+    else:
+        return redirect('login')
+
+
+def calendar(request):
+    if request.user.is_authenticated:
+
+        token = tokenizer.gerateEmailToken(request.user.email)
+
+        r = requests.get(API + "experience", headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        test_info = r.json()
+
+        tests = []
+
+        for test in test_info:
+            t_id = test['id']
+            name = test['author'] + ' - ' + test['name']
+            data = test['begin_date']
+            tests.append({'name': name, 'date': data, 'id': str(t_id), 'type': 'event'})
+        print(tests)
+        return render(request, 'calendar/calendar.html', {'database': tests})
     else:
         return redirect('login')

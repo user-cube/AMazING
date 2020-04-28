@@ -41,7 +41,8 @@ class Tokenizer:
         try:
             decoded = jwtManager.decode(message=token, key=public_key)
             return decoded['email']
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def userToken(self, email):
