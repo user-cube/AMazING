@@ -1,11 +1,6 @@
-FROM python:3.8
-
-RUN mkdir /code
-WORKDIR /code
-
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-
-COPY . .
-CMD ["python", "app.py"]
+FROM python:3
+ADD ./ /app
+WORKDIR /app
+RUN apt-get update
+RUN pip install -r requirements.txt
+CMD python app.py
