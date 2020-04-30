@@ -136,14 +136,19 @@ class APU(db.Model, CRUD):
 
     __tablename__ = 'apu'
     id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(20))
+    name = db.Column(db.String(10))
 
-    def __init__(self, id):
-        self.id = id
+    def __init__(self, ip, name):
+        self.ip = ip
+        self.name = name
 
     @property
     def serializable(self):
         return {
-            "id":self.id
+            "id": self.id,
+            "ip": self.ip,
+            "name": self.name
         }
 
 

@@ -4,12 +4,7 @@ from flask_jwt_extended import JWTManager, jwt_required, get_raw_jwt
 from views import schema_blueprint
 from views import db
 
-from settings import CERT
-
-import jwt as tokenizer
-import os
 import requests
-from dotenv import load_dotenv
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -27,6 +22,8 @@ db.init_app(app)
 def create_database():
      db.create_all()
 
+
+"""
 @app.route('/ola')
 @jwt_required
 def hello_world():
@@ -41,6 +38,7 @@ def node_info(nodeID):
     		msg = {'msg': 'Erro 200'}
     		return msg
     	return jsonify(r.json())
+    	
 
     if nodeID=='2':
         r = requests.get('http://192.168.1.142:5000/testi')
@@ -48,8 +46,7 @@ def node_info(nodeID):
             msg = {'msg': 'Erro 200'}
             return msg
         return jsonify(r.json())
-
-
+"""
 
 if __name__ == '__main__':
     app.run(host=app.config['HOST'],

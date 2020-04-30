@@ -9,6 +9,9 @@ from flask_api import status
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 
+
+import requests
+
 # Config Files
 schema_blueprint = Blueprint('amazing', __name__)
 api = Api(schema_blueprint)
@@ -173,13 +176,8 @@ class ExperienceView(Resource):
         jwt_data = get_raw_jwt()
         experiences_query = db.session.query(Experience, Profile).filter(Experience.profile == Profile.id)
         # Apply filters
-        if jwt_data['isAdmin']:
-            if parse_data['userID']:
-                experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
-        else:
-            email = jwt_data['email']
-            user_id = get_user_by_email(email)['id']
-            experiences_query = experiences_query.filter(Experience.profile == user_id)
+        if parse_data['userID']:
+            experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
 
         if parse_data['date']:
             date_start = datetime.strptime(parse_data['date'], "%Y-%m-%d").date()
@@ -296,6 +294,33 @@ class ExperienceScheduleView(Resource):
         return experience
 
 
+class NodeView(Resource):
+    @jwt_required
+    def get(self):
+        apu_query = db.session.query(APU).all()
+        return jsonify([apu.serializable for apu in apu_query])
+
+
+class NodeInfoView(Resource):
+
+    @jwt_required
+    def get(self, id):
+        apu = db.session.query(APU).get(id)
+        if not apu:
+            results = jsonify("APU not found, id {}".format(id))
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+
+        apu_request = 'http://{}:5000/testi'.format(apu.ip)
+        try:
+            results = requests.get(apu_request, timeout=2)
+            return jsonify(results.json())
+        except requests.exceptions.ConnectionError:
+            results = jsonify("Node: {}, not founded".format(apu.name))
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
+
+
 api.add_resource(UserView, '/user', '/user/')
 api.add_resource(UserInfoView, '/user/<int:id>', '/user/<int:id>/')
 api.add_resource(RoleView, '/role', '/role/')
@@ -303,3 +328,6 @@ api.add_resource(ProfileView, '/profile', '/profile/')
 api.add_resource(ExperienceView, '/experience', '/experience/')
 api.add_resource(ExperienceInfoView, '/experience/<int:id>', '/experience/<int:id>/')
 api.add_resource(ExperienceScheduleView, '/experience/now', '/experience/now/')
+api.add_resource(NodeView, '/node', '/node/')
+api.add_resource(NodeInfoView, '/node/<int:id>', '/node/<int:id>/')
+
