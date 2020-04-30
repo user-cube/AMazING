@@ -2,8 +2,50 @@ from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotFound, HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth.models import User
-
 import requests
+import logging
+
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(name)-12s %(levelname)-8s %(message)s'
+        },
+        'file': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': 'info.log'
+        },
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': 'debug.log'
+        }
+    },
+    'loggers': {
+        '': {
+            'level': 'INFO',
+            'handlers': ['console', 'file']
+        },
+        'debug': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'debug']
+        }
+    }
+})
 
 from dotenv import load_dotenv
 import os
@@ -17,6 +59,7 @@ from django.contrib import messages
 
 load_dotenv()
 API = os.environ.get("API_LINK")
+logger = logging.getLogger(__name__)
 tokenizer = Tokenizer()
 
 
@@ -57,9 +100,11 @@ def profile(request):
     if request.user.is_authenticated:
 
         token = tokenizer.gerateEmailToken(request.user.email)
+        logger.info(token)
         r = requests.get(API + "profile", headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
+            logger.debug("WRONG API STATUS CODE: " + str(r.status_code) + " CONTENT: " + r.text)
             return HttpResponseNotFound()
 
         json = r.json()
