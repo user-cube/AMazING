@@ -7,7 +7,7 @@ pg_db_username = os.getenv('DB_USER')
 
 DEBUG = True
 PORT = 5000
-HOST =  "0.0.0.0"
+HOST = os.getenv('HOST')
 SQLALCHEMY_ECHO = True
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 SECRET_KEY = "SOME SECRET"
