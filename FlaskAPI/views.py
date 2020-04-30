@@ -1,3 +1,4 @@
+import sqlalchemy
 from flask_jwt_extended import jwt_required, get_raw_jwt, get_jti
 from _datetime import datetime, timedelta
 
@@ -151,10 +152,18 @@ class UserInfoView(Resource):
 class ProfileView(Resource):
     @jwt_required
     def get(self):
-        email = get_raw_jwt()['email']
-        users_query = db.session.query(Profile).filter(Profile.email==email).one()
-        results = users_query.serializable
-        return jsonify(results)
+        jwt_raw = get_raw_jwt()
+        email = jwt_raw['email']
+        try:
+            profile = db.session.query(Profile).filter(Profile.email==email).one()
+            results = profile.serializable
+            return jsonify(results)
+        except SQLAlchemyError:
+            results = jsonify({"ERROR": "EMAIL_ERROR",
+                               "CONTENT": f"User email not registered, email: {email}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+
 
     @jwt_required
     def put(self):
@@ -229,13 +238,13 @@ class ExperienceView(Resource):
             return experience.serializable, status.HTTP_201_CREATED
 
         except ValidationError as err:
-            resp = jsonify({"error": err.messages})
+            resp = jsonify({"ERROR": err.messages})
             resp.status_code = status.HTTP_403_FORBIDDEN
             return resp
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            resp = jsonify({"error": str(e)})
+            resp = jsonify({"ERROR": str(e)})
             resp.status_code = status.HTTP_400_BAD_REQUEST
             return resp
 
@@ -294,6 +303,15 @@ class ExperienceScheduleView(Resource):
         return experience
 
 
+class TemplateView(Resource):
+    def get(self):
+        return 200
+
+
+class TemplateView(Resource):
+    def get(self):
+        return 200
+
 class NodeView(Resource):
     @jwt_required
     def get(self):
@@ -307,16 +325,17 @@ class NodeInfoView(Resource):
     def get(self, id):
         apu = db.session.query(APU).get(id)
         if not apu:
-            results = jsonify("APU not found, id {}".format(id))
+            results = jsonify({"ERROR ID": f"APU not found, id {id}"})
             results.status_code = status.HTTP_404_NOT_FOUND
             return results
 
-        apu_request = 'http://{}:5000/testi'.format(apu.ip)
+        apu_request = f'http://{apu.ip}:5000/testi'
         try:
             results = requests.get(apu_request, timeout=2)
             return jsonify(results.json())
         except requests.exceptions.ConnectionError:
-            results = jsonify("Node: {}, not founded".format(apu.name))
+            results = jsonify({"ERROR": "APU_ERROR",
+                               "CONTENT": f"{apu.name}: not founded"})
             results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
             return results
 
