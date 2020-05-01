@@ -1,4 +1,5 @@
-from flask_jwt_extended import jwt_required, get_raw_jwt, get_jti
+from functools import wraps
+from flask_jwt_extended import jwt_required, get_raw_jwt, verify_jwt_in_request, get_jwt_claims
 from _datetime import datetime, timedelta
 
 from models import *
@@ -9,10 +10,11 @@ from flask_api import status
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 
+import requests
+
 # Config Files
 schema_blueprint = Blueprint('amazing', __name__)
 api = Api(schema_blueprint)
-
 
 #       Parse definition
 parser = reqparse.RequestParser()
@@ -34,8 +36,25 @@ parser.add_argument('status')
 #       BASE Functions
 def get_user_by_email(email):
     users_query = db.session().query(Profile).filter(Profile.email == email).one()
-    return users_query.serializable
+    return users_query
 
+
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        verify_jwt_in_request()
+        jwt_data = get_raw_jwt()
+        print(jwt_data)
+        if not jwt_data['isAdmin']:
+            results = jsonify({'ERROR': 'AUTHORIZATION_ERROR', 'CONTENT': 'Forbidden access, admins only!'})
+            results.status_code = status.HTTP_403_FORBIDDEN
+            return results
+        else:
+            return fn(*args, **kwargs)
+    return wrapper
+
+
+#       Class View
 
 class RoleView(Resource):
     def get(self):
@@ -45,15 +64,10 @@ class RoleView(Resource):
 
 
 class UserView(Resource):
-    @jwt_required
+    @admin_required
     def get(self):
-        parse_data = parser.parse_args()
-        jwt_data = get_raw_jwt()
-        if not jwt_data['isAdmin']:
-            results = jsonify()
-            results.status_code = status.HTTP_401_UNAUTHORIZED
-            return results
 
+        parse_data = parser.parse_args()
         users_query = db.session().query(Profile)
 
         if parse_data['typeID']:
@@ -65,105 +79,111 @@ class UserView(Resource):
         q = users_query.all()
         return jsonify([result.serializable for result in q])
 
-    @jwt_required
+    @admin_required
     def post(self):
-        if not get_raw_jwt()['isAdmin']:
-            results = jsonify()
-            results.status_code = status.HTTP_401_UNAUTHORIZED
-            return results
         raw_data = request.get_json(force=True)
         try:
-            message = raw_data
-            profile = Profile(name=message['name'], email=message['email'], role=message['role'], num_test=0,
+            profile = Profile(name=raw_data['name'], email=raw_data['email'], role=raw_data['role'], num_test=0,
                               register_date=datetime.now())
             profile.add(profile)
-            return profile.serializable, status.HTTP_201_CREATED
+            results = profile.serializable
+            results.status_code = status.HTTP_201_CREATED
 
         except ValidationError as err:
-            resp = jsonify({"error": err.messages})
-            resp.status_code = status.HTTP_403_FORBIDDEN
-            return resp
+            results = jsonify({"error": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as err:
             db.session.rollback()
-            resp = jsonify({"error": str(e)})
-            resp.status_code = status.HTTP_400_BAD_REQUEST
-            return resp
+            results = jsonify({"error": str(err)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        return results
 
 
 class UserInfoView(Resource):
-    @jwt_required
+    @admin_required
     def get(self, id):
-        if not get_raw_jwt()['isAdmin']:
-            results = jsonify()
-            results.status_code = status.HTTP_401_UNAUTHORIZED
-            return results
         user_query = db.session.query(Profile).get(id)
         user = jsonify(user_query.serializable)
         return user
 
-    @jwt_required
+    @admin_required
     def put(self, id):
-        jwt_data = get_raw_jwt()
-        if not jwt_data['isAdmin']:
-            results = jsonify()
-            results.status_code = status.HTTP_401_UNAUTHORIZED
-            return results
-
         raw_data = request.get_json(force=True)
-        message = raw_data['role']
-        profile = db.session.query(Profile).get(id)
+        try:
+            message = raw_data['role']
+            profile = db.session.query(Profile).get(id)
 
-        profile.role = message
-        db.session.commit()
-        return profile.serializable
+            profile.role = message
+            db.session.commit()
+            results = jsonify(profile.serializable)
+            results.status_code = status.HTTP_202_ACCEPTED
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        return results
 
-"""
-    @jwt_required
+    """
+    @admin_required
     def delete(self, id):
         email = get_raw_jwt()['jti']
         user_id = get_email_by_id(email)['id']
 
         if not user_id:
-            resp = jsonify({"error": 'Non-existent user'})
-            resp.status_code = 403
-            return resp
+            results = jsonify({"error": 'Non-existent user'})
+            results.status_code = 403
+            return results
 
         user = Profile.query.get_or_404(user_id)
         try:
             delete = user.delete(user)
             response = make_response()
             response.status_code = 204
-            return response
+            return resultsonse
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            resp = jsonify({"error": str(e)})
-            resp.status_code = status.HTTP_401_UNAUTHORIZED
-            return resp
-
+            results = jsonify({"error": str(e)})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+            return results
 """
-
 
 class ProfileView(Resource):
     @jwt_required
     def get(self):
-        email = get_raw_jwt()['email']
-        users_query = db.session.query(Profile).filter(Profile.email==email).one()
-        results = users_query.serializable
-        return jsonify(results)
+        jwt_raw = get_raw_jwt()
+        email = jwt_raw['email']
+        try:
+            profile = db.session.query(Profile).filter(Profile.email == email).one()
+            results = jsonify(profile.serializable)
+        except SQLAlchemyError:
+            results = jsonify({"ERROR": f"User email not registered, email: {email}"})
+            results.status_code = status.HTTP_204_NO_CONTENT
+        return results
 
     @jwt_required
     def put(self):
         email = get_raw_jwt()['email']
-        user = users_query = db.session().query(Profile).filter(Profile.email == email).one()
+        user = db.session().query(Profile).filter(Profile.email == email).one()
         raw_data = request.get_json(force=True)
-
-        if raw_data['pic']:
-            user.picture = raw_data['pic']
-        user.name = raw_data['name']
-        db.session.commit()
-        return user.serializable
+        try:
+            if raw_data['pic']:
+                user.picture = raw_data['pic']
+            user.name = raw_data['name']
+            db.session.commit()
+            results = jsonify(user.serializable)
+            results.status_code = status.HTTP_202_ACCEPTED
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        return results
 
 
 class ExperienceView(Resource):
@@ -173,18 +193,14 @@ class ExperienceView(Resource):
         jwt_data = get_raw_jwt()
         experiences_query = db.session.query(Experience, Profile).filter(Experience.profile == Profile.id)
         # Apply filters
-        if jwt_data['isAdmin']:
-            if parse_data['userID']:
-                experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
-        else:
-            email = jwt_data['email']
-            user_id = get_user_by_email(email)['id']
-            experiences_query = experiences_query.filter(Experience.profile == user_id)
+        if parse_data['userID']:
+            experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
 
         if parse_data['date']:
             date_start = datetime.strptime(parse_data['date'], "%Y-%m-%d").date()
             date_finish = date_start + timedelta(days=1)
-            experiences_query = experiences_query.filter(Experience.begin_date >= date_start).filter( date_finish >= Experience.end_date)
+            experiences_query = experiences_query.filter(Experience.begin_date >= date_start).filter(
+                date_finish >= Experience.end_date)
 
         else:
             if parse_data['begin_date']:
@@ -210,36 +226,42 @@ class ExperienceView(Resource):
     def post(self):
         jwt_data = get_raw_jwt()
         email = jwt_data['email']
-        user_id = get_user_by_email(email)['id']
+        user_id = get_user_by_email(email).id
         raw_data = request.get_json(force=True)
         try:
-            message = raw_data
-            begin_date = datetime.strptime(message['begin_date'], "%Y-%m-%d %H:%M:%S")
-            template = db.session.query(Template).get(message['template'])
-            total_duration = message['num_test'] * (template.duration + 60)  # 1 min for test setup
+            begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
+            template = db.session.query(Template).get(raw_data['template'])
+            if 'end_date' in raw_data.keys():
+                end_date = raw_data['end_date']
+            else:
+                total_duration = raw_data['num_test'] * (template.duration + 60)  # 1 min for test setup
+                end_date = begin_date + timedelta(0, total_duration)
 
-            experience = Experience(name=message['name'],
+            experience = Experience(name=raw_data['name'],
                                     begin_date=begin_date,
-                                    num_test=message['num_test'],
-                                    end_date=begin_date + timedelta(0, total_duration),
+                                    num_test=raw_data['num_test'],
+                                    end_date= end_date,
                                     status='SCHEDULED',
                                     profile=user_id,
-                                    template=message['template'],
+                                    template=raw_data['template'],
                                     register_date=datetime.now())
 
             experience.add(experience)
-            return experience.serializable, status.HTTP_201_CREATED
+            results = jsonify(experience.serializable)
+            results.status_code = status.HTTP_201_CREATED
 
         except ValidationError as err:
-            resp = jsonify({"error": err.messages})
-            resp.status_code = status.HTTP_403_FORBIDDEN
-            return resp
-
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
         except SQLAlchemyError as e:
             db.session.rollback()
-            resp = jsonify({"error": str(e)})
-            resp.status_code = status.HTTP_400_BAD_REQUEST
-            return resp
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        return results
 
 
 class ExperienceInfoView(Resource):
@@ -247,8 +269,9 @@ class ExperienceInfoView(Resource):
     @jwt_required
     def get(self, id):
         jwt_data = get_raw_jwt()
-        user_id = get_user_by_email(jwt_data['email'])['id']
-        query = db.session.query(Experience, Template).filter(Experience.id==id).filter(Experience.template == Template.id).one()
+        user_id = get_user_by_email(jwt_data['email']).id
+        query = db.session.query(Experience, Template).filter(Experience.id == id).filter(
+            Experience.template == Template.id).one()
         experience = query[0].serializable
         template = query[1].serializable
         if not jwt_data['isAdmin'] and experience.profile != user_id:
@@ -263,11 +286,11 @@ class ExperienceScheduleView(Resource):
     def get(self):
 
         date_now = datetime.now()
-        experience_schedule_query = db.session.query(Experience, Profile)\
-            .filter(Experience.end_date >= date_now)\
-            .filter(Experience.profile == Profile.id)\
-            .order_by(Experience.begin_date.asc())\
-            .limit(2)\
+        experience_schedule_query = db.session.query(Experience, Profile) \
+            .filter(Experience.end_date >= date_now) \
+            .filter(Experience.profile == Profile.id) \
+            .order_by(Experience.begin_date.asc()) \
+            .limit(2) \
             .all()
         calendar = {'current_experience': None, 'next_experience': None}
 
@@ -296,6 +319,169 @@ class ExperienceScheduleView(Resource):
         return experience
 
 
+class TemplateView(Resource):
+    @jwt_required
+    def get(self):
+        parse_data = parser.parse_args()
+        return jsonify(self.template_query(parse_data))
+
+    @jwt_required
+    def post(self):
+        raw_data = request.get_json(force=True)
+        try:
+            jwt_data = get_raw_jwt()
+            user_id = get_user_by_email(jwt_data['email']).id
+            template = Template(profile=user_id, duration=raw_data['template']['duration'], name=raw_data['template']['name'])
+            template.add(template)
+            print(template)
+            for apu_config_item in raw_data['config_list']:
+                apu_config = APU_Config(
+                   apu = apu_config_item['apu'],
+                    ip = apu_config_item['ip'],
+                    protocol = apu_config_item['protocol'],
+                    base_template = apu_config_item['base_template'],
+                    template = template.id)
+                apu_config.add(apu_config)
+                results = jsonify(self.template_query(parser_data=None, id=template.id))
+                results.status_code = status.HTTP_201_CREATED
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+
+        return results
+
+
+    @staticmethod
+    def template_query(parse_data, id=None):
+        templates_query = db.session.query(Template, Profile, APU_Config) \
+            .filter(Template.profile == Profile.id) \
+            .filter(Template.id == APU_Config.template)
+        # Apply filters
+
+        if id:
+            templates_query = templates_query.filter(Template.id == id)
+        else:
+            if parse_data['userID']:
+                templates_query = templates_query.filter(Template.profile == parse_data['userID'])
+            if parse_data['content']:
+                templates_query = templates_query.filter(Template.name.contains(parse_data['content']))
+        query_results = templates_query.all()
+
+        response = {}
+        for template, profile, apu_config in query_results:
+            if not template in response.keys():
+                response[template] = {'author': profile, 'config': []}
+            response[template]['config'].append(apu_config.serializable)
+        results = []
+        for template in response.keys():
+            results.append({'template': template.serializable, 'author': response[template]['author'].name,
+                            'config_list': response[template]['config']})
+        return results
+
+class TemplateInfoView(Resource):
+    def get(self, id):
+        parse_data = parser.parse_args()
+        results = TemplateView.template_query(parse_data, id)
+        return jsonify(results[0])
+
+
+class NodeView(Resource):
+    @jwt_required
+    def get(self):
+        apu_query = db.session.query(APU).all()
+        return jsonify([apu.serializable for apu in apu_query])
+
+    @admin_required
+    def post(self):
+        raw_data = request.get_json(force=True)
+        db.session.query(APU)
+        try:
+            apu = APU(ip=raw_data['ip'], name=raw_data['name'])
+            apu.add(apu)
+            return apu.serializable, status.HTTP_201_CREATED
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+            return results
+
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        return results
+
+class NodeInfoView(Resource):
+
+    @jwt_required
+    def get(self, id):
+        apu = db.session.query(APU).get(id)
+        if not apu:
+            results = jsonify({"ERROR": f"APU not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+
+        apu_request = f'http://{apu.ip}:5000/testi'
+        try:
+            results = requests.get(apu_request, timeout=2)
+            return jsonify(results.json())
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
+
+    @admin_required
+    def put(self, id):
+        raw_data = request.get_json(force=True)
+        apu = db.session.query(APU).get(id)
+        print("\n\n id", apu)
+        if not apu:
+            results = jsonify({"ERROR": f" Apu {id} not registered"})
+            results.status_code = status.HTTP_204_NO_CONTENT
+            return results
+        try:
+            if raw_data['name']:
+                apu.name = raw_data['name']
+            if raw_data['ip']:
+                apu.ip = raw_data['ip']
+            db.session.commit()
+            results = jsonify(apu.serializable)
+            results.status_code = status.HTTP_202_ACCEPTED
+        except SQLAlchemyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(err.messages)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        return results
+
+    @admin_required
+    def delete(self, id):
+        apu = db.session.query(APU).get(id)
+        if not apu:
+            results = jsonify({"ERROR": f"APU not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+        apu.delete(apu)
+        return jsonify(apu.serializable)
+
+
 api.add_resource(UserView, '/user', '/user/')
 api.add_resource(UserInfoView, '/user/<int:id>', '/user/<int:id>/')
 api.add_resource(RoleView, '/role', '/role/')
@@ -303,3 +489,7 @@ api.add_resource(ProfileView, '/profile', '/profile/')
 api.add_resource(ExperienceView, '/experience', '/experience/')
 api.add_resource(ExperienceInfoView, '/experience/<int:id>', '/experience/<int:id>/')
 api.add_resource(ExperienceScheduleView, '/experience/now', '/experience/now/')
+api.add_resource(TemplateView, '/template', '/template/')
+api.add_resource(TemplateInfoView, '/template/<int:id>', '/template/<int:id>/')
+api.add_resource(NodeView, '/node', '/node/')
+api.add_resource(NodeInfoView, '/node/<int:id>', '/node/<int:id>/')
