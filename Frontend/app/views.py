@@ -871,37 +871,60 @@ def processAP(request):
 
 def registerTest(request):
     if request.user.is_authenticated:
-        return render(request, 'calendar/registerTest.html')
+        
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + 'template', headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            logging.debug("API ERROR: " + str(r.status_code))
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        
+        json = r.json()
+
+        lista = []
+
+        for i in json:
+            lista.append(i['template']['id'])
+        
+        lista.sort()
+
+        return render(request, 'calendar/registerTest.html', {'database':lista })
     else:
         return redirect('login')
-
 
 def registerTestSave(request):
     if request.user.is_authenticated:
-
         try:
-           name = request.POST['name']
-           begin_date = request.POST['start_time']
-           end_date = request.POST['end_time']
-        except  Exception as e:
-            print(e)
-            messages.error(request, 'Something went wrong')
+            name = request.POST['name']
+            begin_date = request.POST['begin_date']
+            end_date = request.POST['end_date']
+            template = int(request.POST['template'])
+            num_test = int(request.POST['num_test'])
+        except Exception as e:
+            logging.debug("Parsing exception: " + e)
+            messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        
+        begin_date = begin_date.split("T")[0] + " " + begin_date.split("T")[1] + ":00"
+        end_date = end_date.split("T")[0] + " " + end_date.split("T")[1] + ":00"
 
-        token = tokenizer.nodeToken(request.user.email)
-        message = {'name': name, 'begin_date': begin_date, 'end_date': end_date}
+        msg = {'name' : name, 'begin_date' : begin_date, 'end_date' : end_date, 'template' : template, 'num_test' : num_test}
 
-        r = requests.post(API + "experience", json=message, headers={'Authorization': 'Bearer ' + token})
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.post(API + "experience", json=msg, headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 201:
-            messages.error(request, 'Something went wrong')
+            print(r.status_code)
+            logging.debug("API CODE ERROR: " + str(r.status_code))
+            messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        return redirect('calendar/calendar.html')
+        messages.info(request, "Test booked up")
+        return redirect('calendar')
 
     else:
         return redirect('login')
-
 
 def calendar(request):
     if request.user.is_authenticated:
@@ -923,7 +946,7 @@ def calendar(request):
             name = test['author'] + ' - ' + test['name']
             data = test['begin_date']
             tests.append({'name': name, 'date': data, 'id': str(t_id), 'type': 'event'})
-        print(tests)
+        
         return render(request, 'calendar/calendar.html', {'database': tests})
     else:
         return redirect('login')
