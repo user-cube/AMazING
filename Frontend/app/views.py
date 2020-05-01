@@ -136,7 +136,7 @@ def profile(request):
             'year': datetime.now().year
         }
 
-        return render(request, 'user/nonAdmin/profile/profile.html', tparams)
+        return render(request, 'user/generic/profile/profile.html', tparams)
     else:
         return redirect('login')
 
@@ -191,7 +191,7 @@ def editProfile(request):
             'year': datetime.now().year
         }
 
-        return render(request, 'user/nonAdmin/profile/profileEdit.html', tparams)
+        return render(request, 'user/generic/profile/profileEdit.html', tparams)
     else:
         return redirect('login')
 
@@ -974,6 +974,30 @@ def listTemplates(request):
         }
 
         return render(request, 'network/templates/listTemplates.html', tparms)
+
+    else:
+        return redirect('login')
+
+
+def templateInfo(request, templateID):
+    if request.user.is_authenticated:
+
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "template/" + str(templateID), headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        json = r.json()
+
+        tparms = {
+            'author' : json['author'],
+            'config_list' : json['config_list'],
+            'template' : json['template']
+        }
+
+        return render(request, 'network/templates/templateInfo.html', tparms)
 
     else:
         return redirect('login')
