@@ -20,33 +20,8 @@ db.init_app(app)
 
 @app.before_first_request
 def create_database():
-     db.create_all()
+    db.create_all()
 
-
-"""
-@app.route('/ola')
-@jwt_required
-def hello_world():
-    token = request.headers["Authorization"].split()[1]  # Split Bearer from token
-    return 'Hello World!'
-
-@app.route('/node/<nodeID>')
-def node_info(nodeID):
-    if nodeID=='1':
-    	r = requests.get('http://192.168.1.141:5000/testi')
-    	if r.status_code != 200:
-    		msg = {'msg': 'Erro 200'}
-    		return msg
-    	return jsonify(r.json())
-    	
-
-    if nodeID=='2':
-        r = requests.get('http://192.168.1.142:5000/testi')
-        if r.status_code != 200:
-            msg = {'msg': 'Erro 200'}
-            return msg
-        return jsonify(r.json())
-"""
 
 if __name__ == '__main__':
     app.run(host=app.config['HOST'],

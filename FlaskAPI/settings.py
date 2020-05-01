@@ -3,38 +3,31 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-pg_db_hostname = os.getenv('DB_HOST')
-pg_db_name = os.getenv('DB_NAME')
-pg_db_password = os.getenv('DB_PASS')
-pg_db_username = os.getenv('DB_USER')
-
-DEBUG = False
-PORT = 5000
+# Server Info
+DEBUG = os.getenv('DEBUG')
+PORT = os.getenv('PORT')
 HOST = os.getenv('END_HOST')
+
+# BD Info
+DB_HOST = os.getenv('DB_HOST')
+DB_NAME = os.getenv('DB_NAME')
+DB_PASSWORD = os.getenv('DB_PASS')
+DB_USERNAME = os.getenv('DB_USER')
+
 SQLALCHEMY_ECHO = True
 SQLALCHEMY_TRACK_MODIFICATIONS = True
-SECRET_KEY = "SOME SECRET"
+
 # PostgreSQL
-print(HOST)
-SQLALCHEMY_DATABASE_URI = "postgresql://{DB_USER}:{DB_PASS}@{DB_ADDR}/{DB_NAME}".format(DB_USER=pg_db_username,
-                                                                                        DB_PASS=pg_db_password,
-                                                                                        DB_ADDR=pg_db_hostname,
-                                                                                        DB_NAME=pg_db_name)
-
-
-SQLALCHEMY_TRACK_MODIFICATONS = False
-
+SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
 # JWT Decode CERT
 with open("certificates/publicKey.pem", 'rb') as reader:
     JWT_SECRET_KEY = reader.read()
 
+# These info are common between all environment
 
 # JWT Decode Algorithm
 JWT_DECODE_ALGORITHMS = ['RS256']
 
-
 # JWT Identifier
 JWT_IDENTITY_CLAIM = 'email'
-
-

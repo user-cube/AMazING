@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from marshmallow import Schema
 
 db = SQLAlchemy()
 session = None
@@ -132,11 +131,12 @@ class Experience(db.Model, CRUD):
             "template": self.template
         }
 
+
 class APU(db.Model, CRUD):
 
     __tablename__ = 'apu'
     id = db.Column(db.Integer, primary_key=True)
-    ip = db.Column(db.String(20))
+    ip = db.Column(db.String(20), unique=True)
     name = db.Column(db.String(10))
 
     def __init__(self, ip, name):
@@ -179,7 +179,7 @@ class APUConfig(db.Model, CRUD):
 class APUConfig_Template(db.Model, CRUD):
 
     __tablename__ = 'apuconfig_template'
-    id_nonexistent = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     apu_config = db.Column(db.Integer, db.ForeignKey('apuconfig.id'))
     template = db.Column(db.Integer, db.ForeignKey('template.id'))
 
