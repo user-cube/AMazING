@@ -644,11 +644,14 @@ def searchTest(request):
 
             token = tokenizer.gerateEmailToken(request.user.email)
 
-            if typeID != "" and content != "":
-                message = {'type': typeID, 'content': content}
+            print(typeID, content)
 
-                r = requests.get(API + "experience?typeID=" + typeID + "&content=" + content, json=message,
+            if typeID != "" and content != "":
+                if typeID == "0": r = requests.get(API + "experience?begin_date=" + content,
                                  headers={'Authorization': 'Bearer ' + token})
+                else: r = requests.get(API + "experience?content=" + content,
+                                 headers={'Authorization': 'Bearer ' + token})
+               
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
@@ -758,9 +761,9 @@ def searchTestAdmin(request):
             token = tokenizer.gerateEmailToken(request.user.email)
 
             if typeID != "" and content != "":
-                message = {'type': typeID, 'content': content}
-
-                r = requests.get(API + "experience?typeID=" + typeID + "&content=" + content, json=message,
+                if typeID == "0": r = requests.get(API + "experience?begin_date=" + content,
+                                 headers={'Authorization': 'Bearer ' + token})
+                else: r = requests.get(API + "experience?content=" + content,
                                  headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
