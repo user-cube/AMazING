@@ -6,7 +6,7 @@ load_dotenv()
 # Server Info
 DEBUG = os.getenv('DEBUG')
 PORT = os.getenv('PORT')
-HOST = os.getenv('END_HOST')
+END_HOST = os.getenv('END_HOST')
 
 # BD Info
 DB_HOST = os.getenv('DB_HOST')
