@@ -457,16 +457,20 @@ def searchUser(request):
             token = tokenizer.gerateEmailToken(request.user.email)
 
             if typeID != "" and content != "":
-                message = {'type': typeID, 'content': content}
-
-                r = requests.get(API + "user?typeID=" + typeID + "&content=" + content, json=message,
+                if typeID == "0": r = requests.get(API + "user?email=" + content,
+                                 headers={'Authorization': 'Bearer ' + token})
+                else: r = requests.get(API + "user?content=" + content,
                                  headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
                     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+                print(r.text)
+
                 json = r.json()
+
+                print(json)
 
                 return render(request, "user/admin/listUsers/list/allUsers.html",
                               {'year': datetime.now().year, 'database': json})

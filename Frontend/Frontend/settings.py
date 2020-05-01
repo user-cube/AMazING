@@ -133,6 +133,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('EMAIL')
 EMAIL_HOST_PASSWORD = os.getenv('PASS')
 
+"""
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -165,7 +166,7 @@ LOGGING = {
         },
     }
 }
-
+"""
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
