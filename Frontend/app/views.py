@@ -328,8 +328,7 @@ def userCreation(request):
             token = tokenizer.gerateEmailToken(email)
 
             message = {'email': email, 'name': name, 'role': role}
-
-            link = 'http://localhost:8000/create/user/validate/'
+            link = 'http://192.168.85.209:8005/create/user/validate/'
 
             r = requests.post(API + "user", json=message, headers={'Authorization': 'Bearer ' + token})
 
