@@ -11,12 +11,12 @@
 
     <div class="row">
         <div class="col-lg-10 ">
-            <form class="form-horizontal" method="post" action="{% url 'registertest' %}"
+            <form class="form-horizontal" method="post" action="{% url 'registertestsave' %}"
                   enctype="multipart/form-data">
                 {% csrf_token %}
                 <br>
                 <div class="form-group">
-                    <label class="col-lg-4" for="Name">Title</label>
+                    <label class="col-lg-4" for="name">Title</label>
                     <div class="col-lg-6">
                         <div class="input-group">
                             <input id="name" name="name" type="text"
@@ -26,17 +26,38 @@
                 </div>
                 <div class="form-group">
                     <div class="col-lg-6">
-                        <label>Start Date of the Test</label>
+                        <label class="col-lg-4" for="begin_date">Start date</label>
                         <div class="input-group-prepend">
-                            <input type="datetime-local" id="start_time" class="form-control" placeholder="05/16/2018 12:31" required>
+                            <input type="datetime-local" id="begin_date" name="begin_date" class="form-control" placeholder="05/16/2018 12:31" required>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-lg-4" for="NumTests">End Date of the Test</label>
+                    <label class="col-lg-4" for="end_date">End date</label>
                     <div class="col-lg-6">
                         <div class="input-group-prepend">
-                            <input type="datetime-local" id="end_time" class="form-control" placeholder="05/16/2018 12:31" required>
+                            <input type="datetime-local" id="end_date" name="end_date" class="form-control" placeholder="05/16/2018 12:31" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="num_test">Number os tests</label>
+                    <div class="col-lg-6">
+                        <div class="input-group-prepend">
+                            <input type="number" id="num_test" name="num_test" class="form-control" placeholder="Number of tests to realize" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4" for="template"></label>
+                    <div class="col-lg-6">
+                        <div class="input-group-prepend">
+                            <select id="template" name="template" required>
+                                <option value="0">None</option>
+                                {% for i in database  %}
+                                    <option value="{{i}}">Template {{i}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
