@@ -317,32 +317,44 @@ class TemplateView(Resource):
     @jwt_required
     def get(self):
         parse_data = parser.parse_args()
-        templates_query = db.session.query(Template, Profile, APUConfig, APUConfig_Template)\
-            .filter(Template.profile == Profile.id)\
-            .filter(Template.id == APUConfig_Template.template)\
-            .filter(APUConfig_Template.apu_config == APUConfig.id)
+        return jsonify(self.template_query(parse_data))
+
+    @jwt_required
+    def post(self):
+        raw_data = request.get_json(force=True)
+
+    @staticmethod
+    def template_query(parse_data, id=None):
+        templates_query = db.session.query(Template, Profile, APU_Config) \
+            .filter(Template.profile == Profile.id) \
+            .filter(Template.id == APU_Config.template)
         # Apply filters
-        if parse_data['userID']:
-            templates_query = templates_query.filter(Experience.profile == parse_data['userID'])
-        if parse_data['content']:
-            templates_query = templates_query.filter(Experience.name.contains(parse_data['content']))
+
+        if id:
+            templates_query = templates_query.filter(Template.id == id)
+        else:
+            if parse_data['userID']:
+                templates_query = templates_query.filter(Template.profile == parse_data['userID'])
+            if parse_data['content']:
+                templates_query = templates_query.filter(Template.name.contains(parse_data['content']))
         query_results = templates_query.all()
 
         response = {}
-        for template, profile, apuconfig, apuconfig_template  in query_results:
+        for template, profile, apu_config in query_results:
             if not template in response.keys():
                 response[template] = {'author': profile, 'config': []}
-            response[template]['config'].append(apuconfig.serializable)
+            response[template]['config'].append(apu_config.serializable)
         results = []
         for template in response.keys():
             results.append({'template': template.serializable, 'author': response[template]['author'].name,
                             'config_list': response[template]['config']})
-        return jsonify(results)
-
+        return results
 
 class TemplateInfoView(Resource):
-    def get(self):
-        return 200
+    def get(self, id):
+        parse_data = parser.parse_args()
+        results = TemplateView.template_query(parse_data, id)
+        return jsonify(results[0])
 
 
 class NodeView(Resource):

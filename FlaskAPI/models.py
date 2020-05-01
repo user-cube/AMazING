@@ -53,8 +53,8 @@ class Profile(db.Model, CRUD):
         self.last_login = last_login
         self.role = role
 
-    def __repr__(self):
-        return '<user: {}, Email: {}, Role: {}'.format(self.name, self.email, self.role)
+   # def __repr__(self):
+    #    return '<user: {}, Email: {}, Role: {}'.format(self.name, self.email, self.role)
 
     @property
     def serializable(self):
@@ -152,44 +152,32 @@ class APU(db.Model, CRUD):
         }
 
 
-class APUConfig(db.Model, CRUD):
+class APU_Config(db.Model, CRUD):
 
-    __tablename__ = 'apuconfig'
+    __tablename__ = 'apu_config'
     id = db.Column(db.Integer, primary_key=True)
-    apu = db.Column(db.Integer, db.ForeignKey('apuconfig.id'))
+    apu = db.Column(db.Integer, db.ForeignKey('apu.id'))
     ip = db.Column(db.String(40))
     protocol = db.Column(db.String(50))
     base_template = db.Column(db.Integer)
+    template = db.Column(db.Integer, db.ForeignKey('template.id'))
 
-    def __init__(self, apu, ip, protocol, base_template):
+    def __init__(self, apu, ip, protocol, base_template, template):
         self.apu = apu
         self.ip = ip
         self.protocol = protocol
         self.base_template = base_template
+        self.template = template
 
+   # def __repr__(self):
+   #     return f'<apu = {self.apu}, ip = {self.ip}, protocol = {self.protocol}, base_template = {self.base_template}, template = {self.template}>'
+    @property
     def serializable(self):
         return {
             "id": self.id,
             "apu": self.apu,
             "ip": self.ip,
             "protocol": self.protocol,
-            "base_template": self.base_template
-        }
-
-class APUConfig_Template(db.Model, CRUD):
-
-    __tablename__ = 'apuconfig_template'
-    id = db.Column(db.Integer, primary_key=True)
-    apu_config = db.Column(db.Integer, db.ForeignKey('apuconfig.id'))
-    template = db.Column(db.Integer, db.ForeignKey('template.id'))
-
-    def __init__(self, apu_config, template):
-        self.apu_config = apu_config
-        self.template = template
-
-    @property
-    def serializable(self):
-        return {
-            "apu_config": self.apu_config,
+            "base_template": self.base_template,
             "template": self.template
         }
