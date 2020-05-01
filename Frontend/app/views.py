@@ -927,3 +927,24 @@ def calendar(request):
         return render(request, 'calendar/calendar.html', {'database': tests})
     else:
         return redirect('login')
+
+def listTemplates(request):
+    if request.user.is_authenticated:
+
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "template", headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        
+        json = r.json()
+
+        tparms = {
+            'database' : json
+        }
+
+        return render(request, 'network/templates/listTemplates.html', tparms)
+
+    else:
+        return redirect('login')

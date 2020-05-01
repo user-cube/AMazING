@@ -20,7 +20,7 @@ from django.contrib.auth import views as auth_views
 from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, \
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
     searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, \
-    checkTestsAdmin, searchTestAdmin, createAcessPoint, processAP, registerTestSave
+    checkTestsAdmin, searchTestAdmin, createAcessPoint, processAP, registerTestSave, listTemplates
 
 
 
@@ -51,6 +51,7 @@ urlpatterns = [
     path('network/status/<int:nodeID>', processNode, name="nodestatus"),
     path('network/create/AP', createAcessPoint, name="createap"),
     path('network/create/AP/save', processAP, name="saveap"),
+    path('network/templates/', listTemplates, name="listtemplates"),
     path('calendar/', calendar, name='calendar'),
     path('calendar/test', registerTest, name='registertest'),
     path('calendar/test/save', registerTestSave, name='registertestsave')
