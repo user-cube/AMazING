@@ -24,12 +24,14 @@
 
 
                     <p class="card-text">Register Date: {{ registerdate }}</p>
+                    {% if not user.is_superuser %}
                     <p class="card-text">Role:
                         {% if role == 1 %}
                             Expert
                         {% else %}
                             Beginner
                         {% endif %}</p>
+                    {% endif %}
                     {% if not user.is_superuser %}
                         {% if role == 2 %}
                             <div class="row">

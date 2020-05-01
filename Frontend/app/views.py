@@ -203,23 +203,26 @@ def updateProfile(request):
 
         try:
             name = request.POST['name']
-        except:
+        except Exception as e:
             messages.error(request, "Profile did not update.")
+            logger.debug("NO NAME: " + e)
             return redirect('profile')
 
         try:
             pic = request.FILES['picture'].file.read()
             b64pic = b64encode(pic)
             pic = b64pic.decode("utf-8")
-        except:
+        except Exception as e:
+            logger.debug("PIC: " + str(e))
             pic = None
 
         message = {'name': name, 'pic': pic}
 
         r = requests.put(API + "profile", json=message, headers={'Authorization': 'Bearer ' + token})
 
-        if r.status_code != 200:
+        if r.status_code != 202:
             messages.error(request, "Profile did not update.")
+            logger.info("STATUS CODE: " + str(r.status_code))
         else:
             messages.info(request, "Profile updated.")
         return redirect('profile')
@@ -432,8 +435,11 @@ def listUsers(request):
 
             tparms = {
                 'year': datetime.now().year,
-                'database': json
+                'database': json,
+                'nopic' : os.environ.get("NO_PIC")
             }
+
+            logger.info(json)
             return render(request, 'user/admin/listUsers/list/allUsers.html', tparms)
 
         else:

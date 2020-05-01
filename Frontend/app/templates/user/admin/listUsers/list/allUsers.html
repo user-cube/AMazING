@@ -80,8 +80,17 @@
             <tbody>
             {% for row in database %}
                 <tr>
-                    <td><img src="{{ row.picture }}" class="img-responsive img-thumbnail " alt="user"
-                             style="width: 50px; height: 50px"/></td>
+                    {% if row.picture == None %}
+                        <td><img src="{{ nopic }}" class="img-responsive img-thumbnail " alt="user"
+                             style="width: 50px; height: 50px"/>
+                        </td>
+                    {% else %}
+                        <td>
+                            <img src="{{ row.picture }}" class="img-responsive img-thumbnail " alt="user"
+                             style="width: 50px; height: 50px"/>
+                        </td>
+                    {% endif %}
+                    
                     <td>{{ row.name }}</td>
                     <td>{{ row.email }}</td>
                     <td>{{ row.register_date }}</td>
