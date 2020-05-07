@@ -78,8 +78,7 @@ class Template(db.Model, CRUD):
     duration = db.Column(db.BIGINT)
     profile = db.Column(db.Integer, db.ForeignKey('profile.id'))
 
-    def __init__(self, id, name, duration, profile):
-        self.id = id
+    def __init__(self, name, duration, profile):
         self.name = name
         self.duration = duration
         self.profile = profile

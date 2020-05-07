@@ -35,8 +35,10 @@ parser.add_argument('status')
 
 #       BASE Functions
 def get_user_by_email(email):
-    users_query = db.session().query(Profile).filter(Profile.email == email).one()
-    return users_query
+    user = db.session().query(Profile).filter(Profile.email == email).one()
+    print("\n\n\nUSER ", user)
+    print("\n\n\nUSER ID ", user.id)
+    return user
 
 
 def admin_required(fn):
@@ -46,7 +48,7 @@ def admin_required(fn):
         jwt_data = get_raw_jwt()
         print(jwt_data)
         if not jwt_data['isAdmin']:
-            results = jsonify({'ERROR': 'AUTHORIZATION_ERROR', 'CONTENT': 'Forbidden access, admins only!'})
+            results = jsonify({'ERROR': 'Forbidden access, admins only!'})
             results.status_code = status.HTTP_403_FORBIDDEN
             return results
         else:
@@ -213,7 +215,7 @@ class ExperienceView(Resource):
             experiences_query = experiences_query.filter(Experience.status == parse_data['status'])
         if parse_data['content']:
             experiences_query = experiences_query.filter(Experience.name.contains(parse_data['content']))
-        q = experiences_query.all()
+        q = experiences_query.order_by(Experience.begin_date.asc()).all()
         response = []
         for experience, profile in q:
             experience = experience.serializable
@@ -231,7 +233,7 @@ class ExperienceView(Resource):
         try:
             begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
             template = db.session.query(Template).get(raw_data['template'])
-            if 'end_date' in raw_data.keys():
+            if raw_data['end_date']:
                 end_date = raw_data['end_date']
             else:
                 total_duration = raw_data['num_test'] * (template.duration + 60)  # 1 min for test setup
@@ -257,6 +259,91 @@ class ExperienceView(Resource):
             db.session.rollback()
             results = jsonify({"ERROR": str(e)})
             results.status_code = status.HTTP_400_BAD_REQUEST
+        except ValueError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Value Error format:  {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        return results
+
+    @staticmethod
+    def except_if_exerience_unavailable(begin_date, end_date, id=None):
+        experiences = db.session.query(Experience).filter((begin_date <= Experience.begin_date <= end_date) or (begin_date <= Experience.end_date <= end_date))
+        print(experiences)
+        if not experiences:
+            return True
+        if len(experiences) > 
+        if experience[0].id ==
+
+class ExperienceInfoView(Resource):
+
+    @jwt_required
+    def get(self, id):
+        query = db.session.query(Experience, Template).filter(Experience.id == id).filter(
+            Experience.template == Template.id).one()
+        if not query:
+            results = jsonify({"ERROR": f"Experience not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+        experience = query[0].serializable
+        template = query[1].serializable
+        results = make_response({"experience": experience, "template": template})
+        results.status_code = status.HTTP_200_OK
+        return results
+
+    @jwt_required
+    def put(self, id): 
+        jwt_data = get_raw_jwt()
+        user_id = get_user_by_email(email).id
+        experience = db.session.query(Experience).get(id)
+
+        if not experience:
+            results = jsonify({"ERROR": f"Experience not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+        
+        if not jwt_data['isAdmin'] and experience.profile != user_id:
+            results = jsonify({'ERROR': 'Unauthorized access!'})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+            return results
+
+        raw_data = request.get_json(force=True)
+        try:
+            begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
+            template = db.session.query(Template).get(raw_data['template'])
+            if raw_data['end_date']:
+                end_date = raw_data['end_date']
+            else:
+                total_duration = raw_data['num_test'] * (template.duration + 60)  # 1 min for test setup
+                end_date = begin_date + timedelta(0, total_duration)
+
+            experience = db.session.query(Experience).get(id)
+            name = raw_data['name']
+            experience.begin_date = begin_date
+            experience.num_test =raw_data['num_test']
+            experience.end_date = end_date
+            experience.template=raw_data['template']
+
+            db.session.commit()
+            results = jsonify(experience.serializable)
+            results.status_code = status.HTTP_201_CREATED
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except ValueError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Value Error format:  {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        
         except KeyError as err:
             db.session.rollback()
             results = jsonify({"ERROR": f" Missing key {err}"})
@@ -264,22 +351,21 @@ class ExperienceView(Resource):
         return results
 
 
-class ExperienceInfoView(Resource):
-
     @jwt_required
-    def get(self, id):
-        jwt_data = get_raw_jwt()
-        user_id = get_user_by_email(jwt_data['email']).id
-        query = db.session.query(Experience, Template).filter(Experience.id == id).filter(
-            Experience.template == Template.id).one()
-        experience = query[0].serializable
-        template = query[1].serializable
-        if not jwt_data['isAdmin'] and experience.profile != user_id:
-            results = jsonify()
-            results.status_code = status.HTTP_401_UNAUTHORIZED
-        results = make_response({"experience": experience, "template": template})
-        results.status_code = status.HTTP_200_OK
-        return results
+    def delete(self, id):
+        user_id = get_user_by_email(email).id
+        experience = db.session.query(Experience).get(id)
+        if not experience:
+            results = jsonify({"ERROR": f"Experience not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+        elif experience.profile != user_id:
+            results = jsonify({'ERROR': 'Forbidden access!'})
+            results.status_code = status.HTTP_403_FORBIDDEN
+            return results
+        experience.delete(experience)
+        return jsonify(experience.serializable)
+
 
 
 class ExperienceScheduleView(Resource):
@@ -342,8 +428,8 @@ class TemplateView(Resource):
                     base_template = apu_config_item['base_template'],
                     template = template.id)
                 apu_config.add(apu_config)
-                results = jsonify(self.template_query(parser_data=None, id=template.id))
-                results.status_code = status.HTTP_201_CREATED
+            results = jsonify(self.template_query(id=template.id))
+            results.status_code = status.HTTP_201_CREATED
 
         except ValidationError as err:
             results = jsonify({"ERROR": err.messages})
@@ -361,7 +447,7 @@ class TemplateView(Resource):
 
 
     @staticmethod
-    def template_query(parse_data, id=None):
+    def template_query(parse_data=None, id=None):
         templates_query = db.session.query(Template, Profile, APU_Config) \
             .filter(Template.profile == Profile.id) \
             .filter(Template.id == APU_Config.template)
@@ -369,7 +455,7 @@ class TemplateView(Resource):
 
         if id:
             templates_query = templates_query.filter(Template.id == id)
-        else:
+        elif parse_data:
             if parse_data['userID']:
                 templates_query = templates_query.filter(Template.profile == parse_data['userID'])
             if parse_data['content']:
@@ -393,6 +479,56 @@ class TemplateInfoView(Resource):
         results = TemplateView.template_query(parse_data, id)
         return jsonify(results[0])
 
+    @jwt_required
+    def put(self, id):
+        jwt_data = get_raw_jwt()
+        user_id = get_user_by_email(email).id
+        template = db.session.query(Template).get(id)
+
+        if not template:
+            results = jsonify({"ERROR": f"Template not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+        
+        if not jwt_data['isAdmin'] and template.profile != user_id:
+            results = jsonify({'ERROR': 'Unauthorized access!'})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+            return results
+
+        raw_data = request.get_json(force=True)
+        try:
+            jwt_data = get_raw_jwt()
+            user_id = get_user_by_email(jwt_data['email']).id
+            
+            template.profile=user_id
+            template.duration=raw_data['template']['duration']
+            template.name=raw_data['template']['name']
+            template.add(template)
+            print(template)
+            for apu_config_item in raw_data['config_list']:
+                apu_config = db.session.query(APU_Config).get(apu_config_item['id'])
+                    apu_config.apu = apu_config_item['apu']
+                    apu_config.ip = apu_config_item['ip']
+                    apu_config.protocol = apu_config_item['protocol']
+                    apu_config.base_template = apu_config_item['base_template']
+                db.session.commit()
+            results = jsonify(self.template_query(id=template.id))
+            results.status_code = status.HTTP_201_CREATED
+
+        except ValidationError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+
+        return results
 
 class NodeView(Resource):
     @jwt_required
