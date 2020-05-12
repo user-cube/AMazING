@@ -601,19 +601,25 @@ def processNode(request, nodeID):
         dic = {}
         dic2 = {}
         for i in interfaces:
-            if interfaces[i]['ip'] != None:
-                dic['name'] = i
-                dic['end'] = interfaces[i]['addrs']
-                dic['ip']= interfaces[i]['ip']
-                dic['mac'] = interfaces[i]['mac']
-                lista.append(dic)
+            if interfaces[i]['logic_state'] != "DOWN":
+                if interfaces[i]['ip'] != None:
+                    dic['name'] = i
+                    dic['end'] = interfaces[i]['addrs']
+                    dic['ip']= interfaces[i]['ip']
+                    dic['mac'] = interfaces[i]['mac']
+                    lista.append(dic)
+                else:
+                    dic['name'] = i
+                    dic['end'] = [{'addr': '-', 'broadcast': '-', 'netmask': '-', 'peer': '-'}]
+                    dic['ip'] = '127.0.0.1'
+                    dic['mac'] = interfaces[i]['mac']
+                    lista.append(dic)
                 dic = {}
             else:
                 dic2['name'] = i
                 dic2['mac'] = interfaces[i]['mac']
                 lista2.append(dic2)
                 dic2 = {}
-
         try:
             uEmail = ongoing['email']
         except:

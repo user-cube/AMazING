@@ -51,13 +51,21 @@
                 <tr>
                 <tr>
                     {% for row in i.end %}
-                        <td></td>
+                        <td>{% if i.name|first in 'w'  %}
+                            <a class="btn btn-danger" href="#"
+                                       target="_blank"
+                                       rel="noopener noreferrer">Turn off interface</a>
+                        {% endif %}</td>
                         <td>{{ row.addr }}</td>
                         <td>{{ row.broadcast }}</td>
                         <td>{{ row.netmask }}</td>
                         <td>{{ row.peer }}</td>
                         <td>{{ i.mac }}</td>
-                        <td></td>
+                        <td>{% if i.name|first in 'w'  %}
+                            <a class="btn btn-primary" href="#"
+                                       target="_blank"
+                                       rel="noopener noreferrer">Scan AP</a>
+                        {% endif %}</td>
                     {% endfor %}
                 </tr>
                 </tbody>
