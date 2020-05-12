@@ -2,9 +2,7 @@ from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_raw_jwt
 from views import schema_blueprint
-from views import db
-
-import requests
+from models import db
 
 app = Flask(__name__)
 app.config.from_object('settings')
