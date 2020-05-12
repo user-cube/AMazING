@@ -63,6 +63,38 @@
                 </tbody>
             </table>
         {% endfor %}
+    {% if database2|length > 0%}
+        <h1>Down interfaces</h1>
+            <table class="table table-responsive-lg">
+                <thead class="thead-dark">
+                    <tr>
+                        <td><strong>{{ i.name }}</strong></td>
+                        <td>MAC</td>
+                        <td>Actions</td>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                {% for i in database2 %}
+                    {% if i.name|first in 'w'  %}
+                        <td>{{ i.name }}</td>
+                        <td>{{ i.mac }}</td>
+                        <td>{% if access == 1 %}
+                                {% if role == 1 %}
+                                    <a href="#"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="btn btn-success" >Turn On Interface</a>
+                                {% endif %}
+                        {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+    {% endif %}
         {% if ongoing == 1 %}
             {% if access == 1 %}
                 {% if isAdmin == 1 %}

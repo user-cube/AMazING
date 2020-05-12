@@ -597,14 +597,22 @@ def processNode(request, nodeID):
         interfaces = json['interfaces']
 
         lista = []
+        lista2 = []
         dic = {}
+        dic2 = {}
         for i in interfaces:
-            dic['name'] = i
-            dic['end'] = interfaces[i]['addrs']
-            dic['ip']= interfaces[i]['ip']
-            dic['mac'] = interfaces[i]['mac']
-            lista.append(dic)
-            dic = {}
+            if interfaces[i]['ip'] != None:
+                dic['name'] = i
+                dic['end'] = interfaces[i]['addrs']
+                dic['ip']= interfaces[i]['ip']
+                dic['mac'] = interfaces[i]['mac']
+                lista.append(dic)
+                dic = {}
+            else:
+                dic2['name'] = i
+                dic2['mac'] = interfaces[i]['mac']
+                lista2.append(dic2)
+                dic2 = {}
 
         try:
             uEmail = ongoing['email']
@@ -626,6 +634,7 @@ def processNode(request, nodeID):
             'isAdmin' : isAdmin,
             'access' : access,
             'database' : lista,
+            'database2' : lista2,
             'hostname': hostname,
             'username': 'amazing',
             'password': password.decode("utf-8")
