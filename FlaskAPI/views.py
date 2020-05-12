@@ -276,8 +276,9 @@ class ExperienceView(Resource):
         print(experiences)
         if not experiences:
             return True
-        if len(experiences) > 
-        if experience[0].id ==
+        #if len(experiences) > 
+        #if experience[0].id ==
+        return False
 
 class ExperienceInfoView(Resource):
 
@@ -507,10 +508,10 @@ class TemplateInfoView(Resource):
             print(template)
             for apu_config_item in raw_data['config_list']:
                 apu_config = db.session.query(APU_Config).get(apu_config_item['id'])
-                    apu_config.apu = apu_config_item['apu']
-                    apu_config.ip = apu_config_item['ip']
-                    apu_config.protocol = apu_config_item['protocol']
-                    apu_config.base_template = apu_config_item['base_template']
+                apu_config.apu = apu_config_item['apu']
+                apu_config.ip = apu_config_item['ip']
+                apu_config.protocol = apu_config_item['protocol']
+                apu_config.base_template = apu_config_item['base_template']
                 db.session.commit()
             results = jsonify(self.template_query(id=template.id))
             results.status_code = status.HTTP_201_CREATED
