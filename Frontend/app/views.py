@@ -607,12 +607,14 @@ def processNode(request, nodeID):
                     dic['end'] = interfaces[i]['addrs']
                     dic['ip']= interfaces[i]['ip']
                     dic['mac'] = interfaces[i]['mac']
+                    dic['logic_state'] = interfaces[i]['logic_state']
                     lista.append(dic)
                 else:
                     dic['name'] = i
                     dic['end'] = [{'addr': '-', 'broadcast': '-', 'netmask': '-', 'peer': '-'}]
                     dic['ip'] = '127.0.0.1'
                     dic['mac'] = interfaces[i]['mac']
+                    dic['logic_state'] = interfaces[i]['logic_state']
                     lista.append(dic)
                 dic = {}
             else:
