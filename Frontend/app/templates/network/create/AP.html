@@ -7,6 +7,8 @@
                 <script>alert("{{ message }}")</script> {% endif %}
         {% endfor %}
     {% endif %}
+    <h1>Create New Access Point</h1>
+    <hr>
     <form method="post" action="{% url 'saveap' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row">
@@ -102,8 +104,11 @@
             <button type="submit" class="btn btn-primary"><i class="fa fa-wifi"> Create Access Point</i></button>
         </div>
     </form>
+    <hr>
+    <br>
     <br>
     <h1>Channel Frequency Information</h1>
+    <hr>
     <table class="table table-responsive-lg table-hover" style="text-align: center">
         <thead class="thead-dark">
         <tr>
