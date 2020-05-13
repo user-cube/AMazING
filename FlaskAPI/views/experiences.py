@@ -139,23 +139,15 @@ class ExperienceScheduleView(Resource):
         if len(experience_schedule_query) == 2:
             if datetime.strptime(experience_schedule_query[0][0].serializable['begin_date'],
                                  "%Y-%m-%d %H:%M:%S") < date_now:
-                calendar['current_experience'] = self.format_experience_calendar(experience_schedule_query[0])
-                calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[1])
+                calendar['current_experience'] = format_experience_calendar(experience_schedule_query[0])
+                calendar['next_experience'] = format_experience_calendar(experience_schedule_query[1])
             else:
-                calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[0])
+                calendar['next_experience'] = format_experience_calendar(experience_schedule_query[0])
 
         elif len(experience_schedule_query) == 1:
             if datetime.strptime(experience_schedule_query[0][0].serializable['begin_date'],
                                  "%Y-%m-%d %H:%M:%S") < date_now:
-                calendar['current_experience'] = self.format_experience_calendar(experience_schedule_query[0])
+                calendar['current_experience'] = format_experience_calendar(experience_schedule_query[0])
             else:
-                calendar['next_experience'] = self.format_experience_calendar(experience_schedule_query[0])
+                calendar['next_experience'] = format_experience_calendar(experience_schedule_query[0])
         return calendar
-
-    @staticmethod
-    def format_experience_calendar(experince_calendar_fragment):
-        experience = experince_calendar_fragment[0].serializable
-        profile = experince_calendar_fragment[1].serializable
-        experience['author'] = profile['name']
-        experience['email'] = profile['email']
-        return experience

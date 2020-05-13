@@ -100,3 +100,42 @@ class NodeInfoView(Resource):
         apu.delete(apu)
         return jsonify(apu.serializable)
 
+
+class NodeInterfaceView(Resource):
+
+    def get(self, id, interface, command):
+        apu = db.session.query(APU).get(id)
+        if not apu:
+            results = jsonify({"ERROR": f"APU not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+
+        apu_request = f'http://{apu.ip}:5000/{interface}/{command}'
+        try:
+            results = requests.get(apu_request, timeout=2)
+            return jsonify(results.json())
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
+
+    def post(self, id, interface, command):
+        apu = db.session.query(APU).get(id)
+        # apu = '127.0.0.1'
+        raw_data = request.get_json(force=True)
+        if not apu:
+            results = jsonify({"ERROR": f"APU not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+
+        apu_request = f'http://{apu.ip}:5000/{interface}/{command}'
+        # apu_request = f'http://{apu}:5001/{interface}/{command}'
+        try:
+            ip = raw_data['ip']
+            results = requests.post(url=apu_request, json={'ip':ip}, timeout=2)
+            print(results)
+            return jsonify(results.json())
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
