@@ -858,8 +858,12 @@ def processAP(request):
             return HttpResponseForbidden("No access")
 
         try:
-            APSSID = request.POST['APSSID']
             APPW = request.POST['APPW']
+        except:
+            APPW = None
+
+        try:
+            APSSID = request.POST['APSSID']
             Channel = request.POST['Channel']
             RangeStart = request.POST['RangeStart']
             RangeEnd = request.POST['RangeEnd']
@@ -884,6 +888,7 @@ def processAP(request):
         r = requests.post(API + "createAP", json=msg)
 
         if r.status_code != 200:
+            print(r.status_code)
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -981,6 +986,7 @@ def listTemplates(request):
         r = requests.get(API + "template", headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
+            print(r.status_code)
             messages.error(request, 'Something went wrong')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         
