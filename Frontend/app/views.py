@@ -873,7 +873,6 @@ def processAP(request):
         except Exception as e:
             print(e)
             return redirect('networkstatus')
-
         msg = {
             'APSSID' : APSSID,
             'APPW': APPW,
@@ -884,7 +883,6 @@ def processAP(request):
             'DFGateway' : DFGateway,
             'Netmask': Netmask
         }
-
         r = requests.post(API + "createAP", json=msg)
 
         if r.status_code != 200:
