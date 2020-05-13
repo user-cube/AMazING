@@ -136,7 +136,7 @@ def profile(request):
             'year': datetime.now().year
         }
 
-        return render(request, 'user/nonAdmin/profile/profile.html', tparams)
+        return render(request, 'user/generic/profile/profile.html', tparams)
     else:
         return redirect('login')
 
@@ -191,7 +191,7 @@ def editProfile(request):
             'year': datetime.now().year
         }
 
-        return render(request, 'user/nonAdmin/profile/profileEdit.html', tparams)
+        return render(request, 'user/generic/profile/profileEdit.html', tparams)
     else:
         return redirect('login')
 
@@ -203,23 +203,26 @@ def updateProfile(request):
 
         try:
             name = request.POST['name']
-        except:
+        except Exception as e:
             messages.error(request, "Profile did not update.")
+            logger.debug("NO NAME: " + e)
             return redirect('profile')
 
         try:
             pic = request.FILES['picture'].file.read()
             b64pic = b64encode(pic)
             pic = b64pic.decode("utf-8")
-        except:
+        except Exception as e:
+            logger.debug("PIC: " + str(e))
             pic = None
 
         message = {'name': name, 'pic': pic}
 
         r = requests.put(API + "profile", json=message, headers={'Authorization': 'Bearer ' + token})
 
-        if r.status_code != 200:
+        if r.status_code != 202:
             messages.error(request, "Profile did not update.")
+            logger.info("STATUS CODE: " + str(r.status_code))
         else:
             messages.info(request, "Profile updated.")
         return redirect('profile')
@@ -432,8 +435,11 @@ def listUsers(request):
 
             tparms = {
                 'year': datetime.now().year,
-                'database': json
+                'database': json,
+                'nopic' : os.environ.get("NO_PIC")
             }
+
+            logger.info(json)
             return render(request, 'user/admin/listUsers/list/allUsers.html', tparms)
 
         else:
@@ -591,15 +597,31 @@ def processNode(request, nodeID):
         interfaces = json['interfaces']
 
         lista = []
+        lista2 = []
         dic = {}
+        dic2 = {}
         for i in interfaces:
-            dic['name'] = i
-            dic['end'] = interfaces[i]['addrs']
-            dic['ip']= interfaces[i]['ip']
-            dic['mac'] = interfaces[i]['mac']
-            lista.append(dic)
-            dic = {}
-
+            if interfaces[i]['logic_state'] != "DOWN":
+                if interfaces[i]['ip'] != None:
+                    dic['name'] = i
+                    dic['end'] = interfaces[i]['addrs']
+                    dic['ip']= interfaces[i]['ip']
+                    dic['mac'] = interfaces[i]['mac']
+                    dic['logic_state'] = interfaces[i]['logic_state']
+                    lista.append(dic)
+                else:
+                    dic['name'] = i
+                    dic['end'] = [{'addr': '-', 'broadcast': '-', 'netmask': '-', 'peer': '-'}]
+                    dic['ip'] = '127.0.0.1'
+                    dic['mac'] = interfaces[i]['mac']
+                    dic['logic_state'] = interfaces[i]['logic_state']
+                    lista.append(dic)
+                dic = {}
+            else:
+                dic2['name'] = i
+                dic2['mac'] = interfaces[i]['mac']
+                lista2.append(dic2)
+                dic2 = {}
         try:
             uEmail = ongoing['email']
         except:
@@ -620,6 +642,7 @@ def processNode(request, nodeID):
             'isAdmin' : isAdmin,
             'access' : access,
             'database' : lista,
+            'database2' : lista2,
             'hostname': hostname,
             'username': 'amazing',
             'password': password.decode("utf-8")
@@ -805,7 +828,7 @@ def createAcessPoint(request):
         if access == 0:
             return HttpResponseForbidden("No access")
 
-        return render(request, "network/create/AP.html")
+        return render(request, "network/create/AP.html", {'year': datetime.now().year})
 
     else:
         return redirect('login')
@@ -835,8 +858,12 @@ def processAP(request):
             return HttpResponseForbidden("No access")
 
         try:
-            APSSID = request.POST['APSSID']
             APPW = request.POST['APPW']
+        except:
+            APPW = None
+
+        try:
+            APSSID = request.POST['APSSID']
             Channel = request.POST['Channel']
             RangeStart = request.POST['RangeStart']
             RangeEnd = request.POST['RangeEnd']
@@ -861,6 +888,7 @@ def processAP(request):
         r = requests.post(API + "createAP", json=msg)
 
         if r.status_code != 200:
+            print(r.status_code)
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -876,6 +904,7 @@ def registerTest(request):
         r = requests.get(API + 'template', headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
+            print(r.status_code)
             logging.debug("API ERROR: " + str(r.status_code))
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
@@ -889,7 +918,7 @@ def registerTest(request):
         
         lista.sort()
 
-        return render(request, 'calendar/registerTest.html', {'database':lista })
+        return render(request, 'calendar/registerTest.html', {'database':lista, 'year': datetime.now().year })
     else:
         return redirect('login')
 
@@ -947,7 +976,7 @@ def calendar(request):
             data = test['begin_date']
             tests.append({'name': name, 'date': data, 'id': str(t_id), 'type': 'event'})
         
-        return render(request, 'calendar/calendar.html', {'database': tests})
+        return render(request, 'calendar/calendar.html', {'database': tests, 'year': datetime.now().year})
     else:
         return redirect('login')
 
@@ -958,6 +987,7 @@ def listTemplates(request):
         r = requests.get(API + "template", headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
+            print(r.status_code)
             messages.error(request, 'Something went wrong')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         
@@ -968,6 +998,30 @@ def listTemplates(request):
         }
 
         return render(request, 'network/templates/listTemplates.html', tparms)
+
+    else:
+        return redirect('login')
+
+
+def templateInfo(request, templateID):
+    if request.user.is_authenticated:
+
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "template/" + str(templateID), headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        json = r.json()
+
+        tparms = {
+            'author' : json['author'],
+            'config_list' : json['config_list'],
+            'template' : json['template']
+        }
+
+        return render(request, 'network/templates/templateInfo.html', tparms)
 
     else:
         return redirect('login')

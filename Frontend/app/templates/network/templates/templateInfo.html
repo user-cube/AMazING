@@ -1,0 +1,40 @@
+{% extends 'structure/layout.html' %}
+{% block content %}
+
+<table class="table table-responsive-lg">
+        <thead class="thead-dark">
+        <tr>
+            <th>Author</th>
+            <th>APU Configuration</th>
+            <th>Duration (s)</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ author }}</td>
+                <td>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>APU Number</th>
+                        <th>IP</th>
+                        <th>Protocol</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in config_list %}
+                        <tr>
+                            <td>{{ i.apu }}</td>
+                            <td>{{ i.ip }}</td>
+                            <td>{{ i.protocol }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </td>
+                <td> {{template.duration}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+{% endblock %}

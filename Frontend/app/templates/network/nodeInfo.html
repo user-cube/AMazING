@@ -1,18 +1,5 @@
 {% extends 'structure/layout.html' %}
 
-{% block headers %}
-    <style>
-        table {
-            table-layout: fixed;
-            width: 100%;
-        }
-
-        td {
-            width: 25%;
-        }
-    </style>
-{% endblock %}
-
 {% block content %}
     {% if messages %}
         {% for message in messages %}
@@ -22,71 +9,128 @@
     {% endif %}
 
     <div class="container">
-        <h1>{{ hostname }} - Information</h1>
-        <hr>
+        <div class="row">
+            <div class="col-lg-10">
+                <h1>{{ hostname }} - Information</h1>
+            </div>
+            <div class="col-lg-2">
+                {% if access == 1 %}
+                    <a class="btn btn-warning" href="{% url 'createap' %}"><i class="fa fa-wifi"> Create Access Point</i></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <hr>
+    <table class="table table-responsive-lg table-hover" style="text-align: center">
+        <thead class="thead-dark">
+        <tr>
+            <th>Interface</th>
+            <th>Address</th>
+            <th>Broadcast</th>
+            <th>Netmask</th>
+            <th>Peer</th>
+            <th>MAC</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
         {% for i in database %}
-            <table class="table table-hover">
-                <thead>
-                <tr>
+            <tr>
+                {% for row in i.end %}
                     <td><strong>{{ i.name }}</strong></td>
-                    <td>Address</td>
-                    <td>Broadcast</td>
-                    <td>Netmask</td>
-                    <td>Peer</td>
-                    <td>MAC</td>
-                    <td>{% if access == 1 %}
-                        {% if i.ip == '127.0.0.1' %} {% else %}
+                    <td>{% if row.addr is None %} - {% else %}{{ row.addr }}{% endif %}</td>
+                    <td>{% if row.broadcast is None %} - {% else %}{{ row.broadcast }}{% endif %}</td>
+                    <td>{% if row.netmask is None %} - {% else %}{{ row.netmask }}{% endif %}</td>
+                    <td>{% if row.peer is None %} - {% else %}{{ row.peer }}{% endif %}</td>
+                    <td>{% if i.mac  is None %} - {% else %}{{ i.mac }}{% endif %}</td>
+                    <td>
+                        {% if i.name|first in 'w' %}
+                            <div class="container" style="text-align: center">
+                                <a class="btn btn-primary" href="#"
+                                   target="_blank"
+                                   rel="noopener noreferrer"><i class="fa fa-wifi"></i><span> Scan</span></a>
+                                <a class="btn btn-danger" href="#"
+                                   target="_blank"
+                                   rel="noopener noreferrer"><i class="fa fa-power-off"></i><span> Turn off</span></a>
+                            </div>
+                        {% else %}
+                            <div class="container" style="text-align: center">
+                                {% if access == 1 %}
+                                    {% if i.ip == '127.0.0.1' %}
+                                        No action available
+                                    {% else %}
+                                        {% if role == 1 %}
+                                            <a href="http://localhost:8888/?hostname={{ i.ip }}&username={{ username }}&password={{ password }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="btn btn-secondary"><strong><i class="fa fa-terminal"></i></strong><span> Open terminal</span></a>
+                                        {% else %}
+                                            No action available
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if database2|length > 0 %}
+        <h1>Down interfaces</h1>
+        <hr>
+        <table class="table table-responsive-lg table-hover" style="text-align: center; table-layout: fixed">
+            <thead class="thead-dark">
+            <tr>
+                <th>Interface</th>
+                <th>MAC</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                {% for i in database2 %}
+                    {% if i.name|first in 'w' %}
+                        <td><strong>{{ i.name }}</strong></td>
+                        <td>{{ i.mac }}</td>
+                        <td>{% if access == 1 %}
                             {% if role == 1 %}
-                                <a href="http://localhost:8888/?hostname={{ i.ip }}&username={{ username }}&password={{ password }}"
+                                <a href="#"
                                    target="_blank"
                                    rel="noopener noreferrer"
-                                   class="btn btn-success">Abrir Terminal</a>
-                            {% else %} {% endif %}
+                                   class="btn btn-success"><i class="fa fa-power-off"></i><span> Turn on</span></a>
+                            {% endif %}
                         {% endif %}
+                        </td>
                     {% endif %}
-                    </td>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                <tr>
-                    {% for row in i.end %}
-                        <td></td>
-                        <td>{{ row.addr }}</td>
-                        <td>{{ row.broadcast }}</td>
-                        <td>{{ row.netmask }}</td>
-                        <td>{{ row.peer }}</td>
-                        <td>{{ i.mac }}</td>
-                        <td></td>
-                    {% endfor %}
-                </tr>
-                </tbody>
-            </table>
-        {% endfor %}
-        {% if ongoing == 1 %}
-            {% if access == 1 %}
-                {% if isAdmin == 1 %}
-                    <h5><strong>OBS:</strong> there is on ongoing test. you can interact with this node using your admin
-                        permissions.</h5>
-                {% endif %}
-            {% else %}
-                {% if role == 0 %}
-                    <h5><strong>OBS:</strong> there is on ongoing test! you can't interact with this node because you
-                        are a beginner.</h5>
-                {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% endif %}
+    {% if ongoing == 1 %}
+        {% if access == 1 %}
+            {% if isAdmin == 1 %}
+                <h5><strong>OBS:</strong> there is on ongoing test. you can interact with this node using your admin
+                    permissions.</h5>
             {% endif %}
         {% else %}
-            {% if isAdmin == 1 %}
-                <h5><strong>OBS:</strong> there is on ongoing test you can interact with this node using your admin
-                    permissions.</h5>
-            {% else %}
-                <h5><strong>OBS:</strong> there is no on ongoing test!
-                </h5>
-                <h5>To interact with this node please <a href="{% url 'calendar' %}">book an experience.</a></h5>
+            {% if role == 0 %}
+                <h5><strong>OBS:</strong> there is on ongoing test! you can't interact with this node because you
+                    are a beginner.</h5>
             {% endif %}
         {% endif %}
-        {% if access == 1 %}
-            <a class="btn btn-primary" href="{% url 'createap' %}">Create Access Point</a>
+    {% else %}
+        {% if isAdmin == 1 %}
+            <h5><strong>OBS:</strong> there is on ongoing test you can interact with this node using your admin
+                permissions.</h5>
+        {% else %}
+            <h5><strong>OBS:</strong> there is no on ongoing test!
+            </h5>
+            <h5>To interact with this node please <a href="{% url 'calendar' %}">book an experience.</a></h5>
         {% endif %}
-    </div>
+    {% endif %}
 {% endblock %}
