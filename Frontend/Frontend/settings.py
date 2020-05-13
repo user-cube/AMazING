@@ -14,27 +14,27 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEBUG = False
 
+debugFlag = os.getenv('DJANGO_DEBUG')
+if debugFlag == "1": DEBUG = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-# SECURITY WARNING: don't run with debug turned on in production!
-if os.environ.get('DJANGO_DEBUG'):
+if DEBUG:
     print("Debug is enabled.")
     DEBUG = True
     # When not specified, ALLOW_HOSTS defaults to:
-    # ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '192.168.85.209']
 else:
-    DEBUG = False
     ALLOWED_HOSTS = ["192.168.85.209"]
 
 
@@ -133,7 +133,41 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('EMAIL')
 EMAIL_HOST_PASSWORD = os.getenv('PASS')
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'AMazING.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['file'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+        'MYAPP': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+    }
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'app/static')
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

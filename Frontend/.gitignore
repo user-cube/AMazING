@@ -2,3 +2,6 @@
 .idea/
 .env
 venv/
+AMazING.log
+debug.log
+info.log
