@@ -828,7 +828,7 @@ def createAcessPoint(request):
         if access == 0:
             return HttpResponseForbidden("No access")
 
-        return render(request, "network/create/AP.html")
+        return render(request, "network/create/AP.html", {'year': datetime.now().year})
 
     else:
         return redirect('login')
@@ -858,8 +858,12 @@ def processAP(request):
             return HttpResponseForbidden("No access")
 
         try:
-            APSSID = request.POST['APSSID']
             APPW = request.POST['APPW']
+        except:
+            APPW = None
+
+        try:
+            APSSID = request.POST['APSSID']
             Channel = request.POST['Channel']
             RangeStart = request.POST['RangeStart']
             RangeEnd = request.POST['RangeEnd']
@@ -884,6 +888,7 @@ def processAP(request):
         r = requests.post(API + "createAP", json=msg)
 
         if r.status_code != 200:
+            print(r.status_code)
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -899,6 +904,7 @@ def registerTest(request):
         r = requests.get(API + 'template', headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
+            print(r.status_code)
             logging.debug("API ERROR: " + str(r.status_code))
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
@@ -912,7 +918,7 @@ def registerTest(request):
         
         lista.sort()
 
-        return render(request, 'calendar/registerTest.html', {'database':lista })
+        return render(request, 'calendar/registerTest.html', {'database':lista, 'year': datetime.now().year })
     else:
         return redirect('login')
 
@@ -970,7 +976,7 @@ def calendar(request):
             data = test['begin_date']
             tests.append({'name': name, 'date': data, 'id': str(t_id), 'type': 'event'})
         
-        return render(request, 'calendar/calendar.html', {'database': tests})
+        return render(request, 'calendar/calendar.html', {'database': tests, 'year': datetime.now().year})
     else:
         return redirect('login')
 
@@ -981,6 +987,7 @@ def listTemplates(request):
         r = requests.get(API + "template", headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
+            print(r.status_code)
             messages.error(request, 'Something went wrong')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         

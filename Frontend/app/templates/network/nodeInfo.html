@@ -7,7 +7,19 @@
                 <script>alert("{{ message }}")</script> {% endif %}
         {% endfor %}
     {% endif %}
-    <h1>{{ hostname }} - Information</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10">
+                <h1>{{ hostname }} - Information</h1>
+            </div>
+            <div class="col-lg-2">
+                {% if access == 1 %}
+                    <a class="btn btn-warning" href="{% url 'createap' %}"><i class="fa fa-wifi"> Create Access Point</i></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
     <hr>
     <table class="table table-responsive-lg table-hover" style="text-align: center">
         <thead class="thead-dark">
@@ -98,9 +110,6 @@
             </tbody>
         </table>
 
-    {% endif %}
-    {% if access == 1 %}
-        <a class="btn btn-primary" href="{% url 'createap' %}">Create Access Point</a>
     {% endif %}
     {% if ongoing == 1 %}
         {% if access == 1 %}
