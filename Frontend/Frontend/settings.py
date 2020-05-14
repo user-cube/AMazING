@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app.apps.AppConfig',
     'datetimepicker',
-    'django_libsass_compass_mixins'
 ]
 
 MIDDLEWARE = [
