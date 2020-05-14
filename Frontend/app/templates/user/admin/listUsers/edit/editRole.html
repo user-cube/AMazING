@@ -10,7 +10,12 @@
             {% endfor %}
         {% endif %}
         <div class="col-lg-2">
-            <img src="{{ picture }}" class="img-responsive img-thumbnail ">
+            {% if picture|first in 'data' %}
+                <img src="{{ picture }}" class="img-responsive img-thumbnail ">
+            {% else %}
+                <img src="data:image/png;base64, {{ picture }}" class="img-responsive img-thumbnail ">
+            {% endif %}
+
             <br>
             <br>
         </div>

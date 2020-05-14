@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-{% if messages %}
+    {% if messages %}
         {% for message in messages %}
             {% if message.tags %}
                 <script>alert("{{ message }}")</script> {% endif %}
@@ -17,21 +17,22 @@
     <div class="container">
         <br>
         <br>
-        <a href="{% url 'registertest' %}" class="btn btn-success">
-            <span class="glyphicon glyphicon-thumbs-up"></span>Register Test</a>
+        <div class="col-lg-12" style="text-align: end">
+            <a href="{% url 'registertest' %}" class="btn btn-primary">
+                <span class="glyphicon glyphicon-thumbs-up"></span>Register Test</a>
 
+        </div>
+        <br>
         <div id="evoCalendar"></div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="{% static 'evo-calendar/js/evo-calendar.js' %}"></script>
 
         <script>
-
-
             $('#evoCalendar').evoCalendar({
                 theme: 'Royal Navy',
-                    calendarEvents: {% autoescape off %} {{ database }}
-            {% endautoescape %}
+                calendarEvents: {% autoescape off %} {{ database }}
+                {% endautoescape %}
             })
         </script>
     </div>

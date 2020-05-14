@@ -7,12 +7,15 @@
                 <script>alert("{{ message }}")</script> {% endif %}
         {% endfor %}
     {% endif %}
+    <h1>Create New Access Point</h1>
+    <hr>
     <form method="post" action="{% url 'saveap' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row">
             <div class="col-lg-6">
                 <label for="APSSID">AP SSID</label>
-                <input id="APSSID" name="APSSID" type="text" placeholder="AP SSID" class="form-control input-lg"
+                <input id="APSSID" name="APSSID" type="text" placeholder="AP SSID, p.e., IT NODE TEST"
+                       class="form-control input-lg"
                        required>
             </div>
             <div class="col-lg-6">
@@ -23,17 +26,53 @@
         </div>
         <br>
         <div class="form-row">
-            <div class="col-lg-3">
+            <div class="col-lg-4">
                 <label for="RangeStart">Range Start</label>
                 <input id="RangeStart" name="RangeStart" type="text"
-                       placeholder="AP Range Start" class="form-control input-lg" required>
+                       placeholder="AP Range Start, p.e, 10.10.10.0" class="form-control input-lg" required>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-4">
                 <label for="RangeEnd">Range End</label>
                 <input id="RangeEnd" name="RangeEnd" type="text"
-                       placeholder="AP Range End" class="form-control input-lg" required>
+                       placeholder="AP Range End, p.e, 10.10.10.100" class="form-control input-lg" required>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-4">
+                <label for="DFGateway">Default Gateway</label>
+                <input id="DFGateway" name="DFGateway" type="text"
+                       placeholder="AP Default Gateway, p.e, 192.168.1.96" class="form-control input-lg" required>
+            </div>
+        </div>
+        <br>
+        <div class="form-row">
+            <div class="col-lg-4">
+                <label for="Netmask">Network Mask</label>
+                <select id="Netmask" name="Netmask" class="form-control" required>
+                    <option value="255.0.0.0">/8</option>
+                    <option value="255.128.0.0">/9</option>
+                    <option value="255.192.0.0">/10</option>
+                    <option value="255.224.0.0">/11</option>
+                    <option value="255.240.0.0">/12</option>
+                    <option value="255.248.0.0">/13</option>
+                    <option value="255.252.0.0">/14</option>
+                    <option value="255.254.0.0">/15</option>
+                    <option value="255.255.0.0">/16</option>
+                    <option value="255.255.128.0">/17</option>
+                    <option value="255.255.192.0">/18</option>
+                    <option value="255.255.224.0">/19</option>
+                    <option value="255.255.240.0">/20</option>
+                    <option value="255.255.248.0">/21</option>
+                    <option value="255.255.252.0">/22</option>
+                    <option value="255.255.254.0">/23</option>
+                    <option value="255.255.255.0">/24</option>
+                    <option value="255.255.255.128">/25</option>
+                    <option value="255.255.255.192">/26</option>
+                    <option value="255.255.255.224">/27</option>
+                    <option value="255.255.255.240">/28</option>
+                    <option value="255.255.255.248">/29</option>
+                    <option value="255.255.255.252">/30</option>
+                </select>
+            </div>
+            <div class="col-lg-4">
                 <label for="Channel">Channel</label>
                 <select id="Channel" name="Channel" class="form-control" required>
                     <option>1</option>
@@ -52,7 +91,7 @@
                     <option>14</option>
                 </select>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-4">
                 <label for="Channel">Channel</label>
                 <select id="hw_mode" name="hw_mode" class="form-control" required>
                     <option>G</option>
@@ -61,21 +100,123 @@
             </div>
         </div>
         <br>
-        <div class="form-row">
-            <div class="col-lg-6">
-                <label for="DFGateway">Default Gateway</label>
-                <input id="DFGateway" name="DFGateway" type="text"
-                       placeholder="AP Default Gateway" class="form-control input-lg" required>
-            </div>
-            <div class="col-lg-6">
-                <label for="Netmask">Network Mask</label>
-                <input id="Netmask" name="Netmask" type="text"
-                       placeholder="AP Netmask" class="form-control input-lg" required>
-            </div>
-        </div>
-        <br>
         <div class="col-lg-12" style="text-align: center">
             <button type="submit" class="btn btn-primary"><i class="fa fa-wifi"> Create Access Point</i></button>
         </div>
     </form>
+    <hr>
+    <br>
+    <br>
+    <h1>Channel Frequency Information</h1>
+    <hr>
+    <table class="table table-responsive-lg table-hover" style="text-align: center">
+        <thead class="thead-dark">
+        <tr>
+            <th>Channel Number</th>
+            <th>Lower Frequency MHZ</th>
+            <th>Center Frequency MHZ</th>
+            <th>Upper Frequency MHZ</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td> 2401</td>
+            <td>2412</td>
+            <td>2423</td>
+        </tr>
+
+        <tr>
+            <td>2</td>
+            <td>2406</td>
+            <td>2417</td>
+            <td>2428</td>
+        </tr>
+
+        <tr>
+            <td>3</td>
+            <td>2411</td>
+            <td>2422</td>
+            <td>2433</td>
+        </tr>
+
+        <tr>
+            <td>4</td>
+            <td>2416</td>
+            <td>2427</td>
+            <td>2438</td>
+        </tr>
+
+        <tr>
+            <td>5</td>
+            <td>2421</td>
+            <td>2432</td>
+            <td>2443</td>
+        </tr>
+
+        <tr>
+            <td>6</td>
+            <td>2426</td>
+            <td>2437</td>
+            <td>2448</td>
+        </tr>
+
+        <tr>
+            <td>7</td>
+            <td>2431</td>
+            <td>2442</td>
+            <td>2453</td>
+        </tr>
+
+        <tr>
+            <td>8</td>
+            <td>2436</td>
+            <td>2447</td>
+            <td>2458</td>
+        </tr>
+
+        <tr>
+            <td>9</td>
+            <td>2441</td>
+            <td>2452</td>
+            <td>2463</td>
+        </tr>
+
+        <tr>
+            <td>10</td>
+            <td>2446</td>
+            <td>2457</td>
+            <td>2468</td>
+        </tr>
+
+        <tr>
+            <td>11</td>
+            <td>2451</td>
+            <td>2462</td>
+            <td>2473</td>
+        </tr>
+
+        <tr>
+            <td>12</td>
+            <td>2456</td>
+            <td>2467</td>
+            <td>2478</td>
+        </tr>
+
+        <tr>
+            <td>13</td>
+            <td>2461</td>
+            <td>2472</td>
+            <td>2483</td>
+        </tr>
+
+        <tr>
+            <td>14</td>
+            <td>2473</td>
+            <td>2484</td>
+            <td>2495</td>
+        </tr>
+
+        </tbody>
+    </table>
 {% endblock %}
