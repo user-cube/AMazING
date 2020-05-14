@@ -72,3 +72,12 @@ class Tokenizer:
                 datetime.now(timezone.utc) + timedelta(minutes=1)),
         }
         return jwtManager.encode(message, self.private_key, alg='RS256')
+
+    def debugToken(self, email):
+        message = {
+            'email': email,
+            'iat': get_int_from_datetime(datetime.now(timezone.utc)),
+            'exp': get_int_from_datetime(
+                datetime.now(timezone.utc) + timedelta(hours=24)),
+        }
+        return jwtManager.encode(message, self.private_key, alg='RS256')

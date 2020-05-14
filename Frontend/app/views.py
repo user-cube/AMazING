@@ -100,11 +100,9 @@ def profile(request):
     if request.user.is_authenticated:
 
         token = tokenizer.gerateEmailToken(request.user.email)
-        logger.info(token)
         r = requests.get(API + "profile", headers={'Authorization': 'Bearer ' + token})
-
         if r.status_code != 200:
-            logger.debug("WRONG API STATUS CODE: " + str(r.status_code) + " CONTENT: " + r.text)
+            logger.info("WRONG API STATUS CODE: " + str(r.status_code))
             return HttpResponseNotFound()
 
         json = r.json()
@@ -122,7 +120,7 @@ def profile(request):
         """
 
         if json['picture'] != None:
-            picture = json['picture']
+            picture = "data:image/png;base64," + json['picture']
         else:
             picture = os.environ.get("NO_PIC")
 
@@ -160,6 +158,7 @@ def editProfile(request):
         r = requests.get(API + "profile", headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
+            logger.info("STATUS CODE: " + str(r.status_code))
             return HttpResponseNotFound()
 
         json = r.json()
@@ -177,6 +176,7 @@ def editProfile(request):
         """
 
         if json['picture'] != None:
+            print(json['picture'])
             picture = "data:image/png;base64," + json['picture']
         else:
             picture = os.environ.get("NO_PIC")
