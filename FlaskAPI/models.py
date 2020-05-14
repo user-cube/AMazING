@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+import base64
 
 db = SQLAlchemy()
 session = None
@@ -40,7 +41,7 @@ class Profile(db.Model, CRUD):
     email = db.Column(db.String(200), nullable=False, unique=True)
     num_test = db.Column(db.INTEGER, nullable=True)
     register_date = db.Column(db.TIMESTAMP, nullable=False)
-    picture = db.Column(db.String(10485760), nullable=True)
+    picture = db.Column(db.LargeBinary, nullable=True)
     last_login = db.Column(db.TIMESTAMP, nullable=True)
     role = db.Column(db.Integer, db.ForeignKey('role.id'))
 
@@ -58,13 +59,18 @@ class Profile(db.Model, CRUD):
 
     @property
     def serializable(self):
+        print("\n\n\n\n, ", type(self.picture), self.name)
+        if self.picture:
+            pic = self.picture.decode("utf-8")
+        else: 
+            pic = None 
         return {
             "id": self.id,
             "name": self.name,
             "email": self.email,
             "num_test": self.num_test,
             "register_date": self.register_date.strftime("%Y-%m-%d %H:%M:%S"),
-            "picture": self.picture,
+            "picture": pic,
             "last_login": self.last_login,
             "role": self.role
         }
@@ -78,8 +84,7 @@ class Template(db.Model, CRUD):
     duration = db.Column(db.BIGINT)
     profile = db.Column(db.Integer, db.ForeignKey('profile.id'))
 
-    def __init__(self, id, name, duration, profile):
-        self.id = id
+    def __init__(self, name, duration, profile):
         self.name = name
         self.duration = duration
         self.profile = profile
