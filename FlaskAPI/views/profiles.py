@@ -15,7 +15,7 @@ class ProfileView(Resource):
         email = jwt_raw['email']
         try:
             profile = db.session.query(Profile).filter(Profile.email == email).one()
-            results = jsonify(profile.serializable)
+            results = profile.serializable
         except SQLAlchemyError:
             results = jsonify({"ERROR": f"User email not registered, email: {email}"})
             results.status_code = status.HTTP_204_NO_CONTENT
@@ -27,8 +27,11 @@ class ProfileView(Resource):
         user = db.session().query(Profile).filter(Profile.email == email).one()
         raw_data = request.get_json(force=True)
         try:
+            print("\n\n\n -> ", raw_data)
+            for key in raw_data.keys():
+                print(key, type(raw_data[key]))
             if raw_data['pic']:
-                user.picture = raw_data['pic']
+                user.picture = str.encode(raw_data['pic'])
             user.name = raw_data['name']
             db.session.commit()
             results = jsonify(user.serializable)

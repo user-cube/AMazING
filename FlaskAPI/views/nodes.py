@@ -46,6 +46,7 @@ class NodeView(Resource):
 
 class NodeInfoView(Resource):
 
+   """
     @jwt_required
     def get(self, id):
         apu = db.session.query(APU).get(id)
@@ -62,6 +63,7 @@ class NodeInfoView(Resource):
             results = jsonify({"ERROR": f"{apu.name}: not founded"})
             results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
             return results
+"""
 
     @admin_required
     def put(self, id):
