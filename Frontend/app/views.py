@@ -1046,7 +1046,7 @@ def interfaceDown(request, node, iName):
             messages.error(request, 'Something went wrong')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        messages.info(request, "Interface Up")
+        messages.info(request, "Interface Down")
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     else:
         return redirect('login')
