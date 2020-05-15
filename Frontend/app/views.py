@@ -1030,10 +1030,12 @@ def interfaceUP(request, node, iName):
         token = tokenizer.simpleToken(request.user.email)
         r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/up", headers={'Authorization': 'Bearer ' + token})
         if r.status_code != 200:
-            messages.error(request, 'Something went wrong')
+            json = r.json()
+            messages.error(request, json['msg'])
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        messages.info(request, "Interface Up")
+        json = r.json()
+        messages.info(request, json['msg'])
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     else:
         return redirect('login')
@@ -1043,10 +1045,11 @@ def interfaceDown(request, node, iName):
         token = tokenizer.simpleToken(request.user.email)
         r = requests.get(API + "node/" + str(node) + "/" + str(iName)  + "/down", headers={'Authorization': 'Bearer ' + token})
         if r.status_code != 200:
-            messages.error(request, 'Something went wrong')
+            json = r.json()
+            messages.error(request, json['msg'])
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
-        messages.info(request, "Interface Down")
+        json = r.json()
+        messages.info(request, json['msg'])
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     else:
         return redirect('login')
