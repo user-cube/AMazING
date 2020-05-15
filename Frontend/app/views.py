@@ -1025,10 +1025,10 @@ def templateInfo(request, templateID):
     else:
         return redirect('login')
 
-def interfaceUP(request, node, iname):
+def interfaceUP(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + "node/" + str(node) + "/" + str(iname) + "/up", headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/up", headers={'Authorization': 'Bearer ' + token})
         if r.status_code != 200:
             messages.error(request, 'Something went wrong')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
@@ -1038,10 +1038,10 @@ def interfaceUP(request, node, iname):
     else:
         return redirect('login')
 
-def interfaceDown(request, node, iname):
+def interfaceDown(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + "node/" + str(node) + "/" + str(iname)  + "/down", headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName)  + "/down", headers={'Authorization': 'Bearer ' + token})
         if r.status_code != 200:
             messages.error(request, 'Something went wrong')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

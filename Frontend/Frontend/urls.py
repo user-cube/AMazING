@@ -57,6 +57,6 @@ urlpatterns = [
     path('calendar/', calendar, name='calendar'),
     path('calendar/test', registerTest, name='registertest'),
     path('calendar/test/save', registerTestSave, name='registertestsave'),
-    path('network/interface/<int:node>/<str:iname>/up', interfaceUP, name = 'interfaceup'),
-    path('network/interface/<int:node>/<str:iname>/down', interfaceDown, name = 'interfacedown')
+    path('network/interface/<int:node>/<str:iName>/up', interfaceUP, name = 'interfaceup'),
+    path('network/interface/<int:node>/<str:iName>/down', interfaceDown, name = 'interfacedown')
 ]
