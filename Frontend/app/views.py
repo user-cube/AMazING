@@ -1029,14 +1029,15 @@ def interfaceUP(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
         r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/up", headers={'Authorization': 'Bearer ' + token})
+
         if r.status_code != 200:
             json = r.json()
             messages.error(request, json['msg'])
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            return redirect('nodestatus', nodeID=node)
 
         json = r.json()
         messages.info(request, json['msg'])
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect('nodestatus', nodeID=node)
     else:
         return redirect('login')
 
@@ -1044,12 +1045,14 @@ def interfaceDown(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
         r = requests.get(API + "node/" + str(node) + "/" + str(iName)  + "/down", headers={'Authorization': 'Bearer ' + token})
+
         if r.status_code != 200:
             json = r.json()
             messages.error(request, json['msg'])
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            return redirect('nodestatus', nodeID=node)
+
         json = r.json()
         messages.info(request, json['msg'])
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect('nodestatus', nodeID=node)
     else:
         return redirect('login')
