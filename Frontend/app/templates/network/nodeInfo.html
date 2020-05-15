@@ -47,10 +47,8 @@
                         {% if i.name|first in 'w' %}
                             <div class="container" style="text-align: center">
                                 <a class="btn btn-primary" href="/newtork/interface/{{ nodeID }}/{{ i.name }}/scan"
-                                   target="_blank"
                                    rel="noopener noreferrer"><i class="fa fa-wifi"></i><span> Scan</span></a>
                                 <a class="btn btn-danger" href="/newtork/interface/{{ nodeID }}/{{ i.name }}/down"
-                                   target="_blank"
                                    rel="noopener noreferrer"><i class="fa fa-power-off"></i><span> Turn off</span></a>
                             </div>
                         {% else %}
@@ -98,8 +96,6 @@
                         <td>{% if access == 1 %}
                             {% if role == 1 %}
                                 <a href="/newtork/interface/{{ nodeID }}/{{ i.name }}/up"
-                                   target="_blank"
-                                   rel="noopener noreferrer"
                                    class="btn btn-success"><i class="fa fa-power-off"></i><span> Turn on</span></a>
                             {% endif %}
                         {% endif %}
