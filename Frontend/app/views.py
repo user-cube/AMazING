@@ -645,7 +645,8 @@ def processNode(request, nodeID):
             'database2' : lista2,
             'hostname': hostname,
             'username': 'amazing',
-            'password': password.decode("utf-8")
+            'password': password.decode("utf-8"),
+            'nodeID' : nodeID
         }
 
         return render(request, "network/nodeInfo.html", tparms)
@@ -1021,5 +1022,31 @@ def templateInfo(request, templateID):
 
         return render(request, 'network/templates/templateInfo.html', tparms)
 
+    else:
+        return redirect('login')
+
+def interfaceUP(request, iname):
+    if request.user.is_authenticated:
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "node/" + str(iname) + "/up", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        messages.info(request, "Interface Up")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    else:
+        return redirect('login')
+
+def interfaceDown(request, iname):
+    if request.user.is_authenticated:
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "node/" + str(iname) + "/down", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            messages.error(request, 'Something went wrong')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        messages.info(request, "Interface Up")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     else:
         return redirect('login')
