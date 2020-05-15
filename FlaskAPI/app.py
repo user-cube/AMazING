@@ -29,7 +29,7 @@ db.init_app(app)
 @app.before_first_request
 def create_database():
     db.create_all()
-
+"""
 @app.route("/node/<nodeID>", methods=['GET'])
 @jwt_required
 def nodeInfo(nodeID):
@@ -48,6 +48,7 @@ def nodeInfo(nodeID):
     else:
         json = r.json()
         return jsonify(json)
+"""
 
 if __name__ == '__main__':
     app.run(host=app.config['END_HOST'],

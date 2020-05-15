@@ -45,6 +45,23 @@ class NodeView(Resource):
 
 
 class NodeInfoView(Resource):
+    @jwt_required
+    def get(self, id):
+        apu = db.session.query(APU).get(id)
+        if not apu:
+            results = jsonify({"ERROR": f"APU not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+
+        apu_request = f'http://{apu.ip}:5000/testi'
+        try:
+            results = requests.get(apu_request, timeout=2)
+            return jsonify(results.json())
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
+    
     @admin_required
     def put(self, id):
         raw_data = request.get_json(force=True)
@@ -71,27 +88,6 @@ class NodeInfoView(Resource):
             results = jsonify({"ERROR": f" Missing key {err}"})
             results.status_code = status.HTTP_400_BAD_REQUEST
         return results
-
-"""
-    @jwt_required
-    def get(self, id):
-        apu = db.session.query(APU).get(id)
-        if not apu:
-            results = jsonify({"ERROR": f"APU not found, id {id}"})
-            results.status_code = status.HTTP_404_NOT_FOUND
-            return results
-
-        apu_request = f'http://{apu.ip}:5000/testi'
-        try:
-            results = requests.get(apu_request, timeout=2)
-            return jsonify(results.json())
-        except requests.exceptions.ConnectionError:
-            results = jsonify({"ERROR": f"{apu.name}: not founded"})
-            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
-            return results
-"""
-
-
 
 
     @admin_required
