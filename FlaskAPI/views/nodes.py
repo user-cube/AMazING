@@ -102,7 +102,6 @@ class NodeInfoView(Resource):
 
 
 class NodeInterfaceView(Resource):
-
     def get(self, id, interface, command):
         apu = db.session.query(APU).get(id)
         if not apu:
@@ -112,8 +111,10 @@ class NodeInterfaceView(Resource):
 
         apu_request = f'http://{apu.ip}:5000/{interface}/{command}'
         try:
-            results = requests.get(apu_request, timeout=2)
-            return jsonify(results.json())
+            response = requests.get(apu_request, timeout=2)
+            results = jsonify(response.json())
+            results.status_code = response.status_code
+            return results
         except requests.exceptions.ConnectionError:
             results = jsonify({"ERROR": f"{apu.name}: not founded"})
             results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
@@ -132,10 +133,32 @@ class NodeInterfaceView(Resource):
         # apu_request = f'http://{apu}:5001/{interface}/{command}'
         try:
             ip = raw_data['ip']
-            results = requests.post(url=apu_request, json={'ip':ip}, timeout=2)
-            print(results)
-            return jsonify(results.json())
+            response = requests.post(url=apu_request, json={'ip':ip}, timeout=2)
+            results = jsonify(response.json())
+            results.status_code = response.status_code
+            return results
         except requests.exceptions.ConnectionError:
             results = jsonify({"ERROR": f"{apu.name}: not founded"})
             results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
             return results
+
+class NodeAcessPoint(Resource):
+    def post(self, id):
+        raw_data = request.get_json(force=True)
+        apu = db.session.query(APU).get(id)
+        if not apu:
+            results = jsonify({"ERROR": f"APU not found, id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+            return results
+
+        apu_request = f'http://{apu.ip}:5000/newAP'
+        try:
+            response = requests.post(url=apu_request, json=raw_data, timeout=2)
+            results = jsonify(response.json())
+            results.status_code = response.status_code
+            return results
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
+

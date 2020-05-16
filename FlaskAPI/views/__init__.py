@@ -1,4 +1,4 @@
-from views.nodes import NodeView, NodeInfoView, NodeInterfaceView
+from views.nodes import NodeView, NodeInfoView, NodeInterfaceView, NodeAcessPoint
 from views.roles import RoleView
 from views.templates import TemplateView, TemplateInfoView
 from views.users import UserView, UserInfoView
@@ -27,3 +27,4 @@ api.add_resource(NodeView, '/node', '/node/')
 api.add_resource(NodeInfoView, '/node/<int:id>', '/node/<int:id>/')
 api.add_resource(NodeInterfaceView, '/node/<int:id>/<interface>/<command>',
                  '/node/<int:id>/<interface>/<command>/')
+api.add_resource(NodeAcessPoint, '/node/<int:id>/accesspoint', '/node/<int:id>/accesspoint/')
