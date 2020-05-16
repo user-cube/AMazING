@@ -805,7 +805,7 @@ def searchTestAdmin(request):
     else:
         return redirect('login')
 
-def createAcessPoint(request):
+def createAcessPoint(request, nodeID):
     if request.user.is_authenticated:
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
@@ -829,12 +829,12 @@ def createAcessPoint(request):
         if access == 0:
             return HttpResponseForbidden("No access")
 
-        return render(request, "network/create/AP.html", {'year': datetime.now().year})
+        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID})
 
     else:
         return redirect('login')
 
-def processAP(request):
+def processAP(request, nodeID):
     if request.user.is_authenticated:
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
@@ -884,7 +884,7 @@ def processAP(request):
             'DFGateway' : DFGateway,
             'Netmask': Netmask
         }
-        r = requests.post(API + "createAP", json=msg)
+        r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg)
 
         if r.status_code != 200:
             print(r.status_code)

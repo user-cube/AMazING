@@ -15,7 +15,7 @@
             </div>
             <div class="col-lg-2">
                 {% if access == 1 %}
-                    <a class="btn btn-warning" href="{% url 'createap' %}"><i class="fa fa-wifi"> Create Access Point</i></a>
+                    <a class="btn btn-warning" href="network/create/AP/{{ nodeID }}"><i class="fa fa-wifi"> Create Access Point</i></a>
                 {% endif %}
             </div>
         </div>
