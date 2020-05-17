@@ -27,9 +27,6 @@ class ProfileView(Resource):
         user = db.session().query(Profile).filter(Profile.email == email).one()
         raw_data = request.get_json(force=True)
         try:
-            print("\n\n\n -> ", raw_data)
-            for key in raw_data.keys():
-                print(key, type(raw_data[key]))
             if raw_data['pic']:
                 user.picture = str.encode(raw_data['pic'])
             user.name = raw_data['name']

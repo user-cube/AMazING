@@ -66,7 +66,6 @@ class NodeInfoView(Resource):
     def put(self, id):
         raw_data = request.get_json(force=True)
         apu = db.session.query(APU).get(id)
-        print("\n\n id", apu)
         if not apu:
             results = jsonify({"ERROR": f" Apu {id} not registered"})
             results.status_code = status.HTTP_204_NO_CONTENT

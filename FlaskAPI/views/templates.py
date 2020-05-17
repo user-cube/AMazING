@@ -37,7 +37,6 @@ class TemplateView(Resource):
             template = Template(profile=user_id, duration=raw_data['template']['duration'],
                                 name=raw_data['template']['name'])
             template.add(template)
-            print(template)
             for apu_config_item in raw_data['config_list']:
                 apu_config = APU_Config(
                     apu=apu_config_item['apu'],

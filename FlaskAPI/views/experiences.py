@@ -4,12 +4,13 @@ from _datetime import datetime, timedelta
 from flask import request, jsonify, make_response
 from flask_restful import Resource, reqparse
 from flask_api import status
+from sqlalchemy import or_, and_
 
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 
 from models import db, Experience, Profile, Template
-from views.base import get_user_by_email
+from views.base import get_user_by_email, UnauthorizedException
 
 parser = reqparse.RequestParser()
 parser.add_argument('content')
@@ -26,6 +27,17 @@ def format_experience_calendar(experince_calendar_fragment):
     experience['author'] = profile['name']
     experience['email'] = profile['email']
     return experience
+
+
+def return_experince_in_range_datetime(begin_date, end_date):
+    experience_query = db.session.query(Experience).filter(
+        or_(
+            and_((begin_date <= Experience.begin_date),(Experience.begin_date <= end_date)),
+            and_((begin_date <= Experience.end_date), (Experience.end_date <= end_date))
+            )
+    ).all()
+    print("\n\n\n\n Queries", experience_query)
+    return experience_query
 
 
 class ExperienceView(Resource):
@@ -55,7 +67,7 @@ class ExperienceView(Resource):
             experiences_query = experiences_query.filter(Experience.status == parse_data['status'])
         if parse_data['content']:
             experiences_query = experiences_query.filter(Experience.name.contains(parse_data['content']))
-        q = experiences_query.all()
+        q = experiences_query.order_by(Experience.begin_date.asc()).all()
         response = []
         for experience, profile in q:
             experience = experience.serializable
@@ -78,19 +90,25 @@ class ExperienceView(Resource):
             else:
                 total_duration = raw_data['num_test'] * (template.duration + 60)  # 1 min for test setup
                 end_date = begin_date + timedelta(0, total_duration)
+            scheduled_experience = return_experince_in_range_datetime(begin_date, end_date)
+            if len(scheduled_experience) == 0:
+                experience = Experience(name=raw_data['name'],
+                                        begin_date=begin_date,
+                                        num_test=raw_data['num_test'],
+                                        end_date=end_date,
+                                        status='SCHEDULED',
+                                        profile=user_id,
+                                        template=raw_data['template'],
+                                        register_date=datetime.now())
 
-            experience = Experience(name=raw_data['name'],
-                                    begin_date=begin_date,
-                                    num_test=raw_data['num_test'],
-                                    end_date=end_date,
-                                    status='SCHEDULED',
-                                    profile=user_id,
-                                    template=raw_data['template'],
-                                    register_date=datetime.now())
-
-            experience.add(experience)
-            results = jsonify(experience.serializable)
-            results.status_code = status.HTTP_201_CREATED
+                experience.add(experience)
+                results = jsonify(experience.serializable)
+                results.status_code = status.HTTP_201_CREATED
+            else:
+                experiences = [ex.serializable for ex in scheduled_experience]
+                results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
+                                   'experiences': experiences})
+                results.status_code = status.HTTP_400_BAD_REQUEST
 
         except ValidationError as err:
             results = jsonify({"ERROR": err.messages})
@@ -123,10 +141,72 @@ class ExperienceInfoView(Resource):
         results.status_code = status.HTTP_200_OK
         return results
 
+    @jwt_required
+    def put(self, id):
+        jwt_data = get_raw_jwt()
+        email = jwt_data['email']
+        user_id = get_user_by_email(email).id
+        raw_data = request.get_json(force=True)
+        experience = db.session.query(Experience).get(id)
+
+        try:
+            if not experience:
+                raise Exception(f"Experience not founded, id: {id}")
+            if experience.profile != user_id and not jwt_data['isAdmin']:
+                raise UnauthorizedException()
+            begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
+            template = db.session.query(Template).get(raw_data['template'])
+            if 'end_date' in raw_data.keys():
+                end_date = raw_data['end_date']
+            else:
+                total_duration = raw_data['num_test'] * (template.duration + 60)  # 1 min for test setup
+                end_date = begin_date + timedelta(0, total_duration)
+
+            scheduled_experience = return_experince_in_range_datetime(begin_date, end_date)
+            if len(scheduled_experience) == 0 \
+                    or (len(scheduled_experience) == 1 and scheduled_experience[0].id == experience.id):
+
+                experience.name = raw_data['name']
+                experience.begin_date = begin_date
+                experience.num_test = raw_data['num_test']
+                experience.end_date = end_date
+                experience.status = 'SCHEDULED'
+                experience.template = raw_data['template']
+                experience.register_date = datetime.now()
+
+                db.session.commit()
+                results = jsonify(experience.serializable)
+                results.status_code = status.HTTP_200_OK
+            else:
+                experiences = [ex.serializable for ex in scheduled_experience]
+                results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
+                                   'experiences': experiences})
+                results.status_code = status.HTTP_400_BAD_REQUEST
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except UnauthorizedException as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f'Unauthorized Access for: Experience.id: {id}'})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+        except Exception as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": err.__str__()})
+            results.status_code = status.HTTP_404_NOT_FOUND
+        return results
+
 
 class ExperienceScheduleView(Resource):
     def get(self):
-
         date_now = datetime.now()
         experience_schedule_query = db.session.query(Experience, Profile) \
             .filter(Experience.end_date >= date_now) \

@@ -59,7 +59,6 @@ class Profile(db.Model, CRUD):
 
     @property
     def serializable(self):
-        print("\n\n\n\n, ", type(self.picture), self.name)
         if self.picture:
             pic = self.picture.decode("utf-8")
         else: 
