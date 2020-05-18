@@ -8,9 +8,10 @@ from sqlalchemy import or_, and_
 
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
+from sqlalchemy.orm.exc import NoResultFound
 
 from models import db, Experience, Profile, APU_Config
-from views.base import get_user_by_email, UnauthorizedException
+from views.base import get_user_by_email, UnauthorizedException, ExperienceScheduleException
 
 parser = reqparse.RequestParser()
 parser.add_argument('content')
@@ -34,7 +35,7 @@ def return_experince_in_range_datetime(begin_date, end_date):
         or_(
             and_((begin_date <= Experience.begin_date), (Experience.begin_date <= end_date)),
             and_((begin_date <= Experience.end_date), (Experience.end_date <= end_date))
-            )
+        )
     ).all()
     return experience_query
 
@@ -79,39 +80,52 @@ class ExperienceView(Resource):
     def post(self):
         jwt_data = get_raw_jwt()
         email = jwt_data['email']
-        user_id = get_user_by_email(email).id
+        profile = get_user_by_email(email)
         raw_data = request.get_json(force=True)
         try:
             begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
             end_date = raw_data['end_date']
             scheduled_experience = return_experince_in_range_datetime(begin_date, end_date)
-            if len(scheduled_experience) == 0:
-                experience = Experience(name=raw_data['name'],
-                                        begin_date=begin_date,
-                                        end_date=end_date,
-                                        status='SCHEDULED',
-                                        profile=user_id,
-                                        register_date=datetime.now())
+            if len(scheduled_experience) > 0:
+                raise ExperienceScheduleException(scheduled_experience)
 
-                experience.add(experience)
-                results = jsonify(experience.serializable)
-                results.status_code = status.HTTP_201_CREATED
-            else:
-                experiences = [ex.serializable for ex in scheduled_experience]
-                results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
-                                   'experiences': experiences})
-                results.status_code = status.HTTP_400_BAD_REQUEST
+            experience = Experience(name=raw_data['name'],
+                                    begin_date=begin_date,
+                                    end_date=end_date,
+                                    status='SCHEDULED',
+                                    profile=profile.id,
+                                    register_date=datetime.now())
+
+            config_node_list = []
+            if 'config_node' in raw_data.keys():
+                for apu_config in raw_data['config_node']:
+                    new_apu_config = APU_Config(apu=apu_config['apu'],
+                                                experience=experience.id,
+                                                file=str.encode(apu_config['file']))
+                    new_apu_config.add(new_apu_config)
+                    config_node_list.append(new_apu_config.serializable)
+
+            experience.add(experience)
+            profile.num_test += 1
+            db.session.commit()
+            results = jsonify({'experience': experience.serializable, 'config_node': config_node_list})
+            results.status_code = status.HTTP_201_CREATED
 
         except ValidationError as err:
-            results = jsonify({"ERROR": err.messages})
+            results = jsonify({"ERROR": err.__str__()})
             results.status_code = status.HTTP_403_FORBIDDEN
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as err:
             db.session.rollback()
-            results = jsonify({"ERROR": str(e)})
+            results = jsonify({"ERROR": err.__str__()})
             results.status_code = status.HTTP_400_BAD_REQUEST
         except KeyError as err:
             db.session.rollback()
             results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except ExperienceScheduleException as err:
+            experiences = [ex.serializable for ex in err.messages]
+            results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
+                               'experiences': experiences})
             results.status_code = status.HTTP_400_BAD_REQUEST
         return results
 
@@ -120,20 +134,30 @@ class ExperienceInfoView(Resource):
 
     @jwt_required
     def get(self, id):
-        jwt_data = get_raw_jwt()
-        user_id = get_user_by_email(jwt_data['email']).id
-        experience_query = db.session.query(Experience, APU_Config, Profile)\
-            .filter(Experience.id == id)\
-            .filter(APU_Config.id == id)\
-            .filter(Experience.profile == Profile.id).all()
-        print("\n\n\n\n, experience_query", experience_query)
-        experience = experience_query[0].serializable
-        template = experience_query[1].serializable
-        if not jwt_data['isAdmin'] and experience.profile != user_id:
-            results = jsonify()
-            results.status_code = status.HTTP_401_UNAUTHORIZED
-        results = make_response({"experience": experience})
-        results.status_code = status.HTTP_200_OK
+        try:
+            experience_query = db.session.query(Experience, Profile.name)\
+                .filter(Experience.id == id) \
+                .filter(Experience.profile == Profile.id).one()
+
+            apu_config_query = db.session.query(APU_Config)\
+                .filter(APU_Config.experience == id).all()
+            if not experience_query:
+                raise NoResultFound(id)
+
+            response = {'experience': experience_query[0].serializable,
+                        'author': experience_query[1],
+                        'config_list': [apu_config.serializable for apu_config in apu_config_query]}
+            results = jsonify(response)
+            results.status_code = status.HTTP_200_OK
+
+        except NoResultFound:
+            results = jsonify({"Error": f"No item found for id {id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+
+        except Exception as err:
+            results = jsonify({"Error": err.__str__()})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+
         return results
 
     @jwt_required
@@ -150,32 +174,21 @@ class ExperienceInfoView(Resource):
             if experience.profile != user_id and not jwt_data['isAdmin']:
                 raise UnauthorizedException()
             begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
-            if 'end_date' in raw_data.keys():
-                end_date = raw_data['end_date']
-            else:
-                total_duration = raw_data['num_test'] * (template.duration + 60)  # 1 min for test setup
-                end_date = begin_date + timedelta(0, total_duration)
+            end_date = raw_data['end_date']
 
             scheduled_experience = return_experince_in_range_datetime(begin_date, end_date)
-            if len(scheduled_experience) == 0 \
+            if not len(scheduled_experience) == 0 \
                     or (len(scheduled_experience) == 1 and scheduled_experience[0].id == experience.id):
+                raise ExperienceScheduleException(scheduled_experience)
+            experience.name = raw_data['name']
+            experience.begin_date = begin_date
+            experience.end_date = end_date
+            experience.status = 'SCHEDULED'
+            experience.register_date = datetime.now()
 
-                experience.name = raw_data['name']
-                experience.begin_date = begin_date
-                experience.num_test = raw_data['num_test']
-                experience.end_date = end_date
-                experience.status = 'SCHEDULED'
-                experience.template = raw_data['template']
-                experience.register_date = datetime.now()
-
-                db.session.commit()
-                results = jsonify(experience.serializable)
-                results.status_code = status.HTTP_200_OK
-            else:
-                experiences = [ex.serializable for ex in scheduled_experience]
-                results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
-                                   'experiences': experiences})
-                results.status_code = status.HTTP_400_BAD_REQUEST
+            db.session.commit()
+            results = jsonify(experience.serializable)
+            results.status_code = status.HTTP_200_OK
 
         except ValidationError as err:
             results = jsonify({"ERROR": err.messages})
@@ -188,10 +201,15 @@ class ExperienceInfoView(Resource):
             db.session.rollback()
             results = jsonify({"ERROR": f" Missing key {err}"})
             results.status_code = status.HTTP_400_BAD_REQUEST
-        except UnauthorizedException as err:
+        except UnauthorizedException:
             db.session.rollback()
             results = jsonify({"ERROR": f'Unauthorized Access for: Experience.id: {id}'})
             results.status_code = status.HTTP_401_UNAUTHORIZED
+        except ExperienceScheduleException as err:
+            experiences = [ex.serializable for ex in err.messages]
+            results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
+                               'experiences': experiences})
+            results.status_code = status.HTTP_400_BAD_REQUEST
         except Exception as err:
             db.session.rollback()
             results = jsonify({"ERROR": err.__str__()})
@@ -225,3 +243,112 @@ class ExperienceScheduleView(Resource):
             else:
                 calendar['next_experience'] = format_experience_calendar(experience_schedule_query[0])
         return calendar
+
+class ExperienceApuConfig(Resource):
+    @jwt_required
+    def post(self, experience_id):
+        jwt_data = get_raw_jwt()
+        email = jwt_data['email']
+        profile = get_user_by_email(email)
+        raw_data = request.get_json(force=True)
+        experience = db.session.query(Experience).get(experience_id)
+        try:
+            if experience.profile != profile.id and not jwt_data['isAdmin']:
+                raise UnauthorizedException
+            apu_config = APU_Config(apu=raw_data['apu'], file=str.encode(raw_data['file']), experience=experience.id)
+            apu_config.add(apu_config)
+            results = jsonify(apu_config.serializable)
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except UnauthorizedException:
+            results = jsonify({'Error': f'Unauthorized access to selected content, Experience {id}'})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+
+        return results
+
+    @jwt_required
+    def put(self, experience_id, apu_config_id):
+        jwt_data = get_raw_jwt()
+        email = jwt_data['email']
+        profile = get_user_by_email(email)
+        raw_data = request.get_json(force=True)
+        experience, apu_config = db.session.query(Experience, APU_Config)\
+            .filter(APU_Config.id == apu_config_id).\
+            filter(Experience.id == experience_id).one()
+        try:
+            if experience.profile != profile.id and not jwt_data['isAdmin']:
+                raise UnauthorizedException
+            if not experience or not apu_config:
+                raise NoResultFound
+            apu_config.apu = raw_data['apu']
+            apu_config.file = str.encode(raw_data['file'])
+            db.session.commit()
+            results = jsonify(apu_config.serializable)
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except UnauthorizedException:
+            results = jsonify({'Error': f'Unauthorized access to selected content, Apu_Config {apu_config_id}'})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+        except NoResultFound:
+            results = jsonify({"Error": f"No item found for Experience{experience_id} or Apu_Config {apu_config_id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+
+        return results
+
+    @jwt_required
+    def delete(self, experience_id, apu_config_id):
+        jwt_data = get_raw_jwt()
+        email = jwt_data['email']
+        profile = get_user_by_email(email)
+        experience, apu_config = db.session.query(Experience, APU_Config) \
+            .filter(APU_Config.id == apu_config_id). \
+            filter(Experience.id == experience_id).one()
+        try:
+            if experience.profile != profile.id and not jwt_data['isAdmin']:
+                raise UnauthorizedException
+            if not experience or not apu_config:
+                raise NoResultFound
+
+            apu_config.delete(apu_config)
+            db.session.commit()
+            results = jsonify(apu_config.serializable)
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except UnauthorizedException:
+            results = jsonify({'Error': f'Unauthorized access to selected content, Apu_Config {apu_config_id}'})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+        except NoResultFound:
+            results = jsonify({"Error": f"No item found for Experience{experience_id} or Apu_Config {apu_config_id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+
+        return results

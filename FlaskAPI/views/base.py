@@ -29,11 +29,27 @@ def admin_required(fn):
 class UnauthorizedException(Exception):
     def __init__(self, *args):
         if args:
-            self.message = args[0]
+            self.messages = args[0]
         else:
-            self.message = None
+            self.messages = None
+
     def __str__(self):
-        if self.message:
-            return f'Unauthorized Access, {self.message}'
+        if self.messages:
+            return f'Unauthorized Access, {self.messages}'
         else:
             return 'Unauthorized access for select content'
+
+
+class ExperienceScheduleException(Exception):
+    def __init__(self, *args):
+        print(args)
+        if args:
+            self.messages = args[0]
+        else:
+            self.messages = None
+
+    def __str__(self):
+        if self.messages:
+            return f'Range time already busy, experiences {self.messages}'
+        else:
+            return 'Range time already busy'

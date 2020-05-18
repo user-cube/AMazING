@@ -1,9 +1,8 @@
 from views.nodes import NodeView, NodeInfoView, NodeInterfaceView, NodeAcessPoint
 from views.roles import RoleView
-from views.templates import TemplateView, TemplateInfoView
 from views.users import UserView, UserInfoView
 from views.profiles import ProfileView
-from views.experiences import ExperienceView, ExperienceInfoView, ExperienceScheduleView
+from views.experiences import ExperienceView, ExperienceInfoView, ExperienceScheduleView, ExperienceApuConfig
 
 from flask import Blueprint
 from flask_restful import Api
@@ -20,6 +19,8 @@ api.add_resource(RoleView, '/role', '/role/')
 api.add_resource(ProfileView, '/profile', '/profile/')
 api.add_resource(ExperienceView, '/experience', '/experience/')
 api.add_resource(ExperienceInfoView, '/experience/<int:id>', '/experience/<int:id>/')
+api.add_resource(ExperienceApuConfig, '/experience/<int:experience_id>/node', '/experience/<int:experience_id>/node/',
+                 '/experience/<int:experience_id>/node/<int:apu_config_id>', '/experience/<int:experience_id>/node/<int:apu_config_id>/')
 api.add_resource(ExperienceScheduleView, '/experience/now', '/experience/now/')
 api.add_resource(NodeView, '/node', '/node/')
 api.add_resource(NodeInfoView, '/node/<int:id>', '/node/<int:id>/')

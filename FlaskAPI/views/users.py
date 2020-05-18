@@ -6,6 +6,7 @@ from flask_api import status
 
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
+from sqlalchemy.orm.exc import NoResultFound
 
 from models import Profile, db
 from views.base import admin_required
@@ -25,7 +26,6 @@ class UserView(Resource):
     @admin_required
     def get(self):
         parse_data = parser.parse_args()
-
         users_query = db.session().query(Profile)
         if parse_data['typeID']:
             users_query = users_query.filter(Profile.role == parse_data['typeID'])
@@ -65,9 +65,16 @@ class UserView(Resource):
 class UserInfoView(Resource):
     @admin_required
     def get(self, id):
-        user_query = db.session.query(Profile).get(id)
-        user = jsonify(user_query.serializable)
-        return user
+        try:
+            user_query = db.session.query(Profile).get(id)
+            if not user_query:
+                raise NoResultFound
+            results = jsonify(user_query.serializable)
+
+        except NoResultFound:
+            results = jsonify({'ERROR': f'Item not found {id}'})
+            results.status_code = status.HTTP_404_NOT_FOUND
+        return results
 
     @admin_required
     def put(self, id):
@@ -75,7 +82,8 @@ class UserInfoView(Resource):
         try:
             message = raw_data['role']
             profile = db.session.query(Profile).get(id)
-
+            if not profile:
+                raise NoResultFound
             profile.role = message
             db.session.commit()
             results = jsonify(profile.serializable)
@@ -84,29 +92,8 @@ class UserInfoView(Resource):
             db.session.rollback()
             results = jsonify({"ERROR": f" Missing key {err}"})
             results.status_code = status.HTTP_400_BAD_REQUEST
+        except NoResultFound:
+            results = jsonify({'ERROR': f'Item not found {id}'})
+            results.status_code = status.HTTP_404_NOT_FOUND
         return results
 
-    """
-    @admin_required
-    def delete(self, id):
-        email = get_raw_jwt()['jti']
-        user_id = get_email_by_id(email)['id']
-
-        if not user_id:
-            results = jsonify({"error": 'Non-existent user'})
-            results.status_code = 403
-            return results
-
-        user = Profile.query.get_or_404(user_id)
-        try:
-            delete = user.delete(user)
-            response = make_response()
-            response.status_code = 204
-            return resultsonse
-
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            results = jsonify({"error": str(e)})
-            results.status_code = status.HTTP_401_UNAUTHORIZED
-            return results
-"""
