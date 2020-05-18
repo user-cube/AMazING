@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_raw_jwt
+
+from schedule.experience_schedule import schedule_experience
 from views import schema_blueprint
 from models import db
 import requests
@@ -51,6 +53,7 @@ def nodeInfo(nodeID):
 """
 
 if __name__ == '__main__':
+#    schedule_experience()
     app.run(host=app.config['END_HOST'],
             port=app.config['PORT'],
             debug=app.config['DEBUG'])
