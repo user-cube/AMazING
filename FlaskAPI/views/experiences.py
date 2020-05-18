@@ -9,7 +9,7 @@ from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 
-from models import db, Experience, Profile, Template
+from models import db, Experience, Profile, APU_Config
 from views.base import get_user_by_email, UnauthorizedException
 
 parser = reqparse.RequestParser()
@@ -32,11 +32,10 @@ def format_experience_calendar(experince_calendar_fragment):
 def return_experince_in_range_datetime(begin_date, end_date):
     experience_query = db.session.query(Experience).filter(
         or_(
-            and_((begin_date <= Experience.begin_date),(Experience.begin_date <= end_date)),
+            and_((begin_date <= Experience.begin_date), (Experience.begin_date <= end_date)),
             and_((begin_date <= Experience.end_date), (Experience.end_date <= end_date))
             )
     ).all()
-    print("\n\n\n\n Queries", experience_query)
     return experience_query
 
 
@@ -84,21 +83,14 @@ class ExperienceView(Resource):
         raw_data = request.get_json(force=True)
         try:
             begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
-            template = db.session.query(Template).get(raw_data['template'])
-            if 'end_date' in raw_data.keys():
-                end_date = raw_data['end_date']
-            else:
-                total_duration = raw_data['num_test'] * (template.duration + 60)  # 1 min for test setup
-                end_date = begin_date + timedelta(0, total_duration)
+            end_date = raw_data['end_date']
             scheduled_experience = return_experince_in_range_datetime(begin_date, end_date)
             if len(scheduled_experience) == 0:
                 experience = Experience(name=raw_data['name'],
                                         begin_date=begin_date,
-                                        num_test=raw_data['num_test'],
                                         end_date=end_date,
                                         status='SCHEDULED',
                                         profile=user_id,
-                                        template=raw_data['template'],
                                         register_date=datetime.now())
 
                 experience.add(experience)
@@ -130,14 +122,17 @@ class ExperienceInfoView(Resource):
     def get(self, id):
         jwt_data = get_raw_jwt()
         user_id = get_user_by_email(jwt_data['email']).id
-        query = db.session.query(Experience, Template).filter(Experience.id == id).filter(
-            Experience.template == Template.id).one()
-        experience = query[0].serializable
-        template = query[1].serializable
+        experience_query = db.session.query(Experience, APU_Config, Profile)\
+            .filter(Experience.id == id)\
+            .filter(APU_Config.id == id)\
+            .filter(Experience.profile == Profile.id).all()
+        print("\n\n\n\n, experience_query", experience_query)
+        experience = experience_query[0].serializable
+        template = experience_query[1].serializable
         if not jwt_data['isAdmin'] and experience.profile != user_id:
             results = jsonify()
             results.status_code = status.HTTP_401_UNAUTHORIZED
-        results = make_response({"experience": experience, "template": template})
+        results = make_response({"experience": experience})
         results.status_code = status.HTTP_200_OK
         return results
 
@@ -155,7 +150,6 @@ class ExperienceInfoView(Resource):
             if experience.profile != user_id and not jwt_data['isAdmin']:
                 raise UnauthorizedException()
             begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
-            template = db.session.query(Template).get(raw_data['template'])
             if 'end_date' in raw_data.keys():
                 end_date = raw_data['end_date']
             else:

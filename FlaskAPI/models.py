@@ -74,30 +74,6 @@ class Profile(db.Model, CRUD):
             "role": self.role
         }
 
-
-class Template(db.Model, CRUD):
-
-    __tablename__ = 'template'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    duration = db.Column(db.BIGINT)
-    profile = db.Column(db.Integer, db.ForeignKey('profile.id'))
-
-    def __init__(self, name, duration, profile):
-        self.name = name
-        self.duration = duration
-        self.profile = profile
-
-    @property
-    def serializable(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "duration": self.duration,
-            "profile": self.profile
-        }
-
-
 class Experience(db.Model, CRUD):
 
     __tablename__ = 'experience'
@@ -105,21 +81,17 @@ class Experience(db.Model, CRUD):
     name = db.Column(db.String(100), nullable=False)
     begin_date = db.Column(db.TIMESTAMP, nullable=False)
     end_date = db.Column(db.TIMESTAMP, nullable=False)
-    num_test = db.Column(db.Integer, nullable=False)
     register_date = db.Column(db.TIMESTAMP, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     profile = db.Column(db.Integer, db.ForeignKey('profile.id'))
-    template = db.Column(db.Integer, db.ForeignKey('template.id'))
 
-    def __init__(self, name, begin_date, end_date, num_test, register_date, status, profile, template):
+    def __init__(self, name, begin_date, end_date, register_date, status, profile):
         self.name = name
         self.begin_date = begin_date
         self.end_date = end_date
-        self.num_test = num_test
         self.register_date = register_date
         self.status = status
         self.profile = profile
-        self.template = template
 
     @property
     def serializable(self):
@@ -128,11 +100,9 @@ class Experience(db.Model, CRUD):
             "name": self.name,
             "begin_date": self.begin_date.strftime("%Y-%m-%d %H:%M:%S"),
             "end_date": self.end_date.strftime("%Y-%m-%d %H:%M:%S"),
-            "num_test": self.num_test,
             "register_date": self.register_date.strftime("%Y-%m-%d %H:%M:%S"),
             "status": self.status,
-            "profile": self.profile,
-            "template": self.template
+            "profile": self.profile
         }
 
 
@@ -161,27 +131,25 @@ class APU_Config(db.Model, CRUD):
     __tablename__ = 'apu_config'
     id = db.Column(db.Integer, primary_key=True)
     apu = db.Column(db.Integer, db.ForeignKey('apu.id'))
-    ip = db.Column(db.String(40))
-    protocol = db.Column(db.String(50))
-    base_template = db.Column(db.Integer)
-    template = db.Column(db.Integer, db.ForeignKey('template.id'))
+    file = db.Column(db.LargeBinary, nullable=True)
+    experience = db.Column(db.Integer, db.ForeignKey('experience.id'))
 
-    def __init__(self, apu, ip, protocol, base_template, template):
+    def __init__(self, apu, file, experience):
         self.apu = apu
-        self.ip = ip
-        self.protocol = protocol
-        self.base_template = base_template
-        self.template = template
+        self.file = file
+        self.experience = experience
 
    # def __repr__(self):
    #     return f'<apu = {self.apu}, ip = {self.ip}, protocol = {self.protocol}, base_template = {self.base_template}, template = {self.template}>'
     @property
     def serializable(self):
+        if self.file:
+            f = self.file.decode("utf-8")
+        else:
+            f = None
         return {
             "id": self.id,
             "apu": self.apu,
-            "ip": self.ip,
-            "protocol": self.protocol,
-            "base_template": self.base_template,
-            "template": self.template
+            "experience": self.experience,
+            "file": f
         }

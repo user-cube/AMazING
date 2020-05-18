@@ -21,8 +21,6 @@ api.add_resource(ProfileView, '/profile', '/profile/')
 api.add_resource(ExperienceView, '/experience', '/experience/')
 api.add_resource(ExperienceInfoView, '/experience/<int:id>', '/experience/<int:id>/')
 api.add_resource(ExperienceScheduleView, '/experience/now', '/experience/now/')
-api.add_resource(TemplateView, '/template', '/template/')
-api.add_resource(TemplateInfoView, '/template/<int:id>', '/template/<int:id>/')
 api.add_resource(NodeView, '/node', '/node/')
 api.add_resource(NodeInfoView, '/node/<int:id>', '/node/<int:id>/')
 api.add_resource(NodeInterfaceView, '/node/<int:id>/<interface>/<command>',
