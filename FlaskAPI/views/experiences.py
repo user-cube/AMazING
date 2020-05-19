@@ -1,7 +1,7 @@
 from flask_jwt_extended import jwt_required, get_raw_jwt
 from _datetime import datetime, timedelta
 
-from flask import request, jsonify, make_response
+from flask import request, jsonify
 from flask_restful import Resource, reqparse
 from flask_api import status
 from sqlalchemy import or_, and_
@@ -10,6 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
+import enum.experience_status as experience_status
 from models import db, Experience, Profile, APU_Config
 from views.base import get_user_by_email, UnauthorizedException, ExperienceScheduleException
 
@@ -92,7 +93,7 @@ class ExperienceView(Resource):
             experience = Experience(name=raw_data['name'],
                                     begin_date=begin_date,
                                     end_date=end_date,
-                                    status='SCHEDULED',
+                                    status=experience_status.SCHEDULED,
                                     profile=profile.id,
                                     register_date=datetime.now())
 
@@ -170,7 +171,7 @@ class ExperienceInfoView(Resource):
 
         try:
             if not experience:
-                raise Exception(f"Experience not founded, id: {id}")
+                raise NoResultFound
             if experience.profile != user_id and not jwt_data['isAdmin']:
                 raise UnauthorizedException()
             begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
@@ -183,7 +184,7 @@ class ExperienceInfoView(Resource):
             experience.name = raw_data['name']
             experience.begin_date = begin_date
             experience.end_date = end_date
-            experience.status = 'SCHEDULED'
+            experience.status = experience_status.SCHEDULED
             experience.register_date = datetime.now()
 
             db.session.commit()
@@ -210,9 +211,43 @@ class ExperienceInfoView(Resource):
             results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
                                'experiences': experiences})
             results.status_code = status.HTTP_400_BAD_REQUEST
-        except Exception as err:
+        except NoResultFound:
             db.session.rollback()
-            results = jsonify({"ERROR": err.__str__()})
+            results = jsonify({"ERROR": f'Item not found experience id: {id}'})
+            results.status_code = status.HTTP_404_NOT_FOUND
+        return results
+
+    @jwt_required
+    def delete(self, id):
+        jwt_data = get_raw_jwt()
+        email = jwt_data['email']
+        user_id = get_user_by_email(email).id
+        experience = db.session.query(Experience).get(id)
+
+        try:
+            if not experience:
+                raise NoResultFound(f"Experience not founded, id: {id}")
+            if experience.profile != user_id and not jwt_data['isAdmin']:
+                raise UnauthorizedException()
+            experience.delete(experience)
+            db.session.commit()
+            results = jsonify(experience.serializable)
+            results.status_code = status.HTTP_200_OK
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except UnauthorizedException:
+            db.session.rollback()
+            results = jsonify({"ERROR": f'Unauthorized Access for: Experience.id: {id}'})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+        except NoResultFound as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f'Item not found experience id: {id}'})
             results.status_code = status.HTTP_404_NOT_FOUND
         return results
 
@@ -243,6 +278,7 @@ class ExperienceScheduleView(Resource):
             else:
                 calendar['next_experience'] = format_experience_calendar(experience_schedule_query[0])
         return calendar
+
 
 class ExperienceApuConfig(Resource):
     @jwt_required
@@ -284,6 +320,45 @@ class ExperienceApuConfig(Resource):
         raw_data = request.get_json(force=True)
         experience, apu_config = db.session.query(Experience, APU_Config)\
             .filter(APU_Config.id == apu_config_id).\
+            filter(Experience.id == experience_id).one()
+        try:
+            if experience.profile != profile.id and not jwt_data['isAdmin']:
+                raise UnauthorizedException
+            if not experience or not apu_config:
+                raise NoResultFound
+            apu_config.apu = raw_data['apu']
+            apu_config.file = str.encode(raw_data['file'])
+            db.session.commit()
+            results = jsonify(apu_config.serializable)
+
+        except ValidationError as err:
+            results = jsonify({"ERROR": err.messages})
+            results.status_code = status.HTTP_403_FORBIDDEN
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            results = jsonify({"ERROR": str(e)})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except KeyError as err:
+            db.session.rollback()
+            results = jsonify({"ERROR": f" Missing key {err}"})
+            results.status_code = status.HTTP_400_BAD_REQUEST
+        except UnauthorizedException:
+            results = jsonify({'Error': f'Unauthorized access to selected content, Apu_Config {apu_config_id}'})
+            results.status_code = status.HTTP_401_UNAUTHORIZED
+        except NoResultFound:
+            results = jsonify({"Error": f"No item found for Experience{experience_id} or Apu_Config {apu_config_id}"})
+            results.status_code = status.HTTP_404_NOT_FOUND
+
+        return results
+
+    @jwt_required
+    def put(self, experience_id, apu_config_id):
+        jwt_data = get_raw_jwt()
+        email = jwt_data['email']
+        profile = get_user_by_email(email)
+        raw_data = request.get_json(force=True)
+        experience, apu_config = db.session.query(Experience, APU_Config) \
+            .filter(APU_Config.id == apu_config_id). \
             filter(Experience.id == experience_id).one()
         try:
             if experience.profile != profile.id and not jwt_data['isAdmin']:
