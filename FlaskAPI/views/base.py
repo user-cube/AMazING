@@ -25,6 +25,15 @@ def admin_required(fn):
 
     return wrapper
 
+
+class ExperienceStatus:
+    SCHEDULED = 'SCHEDULED'
+    RUNNING = 'RUNNING'
+    SUSPENDED = 'SUSPENDED'
+    FINISHED = 'FINISHED'
+    CANCELED = 'CANCELED'
+    FAILED = 'FAILED'
+
     # Exceptions
 
 

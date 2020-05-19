@@ -10,7 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
-import enum.experience_status as experience_status
+from views.base import ExperienceStatus
 from models import db, Experience, Profile, APU_Config
 from views.base import get_user_by_email, UnauthorizedException, ExperienceScheduleException
 
@@ -93,7 +93,7 @@ class ExperienceView(Resource):
             experience = Experience(name=raw_data['name'],
                                     begin_date=begin_date,
                                     end_date=end_date,
-                                    status=experience_status.SCHEDULED,
+                                    status=ExperienceStatus.SCHEDULED,
                                     profile=profile.id,
                                     register_date=datetime.now())
 
@@ -184,7 +184,6 @@ class ExperienceInfoView(Resource):
             experience.name = raw_data['name']
             experience.begin_date = begin_date
             experience.end_date = end_date
-            experience.status = experience_status.SCHEDULED
             experience.register_date = datetime.now()
 
             db.session.commit()

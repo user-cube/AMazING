@@ -1,9 +1,8 @@
 import requests
 from flask_api import status
 
-import enum.experience_status as experience_status
 from models import db, Experience, APU_Config, APU
-from views.base import FailedExperienceException
+from views.base import FailedExperienceException, ExperienceStatus
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -18,16 +17,18 @@ def start_experience(id):
 
         # if no apu config, those lines wont be executed
     for apu_config, apu in config_query:
+
         json_req = {'experience': id, 'file': apu_config.file.decode("utf-8")}
+
+        #apu_request = f'http://{apu.ip}/autoStart'
         apu_request = f'http://{apu.ip}:5000/autoStart'
         response = requests.post(url=apu_request, json=json_req, timeout=2)
-
         if response.status_code != status.HTTP_200_OK:
-            experience.status = experience_status.FAILED
+            experience.status = ExperienceStatus.FAILED
             db.session.commit()
             raise FailedExperienceException
 
-    experience.status = experience_status.RUNNING
+    experience.status = ExperienceStatus.RUNNING
     db.session.commit()
 
 
@@ -39,7 +40,7 @@ def finish_experience(id):
     if experience:
         raise NoResultFound
 
-    experience.status = experience_status.FINISHED
+    experience.status = ExperienceStatus.FINISHED
     db.session.commit()
 
     # if no apu config, those lines wont be executed
