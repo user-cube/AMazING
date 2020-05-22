@@ -1,7 +1,12 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from views import schema_blueprint
+
+from views.experiences import experiences_blueprint
+from views.nodes import nodes_blueprint
+from views.profiles import profiles_blueprint
+from views.roles import roles_blueprint
+from views.users import users_blueprint
 from models import db
 
 app = Flask(__name__)
@@ -11,7 +16,11 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 jwt = JWTManager(app)
 app.config.update(JWT=jwt)
 
-app.register_blueprint(schema_blueprint)
+app.register_blueprint(experiences_blueprint)
+app.register_blueprint(nodes_blueprint)
+app.register_blueprint(profiles_blueprint)
+app.register_blueprint(roles_blueprint)
+app.register_blueprint(users_blueprint)
 
 db.init_app(app)
 
