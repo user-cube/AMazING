@@ -1,31 +1,29 @@
-"""
-import datetime
-date_now = datetime.now() + timedelta(20)
-experience_schedule_query = db.session.query(Experience) \
-            .filter(Experience.begin_date >= date_now) \
-            .order_by(Experience.begin_date.asc()) \
-            .one()
+from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
+import requests
+
+from models import Experience
+from schedule.config_experience import start_experience
 
 
+def schedule_next_experience(db):
+    date_now = datetime.now()
 
-def schedule_experience():
+    experience_scheduled = db.session.query(Experience) \
+        .filter(Experience.begin_date >= date_now) \
+        .order_by(Experience.begin_date.asc()) \
+        .one()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=running_next_experience, trigger='date', run_date=experience_scheduled.begin_date, args=experience_scheduled.id)
+    scheduler.add_job(func=ending_next_experience, trigger='date', run_date=experience_scheduled.end_date, args=experience_scheduled.id)
+    scheduler.start()
+    print(scheduler.get_jobs())
 
-
-
-
-def startNode():
-    apu_request = f'http://127.0.0.1:5001/test'
+def running_next_experience(id):
     try:
-        response = requests.post(url=apu_request, json=file, timeout=2)
-        results = jsonify(response.json())
-        results.status_code = response.status_code
-        return results
-    except requests.exceptions.ConnectionError:
-        results = jsonify({"ERROR": f"{}: not founded"})
-        results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
-        return results
+        start_experience(id)
+    except NoResultFound:
+    except
 
-
-
-"""
+def ending_next_experience(id):
 

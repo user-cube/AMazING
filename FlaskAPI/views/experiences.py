@@ -10,8 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from marshmallow import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
-from views.base import ExperienceStatus
-from models import db, Experience, Profile, APU_Config
+from models import db, Experience, Profile, APU_Config, ExperienceStatus
 from views.base import get_user_by_email, UnauthorizedException, ExperienceScheduleException
 
 experiences_blueprint = Blueprint('experiences', __name__, )

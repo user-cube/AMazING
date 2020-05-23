@@ -27,7 +27,11 @@ def insert_node():
     raw_data = request.get_json(force=True)
     db.session.query(APU)
     try:
-        apu = APU(ip=raw_data['ip'], name=raw_data['name'])
+        if not 'port' in raw_data.keys() or not raw_data['port']:
+            port = 5000
+        else:
+            port = raw_data['port']
+        apu = APU(ip=raw_data['ip'], port=port, name=raw_data['name'])
         apu.add(apu)
         return apu.serializable, status.HTTP_201_CREATED
 
@@ -59,7 +63,7 @@ def get_node(id):
         results.status_code = status.HTTP_404_NOT_FOUND
         return results
 
-    apu_request = f'http://{apu.ip}:5000/testi'
+    apu_request = f'http://{apu.ip}:{apu.port}/testi'
     try:
         results = requests.get(apu_request, timeout=2)
         return jsonify(results.json())
@@ -83,6 +87,8 @@ def alter_node(id):
             apu.name = raw_data['name']
         if raw_data['ip']:
             apu.ip = raw_data['ip']
+        if raw_data['port']:
+            apu.port = raw_data['port']
         db.session.commit()
         results = jsonify(apu.serializable)
         results.status_code = status.HTTP_202_ACCEPTED
@@ -121,7 +127,7 @@ def create_access_point(id):
         results.status_code = status.HTTP_404_NOT_FOUND
         return results
 
-    apu_request = f'http://{apu.ip}:5000/newAP'
+    apu_request = f'http://{apu.ip}:{apu.port}/newAP'
     try:
         response = requests.post(url=apu_request, json=raw_data, timeout=2)
         results = jsonify(response.json())
@@ -141,7 +147,7 @@ def send_node_command_to_interface(id, interface, command):
         results.status_code = status.HTTP_404_NOT_FOUND
         return results
 
-    apu_request = f'http://{apu.ip}:5000/{interface}/{command}'
+    apu_request = f'http://{apu.ip}:{apu.port}/{interface}/{command}'
     try:
         response = requests.get(apu_request, timeout=2)
         results = jsonify(response.json())
@@ -163,7 +169,7 @@ def send_node_command__to_interface_as_post(id, interface, command):
         results.status_code = status.HTTP_404_NOT_FOUND
         return results
 
-    apu_request = f'http://{apu.ip}:5000/{interface}/{command}'
+    apu_request = f'http://{apu.ip}:{apu.port}/{interface}/{command}'
     # apu_request = f'http://{apu}:5001/{interface}/{command}'
     try:
         ip = raw_data['ip']

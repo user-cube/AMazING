@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
+from tests.insert_data import insert_db_info
 from views.experiences import experiences_blueprint
 from views.nodes import nodes_blueprint
 from views.profiles import profiles_blueprint
@@ -28,6 +29,11 @@ db.init_app(app)
 @app.before_first_request
 def create_database():
     db.create_all()
+    if app.config['TESTING']:
+        insert_db_info(db)
+
+#@app.before_first_request
+    #schedulling the next experience
 
 
 if __name__ == '__main__':

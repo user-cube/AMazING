@@ -1,8 +1,8 @@
 import requests
 from flask_api import status
 
-from models import db, Experience, APU_Config, APU
-from views.base import FailedExperienceException, ExperienceStatus
+from models import db, Experience, APU_Config, APU, ExperienceStatus
+from views.base import FailedExperienceException
 
 from sqlalchemy.orm.exc import NoResultFound
 
