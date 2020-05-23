@@ -110,7 +110,7 @@ def insert_experience():
 
         experience.add(experience)
         profile.num_test += 1
-        db.session.commit()
+        profile.update()
         results = jsonify({'experience': experience.serializable, 'config_node': config_node_list})
         results.status_code = status.HTTP_201_CREATED
 
@@ -165,7 +165,7 @@ def info_experience(self, id):
 
 @experiences_blueprint.route('/experience/<int:id>', methods=['PUT'], strict_slashes=False)
 @jwt_required
-def put(self, id):
+def put(id):
     jwt_data = get_raw_jwt()
     email = jwt_data['email']
     user_id = get_user_by_email(email).id
@@ -189,7 +189,7 @@ def put(self, id):
         experience.end_date = end_date
         experience.register_date = datetime.now()
 
-        db.session.commit()
+        experience.update()
         results = jsonify(experience.serializable)
         results.status_code = status.HTTP_200_OK
 
@@ -234,7 +234,6 @@ def delete_experience(id):
         if experience.profile != user_id and not jwt_data['isAdmin']:
             raise UnauthorizedException()
         experience.delete(experience)
-        db.session.commit()
         results = jsonify(experience.serializable)
         results.status_code = status.HTTP_200_OK
 
@@ -334,7 +333,7 @@ def alter_apu_config(experience_id, apu_config_id):
             raise NoResultFound
         apu_config.apu = raw_data['apu']
         apu_config.file = str.encode(raw_data['file'])
-        db.session.commit()
+        apu_config.update()
         results = jsonify(apu_config.serializable)
 
     except ValidationError as err:
@@ -374,7 +373,6 @@ def delete_apu_config(experience_id, apu_config_id):
             raise NoResultFound
 
         apu_config.delete(apu_config)
-        db.session.commit()
         results = jsonify(apu_config.serializable)
 
     except ValidationError as err:

@@ -53,7 +53,7 @@ def alter_role(id):
         if not role:
             raise NoResultFound
         role.role_name = raw_data['name']
-        db.session.commit()
+        role.update()
         results = jsonify(role.serializable)
 
     except ValidationError as err:
@@ -86,7 +86,6 @@ def delete_role(id):
         if not role:
             raise NoResultFound
         role.delete(role)
-        db.session.commit()
         results = jsonify(role.serializable)
 
     except ValidationError as err:

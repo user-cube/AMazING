@@ -92,7 +92,7 @@ def put(id):
         if not profile:
             raise NoResultFound
         profile.role = message
-        db.session.commit()
+        profile.update()
         results = jsonify(profile.serializable)
         results.status_code = status.HTTP_202_ACCEPTED
     except KeyError as err:

@@ -33,7 +33,7 @@ def alter_profile():
         if raw_data['pic']:
             user.picture = str.encode(raw_data['pic'])
         user.name = raw_data['name']
-        db.session.commit()
+        user.update()
         results = jsonify(user.serializable)
         results.status_code = status.HTTP_202_ACCEPTED
     except KeyError as err:

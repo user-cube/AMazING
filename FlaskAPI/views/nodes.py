@@ -89,7 +89,7 @@ def alter_node(id):
             apu.ip = raw_data['ip']
         if raw_data['port']:
             apu.port = raw_data['port']
-        db.session.commit()
+        apu.update()
         results = jsonify(apu.serializable)
         results.status_code = status.HTTP_202_ACCEPTED
     except SQLAlchemyError as err:
