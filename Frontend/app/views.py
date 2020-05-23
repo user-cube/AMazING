@@ -744,23 +744,23 @@ def checkTestInfoAdmin(request, testID):
             r = requests.get(API + "experience/" + str(testID), headers={'Authorization': 'Bearer ' + token})
 
             if r.status_code != 200:
+                print(r.status_code)
                 return HttpResponseNotFound()
 
             json = r.json()
 
             experience = json['experience']
-            template = json['template']
-
+            config_list = json['config_list']
+            print(config_list)
             tparms = {
+                'author' : json['author'],
                 'begin_date': experience['begin_date'],
                 'end_date': experience['end_date'],
-                'num_test': experience['num_test'],
-                'id' : template['id'],
-                'duration' : template['duration'],
-                'nameT' : template['name'],
-                'profile' : template['profile'],
-                'name': experience['name'],
                 'register_date': experience['register_date'],
+                'name': experience['name'],
+                'status' : experience['status'],
+                'configs' : config_list,
+                'testID' : testID,
                 'year': datetime.now().year
             }
 
@@ -1054,5 +1054,27 @@ def interfaceDown(request, node, iName):
         json = r.json()
         messages.info(request, json['msg'])
         return redirect('nodestatus', nodeID=node)
+    else:
+        return redirect('login')
+
+def openFileTest(request, file, testID):
+    if request.user.is_authenticated:
+        token = tokenizer.userToken(request.user.email)
+        r = requests.get(API + "experience/" + str(testID), headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            return HttpResponseNotFound()
+
+        json = r.json()
+
+        json=json['config_list']
+
+        for i in json:
+            if i['experience'] == file:
+                val = i['file']
+                break;
+
+        return render(request, 'user/admin/experiences/openfile.html', {'file' : val})
+
     else:
         return redirect('login')

@@ -21,7 +21,7 @@ from app.views import profile, home, checkTests, checkTestInfo, editProfile, upd
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
     searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, \
     checkTestsAdmin, searchTestAdmin, createAcessPoint, processAP, registerTestSave, listTemplates, \
-    templateInfo, interfaceUP, interfaceDown
+    templateInfo, interfaceUP, interfaceDown, openFileTest
 
 
 
@@ -58,5 +58,6 @@ urlpatterns = [
     path('calendar/test', registerTest, name='registertest'),
     path('calendar/test/save', registerTestSave, name='registertestsave'),
     path('network/interface/<int:node>/<str:iName>/up', interfaceUP, name = 'interfaceup'),
-    path('network/interface/<int:node>/<str:iName>/down', interfaceDown, name = 'interfacedown')
+    path('network/interface/<int:node>/<str:iName>/down', interfaceDown, name = 'interfacedown'),
+    path('openfile/<int:file>/<int:testID>', openFileTest, name = 'openfile')
 ]
