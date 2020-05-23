@@ -135,7 +135,7 @@ def insert_experience():
 
 @experiences_blueprint.route('/experience/<int:id>', methods=['GET'], strict_slashes=False)
 @jwt_required
-def info_experience(self, id):
+def info_experience(id):
     try:
         experience_query = db.session.query(Experience, Profile.name) \
             .filter(Experience.id == id) \
@@ -312,6 +312,31 @@ def insert_apu_config(experience_id):
     except UnauthorizedException:
         results = jsonify({'Error': f'Unauthorized access to selected content, Experience {id}'})
         results.status_code = status.HTTP_401_UNAUTHORIZED
+
+    return results
+
+
+@experiences_blueprint.route('/experience/<int:experience_id>/node/<apu_config_id>', methods=['GET'], strict_slashes=False)
+@jwt_required
+def get_apu_config(experience_id, apu_config_id):
+    jwt_data = get_raw_jwt()
+    email = jwt_data['email']
+    profile = get_user_by_email(email)
+    experience, apu_config = db.session.query(Experience, APU_Config) \
+        .filter(APU_Config.id == apu_config_id). \
+        filter(Experience.id == experience_id).one()
+    try:
+        if experience.profile != profile.id and not jwt_data['isAdmin']:
+            raise UnauthorizedException
+        if not experience or not apu_config:
+            raise NoResultFound
+        results = jsonify(apu_config.serializable)
+    except UnauthorizedException:
+        results = jsonify({'Error': f'Unauthorized access to selected content, Apu_Config {apu_config_id}'})
+        results.status_code = status.HTTP_401_UNAUTHORIZED
+    except NoResultFound:
+        results = jsonify({"Error": f"No item found for Experience{experience_id} or Apu_Config {apu_config_id}"})
+        results.status_code = status.HTTP_404_NOT_FOUND
 
     return results
 

@@ -29,8 +29,8 @@ db.init_app(app)
 @app.before_first_request
 def create_database():
     db.create_all()
-    if app.config['TESTING']:
-        insert_db_info(db)
+    if app.config['TESTING'] == 'True':
+        insert_db_info()
 
 #@app.before_first_request
     #schedulling the next experience

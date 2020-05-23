@@ -1,13 +1,16 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Server Info
 DEBUG = os.getenv('DEBUG')
 PORT = os.getenv('PORT')
 END_HOST = os.getenv('END_HOST')
 
-TESTING = os.getenv('TEST')
+TESTING = os.getenv('TESTING')
 
-if not TESTING:
+if not TESTING or TESTING == 'False':
     # BD Info
     DB_HOST = os.getenv('DB_HOST')
     DB_NAME = os.getenv('DB_NAME')
@@ -19,7 +22,7 @@ if not TESTING:
 
 else:
     #InMemory Database
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DB')
 
 SQLALCHEMY_ECHO = True
 SQLALCHEMY_TRACK_MODIFICATIONS = True
