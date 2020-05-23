@@ -102,11 +102,12 @@ def insert_experience():
         config_node_list = []
         if 'config_node' in raw_data.keys():
             for apu_config in raw_data['config_node']:
-                new_apu_config = APU_Config(apu=apu_config['apu'],
-                                            experience=experience.id,
-                                            file=str.encode(apu_config['file']))
-                new_apu_config.add(new_apu_config)
-                config_node_list.append(new_apu_config.serializable)
+                if apu_config['file']:
+                    new_apu_config = APU_Config(apu=apu_config['apu'],
+                                                experience=experience.id,
+                                                file=str.encode(apu_config['file']))
+                    new_apu_config.add(new_apu_config)
+                    config_node_list.append(new_apu_config.serializable)
 
         experience.add(experience)
         profile.num_test += 1
@@ -233,7 +234,10 @@ def delete_experience(id):
             raise NoResultFound(f"Experience not founded, id: {id}")
         if experience.profile != user_id and not jwt_data['isAdmin']:
             raise UnauthorizedException()
+        profile = db.session.query(Profile).get(experience.profile)
         experience.delete(experience)
+        profile.num_test -= 1
+        profile.update()
         results = jsonify(experience.serializable)
         results.status_code = status.HTTP_200_OK
 
