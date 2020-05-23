@@ -9,7 +9,7 @@
     {% endif %}
     <h1>Create New Access Point</h1>
     <hr>
-    <form method="post" action="{% url 'saveap' %}" enctype="multipart/form-data">
+    <form method="post" action="/network/create/AP/save/{{ nodeID }}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row">
             <div class="col-lg-6">
@@ -92,11 +92,16 @@
                 </select>
             </div>
             <div class="col-lg-4">
-                <label for="Channel">Channel</label>
+                <label for="hw_mode">Operation Mode</label>
                 <select id="hw_mode" name="hw_mode" class="form-control" required>
                     <option>G</option>
                     <option>H</option>
                 </select>
+            </div>
+            <div class="col-lg-4" hidden>
+                <label for="nodeID">Operation Mode</label>
+                <input id="nodeID" name="nodeID" type="text"
+                       value="{{ nodeID }}" class="form-control input-lg" required hidden>
             </div>
         </div>
         <br>

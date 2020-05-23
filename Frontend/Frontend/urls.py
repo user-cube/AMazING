@@ -20,7 +20,8 @@ from django.contrib.auth import views as auth_views
 from app.views import profile, home, checkTests, checkTestInfo, editProfile, updateProfile, \
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
     searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, \
-    checkTestsAdmin, searchTestAdmin, createAcessPoint, processAP, registerTestSave, listTemplates, templateInfo
+    checkTestsAdmin, searchTestAdmin, createAcessPoint, processAP, registerTestSave, listTemplates, \
+    templateInfo, interfaceUP, interfaceDown, openFileTest
 
 
 
@@ -49,11 +50,14 @@ urlpatterns = [
     path('create/user/validate/save/', saveUser, name="savepassword"),
     path('network/status/', networkStatus, name="networkstatus"),
     path('network/status/<int:nodeID>', processNode, name="nodestatus"),
-    path('network/create/AP', createAcessPoint, name="createap"),
-    path('network/create/AP/save', processAP, name="saveap"),
+    path('network/createAP/<int:nodeID>', createAcessPoint, name="createap"),
+    path('network/create/AP/save/<int:nodeID>', processAP, name="saveap"),
     path('network/templates/', listTemplates, name="listtemplates"),
     path('network/templates/<int:templateID>', templateInfo, name="templateinfo"),
     path('calendar/', calendar, name='calendar'),
     path('calendar/test', registerTest, name='registertest'),
-    path('calendar/test/save', registerTestSave, name='registertestsave')
+    path('calendar/test/save', registerTestSave, name='registertestsave'),
+    path('network/interface/<int:node>/<str:iName>/up', interfaceUP, name = 'interfaceup'),
+    path('network/interface/<int:node>/<str:iName>/down', interfaceDown, name = 'interfacedown'),
+    path('openfile/<int:file>/<int:testID>', openFileTest, name = 'openfile')
 ]

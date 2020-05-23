@@ -15,7 +15,7 @@
             </div>
             <div class="col-lg-2">
                 {% if access == 1 %}
-                    <a class="btn btn-warning" href="{% url 'createap' %}"><i class="fa fa-wifi"> Create Access Point</i></a>
+                    <a class="btn btn-warning" href="/network/createAP/{{ nodeID }}"><i class="fa fa-wifi"> Create Access Point</i></a>
                 {% endif %}
             </div>
         </div>
@@ -46,11 +46,9 @@
                     <td>
                         {% if i.name|first in 'w' %}
                             <div class="container" style="text-align: center">
-                                <a class="btn btn-primary" href="#"
-                                   target="_blank"
+                                <a class="btn btn-primary" href="/network/interface/{{ nodeID }}/{{ i.name }}/scan"
                                    rel="noopener noreferrer"><i class="fa fa-wifi"></i><span> Scan</span></a>
-                                <a class="btn btn-danger" href="#"
-                                   target="_blank"
+                                <a class="btn btn-danger" href="/network/interface/{{ nodeID }}/{{ i.name }}/down"
                                    rel="noopener noreferrer"><i class="fa fa-power-off"></i><span> Turn off</span></a>
                             </div>
                         {% else %}
@@ -97,9 +95,7 @@
                         <td>{{ i.mac }}</td>
                         <td>{% if access == 1 %}
                             {% if role == 1 %}
-                                <a href="#"
-                                   target="_blank"
-                                   rel="noopener noreferrer"
+                                <a href="/network/interface/{{ nodeID }}/{{ i.name }}/up"
                                    class="btn btn-success"><i class="fa fa-power-off"></i><span> Turn on</span></a>
                             {% endif %}
                         {% endif %}

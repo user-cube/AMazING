@@ -645,7 +645,8 @@ def processNode(request, nodeID):
             'database2' : lista2,
             'hostname': hostname,
             'username': 'amazing',
-            'password': password.decode("utf-8")
+            'password': password.decode("utf-8"),
+            'nodeID' : nodeID
         }
 
         return render(request, "network/nodeInfo.html", tparms)
@@ -743,23 +744,23 @@ def checkTestInfoAdmin(request, testID):
             r = requests.get(API + "experience/" + str(testID), headers={'Authorization': 'Bearer ' + token})
 
             if r.status_code != 200:
+                print(r.status_code)
                 return HttpResponseNotFound()
 
             json = r.json()
 
             experience = json['experience']
-            template = json['template']
-
+            config_list = json['config_list']
+            print(config_list)
             tparms = {
+                'author' : json['author'],
                 'begin_date': experience['begin_date'],
                 'end_date': experience['end_date'],
-                'num_test': experience['num_test'],
-                'id' : template['id'],
-                'duration' : template['duration'],
-                'nameT' : template['name'],
-                'profile' : template['profile'],
-                'name': experience['name'],
                 'register_date': experience['register_date'],
+                'name': experience['name'],
+                'status' : experience['status'],
+                'configs' : config_list,
+                'testID' : testID,
                 'year': datetime.now().year
             }
 
@@ -804,7 +805,7 @@ def searchTestAdmin(request):
     else:
         return redirect('login')
 
-def createAcessPoint(request):
+def createAcessPoint(request, nodeID):
     if request.user.is_authenticated:
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
@@ -828,12 +829,12 @@ def createAcessPoint(request):
         if access == 0:
             return HttpResponseForbidden("No access")
 
-        return render(request, "network/create/AP.html", {'year': datetime.now().year})
+        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID})
 
     else:
         return redirect('login')
 
-def processAP(request):
+def processAP(request, nodeID):
     if request.user.is_authenticated:
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "experience/now", headers={'Authorization': 'Bearer ' + token})
@@ -883,7 +884,7 @@ def processAP(request):
             'DFGateway' : DFGateway,
             'Netmask': Netmask
         }
-        r = requests.post(API + "createAP", json=msg)
+        r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg)
 
         if r.status_code != 200:
             print(r.status_code)
@@ -1020,6 +1021,60 @@ def templateInfo(request, templateID):
         }
 
         return render(request, 'network/templates/templateInfo.html', tparms)
+
+    else:
+        return redirect('login')
+
+def interfaceUP(request, node, iName):
+    if request.user.is_authenticated:
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/up", headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            json = r.json()
+            messages.error(request, json['msg'])
+            return redirect('nodestatus', nodeID=node)
+
+        json = r.json()
+        messages.info(request, json['msg'])
+        return redirect('nodestatus', nodeID=node)
+    else:
+        return redirect('login')
+
+def interfaceDown(request, node, iName):
+    if request.user.is_authenticated:
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName)  + "/down", headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            json = r.json()
+            messages.error(request, json['msg'])
+            return redirect('nodestatus', nodeID=node)
+
+        json = r.json()
+        messages.info(request, json['msg'])
+        return redirect('nodestatus', nodeID=node)
+    else:
+        return redirect('login')
+
+def openFileTest(request, file, testID):
+    if request.user.is_authenticated:
+        token = tokenizer.userToken(request.user.email)
+        r = requests.get(API + "experience/" + str(testID), headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            return HttpResponseNotFound()
+
+        json = r.json()
+
+        json=json['config_list']
+
+        for i in json:
+            if i['experience'] == file:
+                val = i['file']
+                break;
+
+        return render(request, 'user/admin/experiences/openfile.html', {'file' : val})
 
     else:
         return redirect('login')
