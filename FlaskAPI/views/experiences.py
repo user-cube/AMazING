@@ -13,6 +13,9 @@ from sqlalchemy.orm.exc import NoResultFound
 from models import db, Experience, Profile, APU_Config, ExperienceStatus
 from views.base import get_user_by_email, UnauthorizedException, ExperienceScheduleException
 
+from schedule.experience_schedule import experience_scheduler_manager
+
+
 experiences_blueprint = Blueprint('experiences', __name__, )
 
 parser = reqparse.RequestParser()
@@ -87,7 +90,7 @@ def insert_experience():
     raw_data = request.get_json(force=True)
     try:
         begin_date = datetime.strptime(raw_data['begin_date'], "%Y-%m-%d %H:%M:%S")
-        end_date = raw_data['end_date']
+        end_date = datetime.strptime(raw_data['end_date'], "%Y-%m-%d %H:%M:%S")
         scheduled_experience = return_experince_in_range_datetime(begin_date, end_date)
         if len(scheduled_experience) > 0:
             raise ExperienceScheduleException(scheduled_experience)
@@ -100,6 +103,8 @@ def insert_experience():
                                 register_date=datetime.now())
 
         config_node_list = []
+
+        experience.add(experience)
         if 'config_node' in raw_data.keys():
             for apu_config in raw_data['config_node']:
                 if apu_config['file']:
@@ -109,11 +114,11 @@ def insert_experience():
                     new_apu_config.add(new_apu_config)
                     config_node_list.append(new_apu_config.serializable)
 
-        experience.add(experience)
         profile.num_test += 1
         profile.update()
         results = jsonify({'experience': experience.serializable, 'config_node': config_node_list})
         results.status_code = status.HTTP_201_CREATED
+        experience_scheduler_manager.manage_next_experience(experience.id)
 
     except ValidationError as err:
         results = jsonify({"ERROR": err.__str__()})
@@ -193,6 +198,7 @@ def put(id):
         experience.update()
         results = jsonify(experience.serializable)
         results.status_code = status.HTTP_200_OK
+        experience_scheduler_manager.manage_next_experience()
 
     except ValidationError as err:
         results = jsonify({"ERROR": err.messages})
@@ -240,6 +246,8 @@ def delete_experience(id):
         profile.update()
         results = jsonify(experience.serializable)
         results.status_code = status.HTTP_200_OK
+
+        experience_scheduler_manager.remove_schedule_experience(experience.id)
 
     except ValidationError as err:
         results = jsonify({"ERROR": err.messages})

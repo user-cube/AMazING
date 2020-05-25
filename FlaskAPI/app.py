@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
+from schedule.experience_schedule import experience_scheduler_manager
 from tests.insert_data import insert_db_info
 from views.experiences import experiences_blueprint
 from views.nodes import nodes_blueprint
@@ -25,15 +26,18 @@ app.register_blueprint(users_blueprint)
 
 db.init_app(app)
 
-
 @app.before_first_request
 def create_database():
-    db.create_all()
+    with app.app_context():
+        db.create_all()
     if app.config['TESTING'] == 'True':
         insert_db_info()
 
-#@app.before_first_request
-    #schedulling the next experience
+
+@app.before_first_request
+def schedule_expereince():
+    experience_scheduler_manager.configure(app=app, db=db)
+    experience_scheduler_manager.manage_next_experience()
 
 
 if __name__ == '__main__':
