@@ -1,0 +1,54 @@
+{% extends 'structure/layout.html' %}
+
+{% block content %}
+
+    <h1>Create Iperf Client</h1>
+    <hr>
+    <form method="post" action="/network/create/Iperf/Client/save/{{ nodeID }}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-row justify-content-center">
+            <div class="col-md-5">
+                <label>Protocol</label>
+                <br>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="protocol" id="tcp" value="tcp">
+                    <label class="form-check-label" for="tcp">TCP</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="protocol" id="udp" value="udp">
+                    <label class="form-check-label" for="udp">UDP</label>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="form-row justify-content-center">
+            <div class="col-md-5">
+                <label for="time">Time</label>
+                <input id="time" name="time" type="text"
+                       placeholder="Time" class="form-control input-lg">
+            </div>
+        </div>
+        <br>
+        <div class="form-row justify-content-center">
+            <div class="col-md-5">
+                <label for="mtu">MTU</label>
+                <input id="mtu" name="mtu" type="text"
+                       placeholder="Length of the buffer, default 8Kb" class="form-control input-lg">
+            </div>
+        </div>
+        <br>
+        <div class="form-row justify-content-center">
+            <div class="col-md-5">
+                <label for="bandwidth">Bandwidth</label>
+                <input id="bandwidth" name="bandwidth" type="text"
+                       placeholder="Bandwidth to send at (Required for UDP, default 1Mbit/sec)" class="form-control input-lg">
+            </div>
+        </div>
+
+        <br>
+        <div class="col-lg-12" style="text-align: center">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-wifi"> Create Iperf Client</i></button>
+        </div>
+    </form>
+
+{% endblock %}

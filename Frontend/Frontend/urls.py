@@ -21,8 +21,8 @@ from app.views import profile, home, checkTests, checkTestInfo, editProfile, upd
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
     searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, \
     checkTestsAdmin, searchTestAdmin, createAcessPoint, processAP, registerTestSave, listTemplates, \
-    templateInfo, interfaceUP, interfaceDown, openFileTest
-
+    templateInfo, interfaceUP, interfaceDown, openFileTest, iperfServer, iperfClient, processIpServer, \
+    processIpClient
 
 
 urlpatterns = [
@@ -59,5 +59,9 @@ urlpatterns = [
     path('calendar/test/save', registerTestSave, name='registertestsave'),
     path('network/interface/<int:node>/<str:iName>/up', interfaceUP, name = 'interfaceup'),
     path('network/interface/<int:node>/<str:iName>/down', interfaceDown, name = 'interfacedown'),
+    path('/network/createIpServer/<int:nodeID>', iperfServer, name="iperfserver"),
+    path('/network/createIpClient/<int:nodeID>', iperfClient, name="iperfclient"),
+    path('/network/create/Iperf/Server/save/<int:nodeID>', processIpServer, name="saveipserver"),
+    path('/network/create/Iperf/Client/save/<int:nodeID>', processIpClient, name="saveipclient"),
     path('openfile/<int:file>/<int:testID>', openFileTest, name = 'openfile')
 ]

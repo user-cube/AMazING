@@ -974,7 +974,7 @@ def calendar(request):
             name = test['author'] + ' - ' + test['name']
             data = test['begin_date']
             tests.append({'name': name, 'date': data, 'id': str(t_id), 'type': 'event'})
-        
+
         return render(request, 'calendar/calendar.html', {'database': tests, 'year': datetime.now().year})
     else:
         return redirect('login')
@@ -1076,5 +1076,104 @@ def openFileTest(request, file, testID):
 
         return render(request, 'user/admin/experiences/openfile.html', {'file' : val})
 
+    else:
+        return redirect('login')
+
+
+def iperfServer(request, nodeID):
+    if request.user.is_authenticated:
+        return render(request, 'network/iperfServer.html', {'year': datetime.now().year, 'nodeID': nodeID})
+    else:
+        return redirect('login')
+
+
+def iperfClient(request, nodeID):
+    if request.user.is_authenticated:
+        return render(request, 'network/iperfClient.html', {'year': datetime.now().year, 'nodeID': nodeID})
+    else:
+        return redirect('login')
+
+
+def processIpServer(request, nodeID):
+    if request.user.is_authenticated:
+        '''
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "", headers={'Authorization': 'Bearer ' + token}) # preencher se necessario
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '')) # preencher se necessario
+        '''
+        try:
+            time = request.POST['time']
+        except:
+            time = 0
+
+        try:
+            protocol = request.POST['protocol']
+        except:
+            protocol = 'tcp'
+
+        try:
+            mtu = request.POST['mtu']
+        except Exception as e:
+            print(e)
+            return redirect('networkstatus')
+
+        msg = {
+            'protocol': protocol,
+            'time': time,
+            'mtu': mtu
+        }
+        r = requests.post(API + "" + str(nodeID) + "", json=msg)
+
+        if r.status_code != 200:
+            print(r.status_code)
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('networkstatus')
+    else:
+        return redirect('login')
+
+
+def processIpClient(request, nodeID):
+    if request.user.is_authenticated:
+        '''
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        '''
+
+        try:
+            time = request.POST['time']
+        except:
+            time = 0
+
+        try:
+            protocol = request.POST['protocol']
+        except:
+            protocol = 'tcp'
+
+        try:
+            bandwidth = request.POST['bandwidth']
+            mtu = request.POST['mtu']
+        except Exception as e:
+            print(e)
+            return redirect('networkstatus')
+
+        msg = {
+            'protocol': protocol,
+            'time': time,
+            'bandwidth': bandwidth,
+            'mtu': mtu
+        }
+        r = requests.post(API + "" + str(nodeID) + "", json=msg)
+
+        if r.status_code != 200:
+            print(r.status_code)
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('networkstatus')
     else:
         return redirect('login')
