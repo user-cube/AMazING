@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.0",
+  "swagger": "2.0",
   "info": {
     "description": "group 3 PI",
     "version": "1.0.0",
@@ -9,11 +9,6 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "servers": [
-    {
-      "url": "/"
-    }
-  ],
   "tags": [
     {
       "name": "User Request",
@@ -394,8 +389,149 @@
           }
         }
       }
+    },
+    "/node": {
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Returns list of Nodes"
+      },
+      "post": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Create new Node"
+      }
+    },
+    "/node/{id}": {
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Returns selected Node"
+      },
+      "put": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Update selected Node"
+      },
+      "delete": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Delete selected Node"
+      }
+    },
+    "/node/{id}/accesspoint": {
+      "post": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Create new accesspoint"
+      }
+    },
+    "node/{id}/{interface}/up": {
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Turn up selected Node's Interface"
+      },
+      "post": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Turn up selected Node's Interface with specific ip"
+      }
+    },
+    "node/{id}/{interface}/down": {
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Turn down selected Node's Interface"
+      }
+    },
+    "node/{id}/{interface}/scan": {
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Scan selected Node's Interface"
+      }
+    },
+    "experience": {
+      "get": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Returns list of Experiences"
+      },
+      "post": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Create new Experience"
+      }
+    },
+    "experience/{id}": {
+      "get": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Returns selected Experience"
+      },
+      "put": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Update selected Experience"
+      },
+      "delete": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Delete selected Experience"
+      }
+    },
+    "experience/now": {
+      "get": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Returns on going and next scheluded Experience"
+      }
+    },
+    "experience/{id}/node": {
+      "post": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Create new configuration for Experience's Node"
+      }
+    },
+    "experience/{experience_id}/node/{apu_config_id}": {
+      "get": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Returns selected node configuration on selected Experience"
+      },
+      "put": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Update selected node configuration on selected Experience"
+      },
+      "delete": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Delete selected node configuration on selected Experience"
+      }
     }
-    
   },
   "components": {
     "schemas": {
