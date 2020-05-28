@@ -60,9 +60,6 @@ class ExperienceSchedulerManager:
             logging.error(f'ExperienceSchedule: No Experience Found, Experience.id {id}')
             self.scheduler_end.remove_job(str(id))
         except FailedExperienceException as err:
-            print('\n\n\n\nNEXT: ')
-            print(self.scheduler_start.get_jobs())
-            print(self.scheduler_end.get_jobs())
             logging.error(f'ExperienceSchedule: {err.messages}')
             self.scheduler_end.remove_job(str(id))
         self.manage_next_experience()
@@ -70,10 +67,8 @@ class ExperienceSchedulerManager:
     def ending_next_experience(self, id):
         try:
             response = finish_experience(id, self.app, self.db)
-            print('\n\n\n', f'ExperienceSchedule: Finished Experience {id}, APUs: {[apu_response for apu_response in response]}')
             logging.info(f'ExperienceSchedule: Finished Experience {id}, APUs: {[apu_response for apu_response in response]}')
         except NoResultFound:
-            print('\n\n\n', f'ExperienceSchedule: No Experience Found, Experience.id {id}')
             logging.error(f'ExperienceSchedule: No Experience Found, Experience.id {id}')
 
     def insert_job(self, experience_scheduled):

@@ -1,0 +1,614 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "group 3 PI",
+    "version": "1.0.0",
+    "title": "AMazING api Documentation",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "User Request",
+      "description": "Example API for requesting and return users requests"
+    },
+    {
+      "name": "Profile Request",
+      "description": "Example API for requesting and return self profile"
+    },
+    {
+      "name": "Role Request",
+      "description": "Example API for requesting and return roles requests"
+    },
+    {
+      "name": "Experience Request",
+      "description": "Example API for requesting and return experiences requests"
+    },
+    {
+      "name": "Node Request",
+      "description": "Example API for requesting and return nodes requests"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/user": {
+      "get": {
+        "parameters": [
+          {
+            "name": "typeID",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Returns List of Users",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/user"
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Create a new User",
+        "requestBody": {
+          "description": "User Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user_insert"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "schema": {
+              "$ref": "#/components/schemas/user"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Returns selected User",
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/components/schemas/user"
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Update User Role",
+        "requestBody": {
+          "description": "User Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user_role_update"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/components/schemas/user"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": [
+          "Profile Request"
+        ],
+        "summary": "Returns logged Profile",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/user"
+            }
+          },
+          "204": {
+            "description": "NO_CONTENT."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Profile Request"
+        ],
+        "summary": "Update User Name or Picture",
+        "requestBody": {
+          "description": "User Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/profile_update"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "202": {
+            "schema": {
+              "$ref": "#/components/schemas/user"
+            }
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          }
+        }
+      }
+    },
+    "/role": {
+      "get": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Returns List of Roles",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/role"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Create a new Role",
+        "requestBody": {
+          "description": "Role Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/role_insert_update"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "schema": {
+              "$ref": "#/components/schemas/role"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          }
+        }
+      }
+    },
+    "/role/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Returns selected Role",
+        "responses": {
+          "200": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/components/schemas/role"
+            }
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Update Role name",
+        "requestBody": {
+          "description": "Role Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/role_insert_update"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/components/schemas/role"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Delete selected Role",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/role"
+            }
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      }
+    }
+    
+  },
+  "components": {
+    "schemas": {
+      "user": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "num_test": {
+          "type": "integer",
+          "format": "number"
+        },
+        "register_date": {
+          "type": "string",
+          "format": "Date"
+        },
+        "picture": {
+          "type": "file"
+        },
+        "last_login": {
+          "type": "integer",
+          "format": "Date"
+        },
+        "role": {
+          "type": "integer",
+          "format": "number"
+        }
+      },
+      "user_insert": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "user_role_update": {
+        "properties": {
+          "role": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "profile_update": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "pic": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "role_name": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      },
+      "role_insert_update": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      },
+      "experience": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "register_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "status": {
+            "type": "string",
+            "format": "string"
+          },
+          "profile": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "apu": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "ip": {
+            "type": "string",
+            "format": "string"
+          },
+          "port": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "apu_insert_update": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "ip": {
+            "type": "string",
+            "format": "string"
+          },
+          "port": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "apu_access_point": {
+        "properties": {
+          "APSSID": {},
+          "APPW": {},
+          "Channel": {},
+          "RangeStart": {},
+          "RangeEnd": {},
+          "hw_mode": {},
+          "DFGateway": {},
+          "Netmask": {}
+        }
+      },
+      "apu_interface_configuration": {
+        "properties": {
+          "ip": {
+            "type": "string",
+            "format": "string"
+          }
+        },
+        "apu_config": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "apu": {
+            "type": "integer",
+            "format": "number"
+          },
+          "experience": {
+            "type": "integer",
+            "format": "number"
+          },
+          "file": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "name": "Authorization",
+        "description": "Json Web Token required to logged users"
+      }
+    }
+  }
+}
