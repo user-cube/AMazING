@@ -1082,14 +1082,14 @@ def openFileTest(request, file, testID):
 
 def iperfServer(request, nodeID):
     if request.user.is_authenticated:
-        return render(request, 'network/iperfServer.html', {'year': datetime.now().year, 'nodeID': nodeID})
+        return render(request, 'network/create/iperfServer.html', {'year': datetime.now().year, 'nodeID': nodeID})
     else:
         return redirect('login')
 
 
 def iperfClient(request, nodeID):
     if request.user.is_authenticated:
-        return render(request, 'network/iperfClient.html', {'year': datetime.now().year, 'nodeID': nodeID})
+        return render(request, 'network/create/iperfClient.html', {'year': datetime.now().year, 'nodeID': nodeID})
     else:
         return redirect('login')
 
@@ -1175,5 +1175,18 @@ def processIpClient(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         return redirect('networkstatus')
+    else:
+        return redirect('login')
+
+
+def userStatistics(request):
+    if request.user.is_authenticated:
+        return render(request, 'statistics/admin.html', {'year': datetime.now().year})
+    else:
+        return redirect('login')
+
+def adminStatistics(request):
+    if request.user.is_authenticated:
+        return render(request, 'statistics/user.html', {'year': datetime.now().year})
     else:
         return redirect('login')
