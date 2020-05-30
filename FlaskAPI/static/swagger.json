@@ -1,0 +1,1586 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "description": "group 3 PI",
+    "version": "1.0.0",
+    "title": "AMazING api Documentation",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "tags": [
+    {
+      "name": "User Request",
+      "description": "Example API for requesting and return users requests"
+    },
+    {
+      "name": "Profile Request",
+      "description": "Example API for requesting and return self profile"
+    },
+    {
+      "name": "Role Request",
+      "description": "Example API for requesting and return roles requests"
+    },
+    {
+      "name": "Experience Request",
+      "description": "Example API for requesting and return experiences requests"
+    },
+    {
+      "name": "Node Request",
+      "description": "Example API for requesting and return nodes requests"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/user": {
+      "get": {
+        "parameters": [
+          {
+            "name": "typeID",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Returns List of Users",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user_array"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Create a new User",
+        "requestBody": {
+          "description": "User Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user_insert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Returns selected User",
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User Request"
+        ],
+        "summary": "Update User Role",
+        "requestBody": {
+          "description": "User Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user_role_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": [
+          "Profile Request"
+        ],
+        "summary": "Returns logged Profile",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "NO_CONTENT."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Profile Request"
+        ],
+        "summary": "Update User Name or Picture",
+        "requestBody": {
+          "description": "User Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/profile_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          }
+        }
+      }
+    },
+    "/role": {
+      "get": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Returns List of Roles",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/role_array"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Create a new Role",
+        "requestBody": {
+          "description": "Role Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/role_insert_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/role"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          }
+        }
+      }
+    },
+    "/role/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Returns selected Role",
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/role"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Update Role name",
+        "requestBody": {
+          "description": "Role Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/role_insert_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/role"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Role Request"
+        ],
+        "summary": "Delete selected Role",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/role"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      }
+    },
+    "/node": {
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Returns list of Nodes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apu_array"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Create new Node",
+        "requestBody": {
+          "description": "Node/APU Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/apu_insert_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apu"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          }
+        }
+      }
+    },
+    "/node/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Returns selected Node info in real time",
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apu"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not Found."
+          },
+          "444": {
+            "description": "Connection Closed without Response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Update selected Node",
+        "requestBody": {
+          "description": "Role Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/apu_insert_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apu"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Delete selected Node",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/role"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "403": {
+            "description": "Forbidden access, admins only!"
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      }
+    },
+    "/node/{id}/accesspoint": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Create new accesspoint",
+        "requestBody": {
+          "description": "Node Access Point Creation Parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/apu_access_point"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Item not Found."
+          },
+          "444": {
+            "description": "Connection Closed without Response."
+          }
+        }
+      }
+    },
+    "/node/{id}/{interface}/up": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "interface",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Turn up selected Node's Interface",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Item not Found."
+          },
+          "444": {
+            "description": "Connection Closed without Response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Turn up selected Node's Interface with specific ip",
+        "requestBody": {
+          "description": "Node Interface Configuration Parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/apu_interface_configuration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Item not Found."
+          },
+          "444": {
+            "description": "Connection Closed without Response."
+          }
+        }
+      }
+    },
+    "/node/{id}/{interface}/down": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "interface",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Turn down selected Node's Interface",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Item not Found."
+          },
+          "444": {
+            "description": "Connection Closed without Response."
+          }
+        }
+      }
+    },
+    "/node/{id}/{interface}/scan": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "interface",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Node Request"
+        ],
+        "summary": "Scan selected Node's Interface",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Item not Found."
+          },
+          "444": {
+            "description": "Connection Closed without Response."
+          }
+        }
+      }
+    },
+    "/experience": {
+      "get": {
+        "tags": [
+          "Experience Request"
+        ],
+        "parameters": [
+          {
+            "name": "content",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userID",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "description": "This parameter invalidates *begin_date* and *end_date*",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "begin_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "Returns list of Experiences",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/experience_array"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Create new Experience",
+        "requestBody": {
+          "description": "Experience Request POST Parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/experience_insert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/experience_apu_config"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "406": {
+            "description": "Not Acceptable. There are experiences scheduled in the requested range time"
+          }
+        }
+      }
+    },
+    "/experience/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Returns selected Experience",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/experience_apu_config"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Update selected Experience",
+        "requestBody": {
+          "description": "Experience Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/experience_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/experience"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Delete selected Experience",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/experience"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Item not Found."
+          }
+        }
+      }
+    },
+    "/experience/now": {
+      "get": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Returns on going and next scheluded Experience",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content":{
+              "application/json":{
+                "schema":{
+                "$ref":"#/components/schemas/experience_now"
+              }
+            }
+            }
+          }
+        }
+      }
+    },
+    "/experience/{experience_id}/node": {
+      "parameters": [
+        {
+          "name": "experience_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Create new configuration for Experience's Node",
+        "requestBody": {
+          "description": "Node Configuration Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/apu_config_insert_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apu_config"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          }
+        }
+      }
+    },
+    "/experience/{experience_id}/node/{apu_config_id}": {
+      "parameters": [
+        {
+          "name": "experience_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "apu_config_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Returns selected node configuration on selected Experience",
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apu_config"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Experience or APU config not found not Found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Update selected node configuration on selected Experience",
+        "requestBody": {
+          "description": "Experience Request Put Parameter",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/apu_config_insert_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apu_config"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Bad sent data."
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Experience or APU config not found not Found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Experience Request"
+        ],
+        "summary": "Delete selected node configuration on selected Experience",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/experience"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or Invalid Authorization Header."
+          },
+          "404": {
+            "description": "Experience or APU config not found not Found."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "role_name": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      },
+      "role_array":{
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/role"
+        }
+      },
+      "role_insert_update": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      },
+      "user": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "num_test": {
+            "type": "integer",
+            "format": "number"
+          },
+          "register_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "picture": {
+            "type": "string",
+            "format": "byte"
+          },
+          "last_login": {
+            "type": "integer",
+            "format": "Date"
+          },
+          "role": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "user_array":{
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/user"
+        }
+      },
+      "user_insert": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "user_role_update": {
+        "properties": {
+          "role": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "profile_update": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "pic": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "experience": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "register_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "status": {
+            "type": "string",
+            "format": "string"
+          },
+          "profile": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "experience_author": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "author": {
+            "type": "string",
+            "format": "string"
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "register_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "status": {
+            "type": "string",
+            "format": "string"
+          },
+          "profile": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "experience_author_email": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "author": {
+            "type": "string",
+            "format": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "register_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "status": {
+            "type": "string",
+            "format": "string"
+          },
+          "profile": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "experience_array":{
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/experience_author"
+        }
+      },
+      "experience_insert": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "config_node": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/apu_config_insert_update"
+            }
+          }
+        }
+      },
+      "experience_apu_config": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "register_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "status": {
+            "type": "string",
+            "format": "string"
+          },
+          "config_node": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/apu_config"
+            }
+          }
+        }
+      },
+      "experience_update": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "Date"
+          }
+        }
+      },
+      "experience_now":{
+        "properties": {
+          "current_experience": {
+            "type":"object",
+            "$ref": "#/components/schemas/experience_author_email"
+          },
+          "next_experience": {
+            "type":"object",
+            "$ref": "#/components/schemas/experience_author_email"}
+        }
+      },
+      "apu_config": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "experience": {
+            "type": "integer",
+            "format": "number"
+          },
+          "apu": {
+            "type": "integer",
+            "format": "number"
+          },
+          "file": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "apu_config_insert_update": {
+        "properties": {
+          "apu": {
+            "type": "integer",
+            "format": "number"
+          },
+          "file": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "apu": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "number"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "ip": {
+            "type": "string",
+            "format": "string"
+          },
+          "port": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "apu_array":{
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/apu"
+        }
+      },
+      "apu_insert_update": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "ip": {
+            "type": "string",
+            "format": "string"
+          },
+          "port": {
+            "type": "integer",
+            "format": "number"
+          }
+        }
+      },
+      "apu_access_point": {
+        "properties": {
+          "APSSID": {},
+          "APPW": {},
+          "Channel": {},
+          "RangeStart": {},
+          "RangeEnd": {},
+          "hw_mode": {},
+          "DFGateway": {},
+          "Netmask": {}
+        }
+      },
+      "apu_interface_configuration": {
+        "properties": {
+          "ip": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Json Web Token required to logged users"
+      }
+    }
+  }
+}

@@ -44,6 +44,20 @@ def insert_role():
     return results
 
 
+@roles_blueprint.route('/role/<int:id>', methods=['GET'], strict_slashes=False)
+def get_role():
+    try:
+        roles_query = db.session.query(Role).get(id)
+        if not roles_query:
+            raise NoResultFound
+        results = jsonify(roles_query.serializable)
+
+    except NoResultFound:
+        results = jsonify({'ERROR': f'Item not found {id}'})
+        results.status_code = status.HTTP_404_NOT_FOUND
+    return results
+
+
 @roles_blueprint.route('/role/<int:id>', methods=['PUT'], strict_slashes=False)
 @admin_required
 def alter_role(id):

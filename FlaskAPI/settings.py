@@ -3,14 +3,24 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+"""
+                        Server Configuration Session
+"""
+
 # Server Info
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.getenv('DEBUG') == 'True'
 PORT = os.getenv('PORT')
 END_HOST = os.getenv('END_HOST')
 
-TESTING = os.getenv('TESTING')
+TESTING = os.getenv('TESTING') == 'True'
 
-if not TESTING or TESTING == 'False':
+
+"""
+                        DataBase Session
+"""
+
+if not TESTING:
     # BD Info
     DB_HOST = os.getenv('DB_HOST')
     DB_NAME = os.getenv('DB_NAME')
@@ -24,9 +34,14 @@ else:
     #InMemory Database
     SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DB')
 
-SQLALCHEMY_ECHO = True
-SQLALCHEMY_TRACK_MODIFICATIONS = True
 
+SQLALCHEMY_ECHO = os.getenv('SQLALCHEMY_ECHO') == 'True'
+SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS') == 'True'
+
+
+"""
+                        Json Web Token Session
+"""
 
 # JWT Decode CERT
 with open("certificates/publicKey.pem", 'rb') as reader:
@@ -39,3 +54,12 @@ JWT_DECODE_ALGORITHMS = ['RS256']
 
 # JWT Identifier
 JWT_IDENTITY_CLAIM = 'email'
+
+
+
+"""
+                        Swagger Session
+"""
+SWAGGER_URL = ''
+API_URL = '/static/swagger.json'
+APP_NAME = 'AMazING api Documentation'
