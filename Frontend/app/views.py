@@ -1113,12 +1113,14 @@ def processIpServer(request, nodeID):
             protocol = 'tcp'
 
         try:
+            ip = request.POST['ip']
             mtu = request.POST['mtu']
         except Exception as e:
             print(e)
             return redirect('networkstatus')
 
         msg = {
+            'ip': ip,
             'protocol': protocol,
             'time': time,
             'mtu': mtu
@@ -1155,6 +1157,7 @@ def processIpClient(request, nodeID):
             protocol = 'tcp'
 
         try:
+            ip = request.POST['ip']
             bandwidth = request.POST['bandwidth']
             mtu = request.POST['mtu']
         except Exception as e:
@@ -1162,6 +1165,7 @@ def processIpClient(request, nodeID):
             return redirect('networkstatus')
 
         msg = {
+            'ip': ip,
             'protocol': protocol,
             'time': time,
             'bandwidth': bandwidth,
@@ -1184,6 +1188,7 @@ def userStatistics(request):
         return render(request, 'statistics/admin.html', {'year': datetime.now().year})
     else:
         return redirect('login')
+
 
 def adminStatistics(request):
     if request.user.is_authenticated:
