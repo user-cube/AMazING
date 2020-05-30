@@ -15,7 +15,6 @@ nodes_blueprint = Blueprint('nodes', __name__, )
 
 
 @nodes_blueprint.route('/node', methods=['GET'], strict_slashes=False)
-@jwt_required
 def list_nodes():
     apu_query = db.session.query(APU).all()
     return jsonify([apu.serializable for apu in apu_query])
@@ -119,6 +118,7 @@ def delete_node(id):
 
 
 @nodes_blueprint.route('/node/<int:id>/accesspoint', methods=['POST'], strict_slashes=False)
+@jwt_required
 def create_access_point(id):
     raw_data = request.get_json(force=True)
     apu = db.session.query(APU).get(id)
@@ -140,6 +140,7 @@ def create_access_point(id):
 
 
 @nodes_blueprint.route('/node/<int:id>/<interface>/<command>', methods=['GET'], strict_slashes=False)
+@jwt_required
 def send_node_command_to_interface(id, interface, command):
     apu = db.session.query(APU).get(id)
     if not apu:
@@ -159,7 +160,8 @@ def send_node_command_to_interface(id, interface, command):
         return results
 
 
-@nodes_blueprint.route('/node/<int:id>/<interface>/<command>', methods=['POST'], strict_slashes=False)
+@nodes_blueprint.route('/node/<int:id>/<interface>/<command>', methods=['PUT'], strict_slashes=False)
+@jwt_required
 def send_node_command__to_interface_as_post(id, interface, command):
     apu = db.session.query(APU).get(id)
     # apu = '127.0.0.1'

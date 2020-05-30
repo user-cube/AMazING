@@ -135,7 +135,7 @@ def insert_experience():
         experiences = [ex.serializable for ex in err.messages]
         results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
                            'experiences': experiences})
-        results.status_code = status.HTTP_400_BAD_REQUEST
+        results.status_code = status.HTTP_406_NOT_ACCEPTABLE
     return results
 
 
@@ -219,7 +219,7 @@ def put(id):
         experiences = [ex.serializable for ex in err.messages]
         results = jsonify({'ERROR': 'There are experiences scheduled in the requested range time',
                            'experiences': experiences})
-        results.status_code = status.HTTP_400_BAD_REQUEST
+        results.status_code = status.HTTP_406_NOT_ACCEPTABLE
     except NoResultFound:
         db.session.rollback()
         results = jsonify({"ERROR": f'Item not found experience id: {id}'})
