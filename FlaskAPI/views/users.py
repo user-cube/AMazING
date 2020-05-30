@@ -48,7 +48,7 @@ def insert_user():
         profile = Profile(name=raw_data['name'], email=raw_data['email'], role=raw_data['role'], num_test=0,
                           register_date=datetime.now())
         profile.add(profile)
-        results = profile.serializable
+        results = jsonify(profile.serializable)
         results.status_code = status.HTTP_201_CREATED
 
     except ValidationError as err:
