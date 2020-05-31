@@ -564,11 +564,11 @@ def networkStatus(request):
 
 
 # API
-def processNode(request, nodeID):
+def processNode(request, nodeID, content=None):
     if request.user.is_authenticated:
 
-        if request.method == 'POST':
-            print(request.POST)
+        if content != None:
+            print(content)
 
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
@@ -1229,6 +1229,6 @@ def interfaceScan(request, node, iName):
         json = r.json()
         dictionary = json['msg']
 
-        return request.POST(dictionary, processNode(request=request, nodeID=node))
+        return request.POST(processNode(request=request, nodeID=node, content=dictionary))
     else:
         return redirect('login')
