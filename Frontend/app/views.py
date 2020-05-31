@@ -908,7 +908,7 @@ def processAP(request, nodeID):
             interface = request.POST['interface']
         except Exception as e:
             print(e)
-            return redirect('networkstatus')
+            return redirect('nodestatus')
         msg = {
             'APSSID' : APSSID,
             'APPW': APPW,
@@ -927,7 +927,7 @@ def processAP(request, nodeID):
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        return redirect('networkstatus')
+        return redirect('nodestatus')
     else:
         return redirect('login')
 

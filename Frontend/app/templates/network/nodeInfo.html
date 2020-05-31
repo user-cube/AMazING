@@ -14,14 +14,14 @@
                 <h1>{{ hostname }} - Information</h1>
             </div>
             <div class="col-lg-2">
-                <a class="btn btn-warning" href="/network/createIpServer/{{ nodeID }}"><i class="fa fa-wifi"> Create Iperf Server</i></a>
+                <a class="btn btn-warning" href="/network/createIpServer/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Iperf Server</a>
             </div>
             <div class="col-lg-2">
-                <a class="btn btn-warning" href="/network/createIpClient/{{ nodeID }}"><i class="fa fa-wifi"> Create Iperf Client</i></a>
+                <a class="btn btn-warning" href="/network/createIpClient/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Iperf Client</a>
             </div>
             <div class="col-lg-2">
                 {% if access == 1 %}
-                    <a class="btn btn-warning" href="/network/createAP/{{ nodeID }}"><i class="fa fa-wifi"> Create Access Point</i></a>
+                    <a class="btn btn-warning" href="/network/createAP/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Access Point</a>
                 {% endif %}
             </div>
         </div>
