@@ -1209,19 +1209,19 @@ def adminStatistics(request):
     else:
         return redirect('login')
 
-def interfaceScan(request, nodeID, interface):
+
+def interfaceScan(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + "node/" + str(nodeID) + "/" + str(interface) + "/scan",
-                         headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/scan", headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             json = r.json()
             messages.error(request, json['msg'])
-            return redirect('nodestatus', nodeID=nodeID)
+            return redirect('nodestatus', nodeID=node)
 
         json = r.json()
         print(json)
-        return redirect('nodestatus', nodeID=nodeID, )
+        return redirect('nodestatus', nodeID=node)
     else:
         return redirect('login')
