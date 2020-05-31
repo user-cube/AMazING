@@ -954,7 +954,8 @@ def calendar(request):
             t_id = test['id']
             name = test['author'] + ' - ' + test['name']
             data = test['begin_date']
-            tests.append({'name': name, 'date': data, 'id': str(t_id), 'type': 'event'})
+            date_finish = test['end_date']
+            tests.append({'name': name, 'date': data, 'description': date_finish, 'id': str(t_id), 'type': 'event'})
 
         return render(request, 'calendar/calendar.html', {'database': tests, 'year': datetime.now().year})
     else:
