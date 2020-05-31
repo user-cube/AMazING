@@ -813,8 +813,44 @@ def createAcessPoint(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         ongoing = r.json()
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        json = r.json()
+        interfaces = json['interfaces']
         ongoing = ongoing['current_experience']
+
+        lista = []
+        lista2 = []
+        dic = {}
+        dic2 = {}
+        for i in interfaces:
+            if interfaces[i]['logic_state'] != "DOWN":
+                if interfaces[i]['ip'] != None:
+                    dic['name'] = i
+                    dic['end'] = interfaces[i]['addrs']
+                    dic['ip'] = interfaces[i]['ip']
+                    dic['mac'] = interfaces[i]['mac']
+                    dic['logic_state'] = interfaces[i]['logic_state']
+                    lista.append(dic)
+                else:
+                    dic['name'] = i
+                    dic['end'] = [{'addr': '-', 'broadcast': '-', 'netmask': '-', 'peer': '-'}]
+                    dic['ip'] = '127.0.0.1'
+                    dic['mac'] = interfaces[i]['mac']
+                    dic['logic_state'] = interfaces[i]['logic_state']
+                    lista.append(dic)
+                dic = {}
+            else:
+                dic2['name'] = i
+                dic2['mac'] = interfaces[i]['mac']
+                lista2.append(dic2)
+                dic2 = {}
+                dic2 = {}
+                dic2 = {}
 
         try:
             uEmail = ongoing['email']
@@ -829,7 +865,7 @@ def createAcessPoint(request, nodeID):
         if access == 0:
             return HttpResponseForbidden("No access")
 
-        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID})
+        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID, 'database' : json})
 
     else:
         return redirect('login')
