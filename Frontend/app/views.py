@@ -927,7 +927,7 @@ def processAP(request, nodeID):
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        return redirect('nodestatus')
+        return processNode(request=request, nodeID=nodeID)
     else:
         return redirect('login')
 
