@@ -84,7 +84,7 @@
     {% if aps|length > 0 %}
         <h1>Scan Results</h1>
         <hr>
-        <table class="table table-responsive table-hover" style="text-align: center; table-layout: fixed">
+        <table class="table table-responsive-lg table-hover" style="text-align: center; table-layout: fixed">
             <thead class="thead-dark">
                 <tr>
                     <th>Cell Number</th>
@@ -97,6 +97,7 @@
                     <th>Signal Level</th>
                     <th>Signal Quality</th>
                     <th>Signal Total</th>
+                    <th>Options</th>
                 </tr>
             </thead>
             <tbody>
@@ -104,6 +105,7 @@
                 <tr>
                     <td>{{i.cellnumber}}</td>
                     <td>{{i.channel}}</td>
+                    <td>{{i.encryption}}</td>
                     <td>{{i.essid}}</td>
                     <td>{{i.frequency}} {{i.frequency_units}}</td>
                     <td>{{i.mac}}</td>
@@ -111,6 +113,9 @@
                     <td>{{i.signal_level_dBm}}</td>
                     <td>{{i.signal_quality}}</td>
                     <td>{{i.signal_total}}</td>
+                    <td><a href="/network/interface/{{ nodeID }}/{{ i.name }}/up"
+                                   class="btn btn-success"><i class="fa fa-power-off"></i><span> Connect</span></a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
