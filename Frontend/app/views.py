@@ -857,7 +857,7 @@ def createAcessPoint(request, nodeID):
 
         print(lista)
 
-        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID, 'database' : json})
+        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID, 'database' : lista})
 
     else:
         return redirect('login')
