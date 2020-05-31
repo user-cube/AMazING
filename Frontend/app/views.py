@@ -639,6 +639,7 @@ def processNode(request, nodeID, content=None):
         if content == None:
             content = []
 
+        print(content)
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
