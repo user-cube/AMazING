@@ -899,6 +899,7 @@ def processAP(request, nodeID):
             hw_mode = request.POST['hw_mode']
             DFGateway = request.POST['DFGateway']
             Netmask = request.POST['Netmask']
+            interface = request.POST['interface']
         except Exception as e:
             print(e)
             return redirect('networkstatus')
@@ -910,7 +911,8 @@ def processAP(request, nodeID):
             'RangeEnd' : RangeEnd,
             'hw_mode' : hw_mode,
             'DFGateway' : DFGateway,
-            'Netmask': Netmask
+            'Netmask': Netmask,
+            'interface' : interface
         }
         r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg, headers={'Authorization': 'Bearer ' + token})
 
