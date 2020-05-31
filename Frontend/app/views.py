@@ -824,9 +824,7 @@ def createAcessPoint(request, nodeID):
         ongoing = ongoing['current_experience']
 
         lista = []
-        lista2 = []
         dic = {}
-        dic2 = {}
         for i in interfaces:
             if interfaces[i]['logic_state'] != "DOWN":
                 if interfaces[i]['ip'] != None:
@@ -844,14 +842,6 @@ def createAcessPoint(request, nodeID):
                     dic['logic_state'] = interfaces[i]['logic_state']
                     lista.append(dic)
                 dic = {}
-            else:
-                dic2['name'] = i
-                dic2['mac'] = interfaces[i]['mac']
-                lista2.append(dic2)
-                dic2 = {}
-                dic2 = {}
-                dic2 = {}
-
         try:
             uEmail = ongoing['email']
         except:
@@ -864,6 +854,8 @@ def createAcessPoint(request, nodeID):
 
         if access == 0:
             return HttpResponseForbidden("No access")
+
+        print(lista)
 
         return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID, 'database' : json})
 

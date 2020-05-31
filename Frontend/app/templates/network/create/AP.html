@@ -74,8 +74,8 @@
             </div>
             <div class="form-row">
                 <div class="col-lg-3">
-                    <label for="Netmask">Network Mask</label>
-                    <select id="Netmask" name="Netmask" class="form-control" required>
+                    <label for="Netmask">Interfaces</label>
+                    <select id="interface" name="interface" class="form-control" required>
                         {% for i in database %}
                             {% if i.name|first in 'w' %}
                                 <option value="{{ i.name }}">{{ i.name }}</option>
