@@ -7,7 +7,7 @@ def insert_db_info():
     role = Role(role_name='test_role')
     role.add(role)
 
-    profile = Profile(name='TEST_USER', email='jean18.jh@gmail.com', role=1, picture=None, num_test=0,
+    profile = Profile(name='TEST_USER', email='testuser@gmail.com', role=1, picture=None, num_test=0,
                       register_date=datetime.now())
     profile.add(profile)
 

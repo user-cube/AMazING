@@ -15,7 +15,6 @@ END_HOST = os.getenv('END_HOST')
 
 TESTING = os.getenv('TESTING') == 'True'
 
-
 """
                         DataBase Session
 """

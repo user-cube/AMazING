@@ -45,19 +45,20 @@ class ExperienceSchedulerManager:
                 .order_by(Experience.begin_date.asc()) \
                 .first()
         if not experience_scheduled:
-            logging.info('ExperienceSchedule: No Next Experience Found')
+            self.app.logger.info('ExperienceSchedule: No Next Experience Found')
             return
 
                 # If inserted experiencce not the next one, no changed are needed
         if new_experience and experience_scheduled.id != new_experience:
             return
-
+        self.app.logger.info(f'Adding New Experience {experience_scheduled.serializable}')
         self.remove_schedule_experience(experience_scheduled)
         self.insert_job(experience_scheduled)
         self.start_jobs()
 
     def running_next_experience(self, experience):
         try:
+            self.app.logger.info(f'Starting to run Experience {experience.id} - {experience.name}')
             start_experience(experience, self.app, self.db)
             self.starting_experience_mail(experience)
 
@@ -70,11 +71,10 @@ class ExperienceSchedulerManager:
     def ending_experience(self, experience):
         try:
             response = finish_experience(experience, self.app, self.db)
-            logging.info(
-                f'ExperienceSchedule: Finished Experience {experience.id}, APUs: {[apu_response for apu_response in response]}')
+            self.app.logger.info(f'ExperienceSchedule: Finished Experience {experience.id}, APUs: {[apu_response for apu_response in response]}')
             self.finishing_experience_mail(experience, response)
         except NoResultFound:
-            logging.error(f'ExperienceSchedule: No Experience Found, Experience {experience}, id {experience.id}')
+            self.app.logger.error(f'ExperienceSchedule: No Experience Found, Experience {experience}, id {experience.id}')
 
     def insert_job(self, experience_scheduled):
         self.scheduler_start.add_job(id=str(experience_scheduled.id),
@@ -96,6 +96,7 @@ class ExperienceSchedulerManager:
             self.scheduler_end.remove_job(str(experience.id))
 
     def start_jobs(self):
+        self.app.logger.info('starting Jobs')
         if not self.scheduler_start.state == apscheduler.schedulers.base.STATE_RUNNING:
             self.scheduler_start.start()
         if not self.scheduler_end.state == apscheduler.schedulers.base.STATE_RUNNING:

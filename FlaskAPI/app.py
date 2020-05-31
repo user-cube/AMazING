@@ -1,4 +1,5 @@
 from flask import Flask
+import logging
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
@@ -50,6 +51,7 @@ app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=app.config['SWAGGER_URL']
 
 db.init_app(app)
 
+logging.basicConfig(level=logging.DEBUG)
 
 @app.before_first_request
 def create_database():
