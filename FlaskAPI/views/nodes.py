@@ -149,13 +149,14 @@ def send_node_command_to_interface(id, interface, command):
         return results
 
     apu_request = f'http://{apu.ip}:{apu.port}/{interface}/{command}'
+    
     try:
-        response = requests.get(apu_request, timeout=2)
+        response = requests.get(apu_request, timeout=5)
         results = jsonify(response.json())
         results.status_code = response.status_code
         return results
     except requests.exceptions.ConnectionError:
-        results = jsonify({"ERROR": f"{apu.name}: not founded"})
+        results = jsonify({"ERROR": f"{apu.name}: not found"})
         results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
         return results
 
