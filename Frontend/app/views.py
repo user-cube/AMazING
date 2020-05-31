@@ -921,12 +921,13 @@ def processAP(request, nodeID):
             'interface' : interface
         }
         r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg, headers={'Authorization': 'Bearer ' + token})
-
+        json = r.json()
         if r.status_code != 200:
             print(r.status_code)
-            messages.error(request, "Something went wrong.")
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            messages.error(request, json['msg'])
+            return redirect('nodestatus', nodeID=nodeID)
 
+        messages.info(request, json['msg'])
         return processNode(request=request, nodeID=nodeID)
     else:
         return redirect('login')
