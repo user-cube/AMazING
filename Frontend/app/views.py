@@ -1062,6 +1062,7 @@ def interfaceDown(request, node, iName):
             return redirect('nodestatus', nodeID=node)
 
         json = r.json()
+
         messages.info(request, json['msg'])
         return redirect('nodestatus', nodeID=node)
     else:
