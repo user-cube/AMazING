@@ -908,7 +908,7 @@ def processAP(request, nodeID):
             interface = request.POST['interface']
         except Exception as e:
             print(e)
-            return redirect('nodestatus')
+            return redirect('networkstatus')
         msg = {
             'APSSID' : APSSID,
             'APPW': APPW,
