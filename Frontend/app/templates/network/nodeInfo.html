@@ -15,14 +15,14 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6"></div>
-            <div class="col-lg-2">
+            <div class="col-sm-6"></div>
+            <div class="col-sm-2">
                 <a class="btn btn-success" href="/network/createIpServer/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Iperf Server</a>
             </div>
-            <div class="col-lg-2">
+            <div class="col-sm-2">
                 <a class="btn btn-success" href="/network/createIpClient/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Iperf Client</a>
             </div>
-            <div class="col-lg-2">
+            <div class="col-sm-2">
                 {% if access == 1 %}
                     <a class="btn btn-success" href="/network/createAP/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Access Point</a>
                 {% endif %}
