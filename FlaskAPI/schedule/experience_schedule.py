@@ -66,6 +66,8 @@ class ExperienceSchedulerManager:
             logging.error(f'ExperienceSchedule: {err.messages}')
             self.scheduler_end.remove_job(str(experience.id))
             self.failing_experience_mail(experience)
+        except Exception as err:
+            self.app.logger.error('ExperienceSchedule:' + err.__str__())
         self.manage_next_experience()
 
     def ending_experience(self, experience):

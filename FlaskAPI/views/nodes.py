@@ -172,7 +172,6 @@ def send_node_command__to_interface_as_post(id, interface, command):
         return results
 
     apu_request = f'http://{apu.ip}:{apu.port}/{interface}/{command}'
-    # apu_request = f'http://{apu}:5001/{interface}/{command}'
     try:
         ip = raw_data['ip']
         response = requests.post(url=apu_request, json={'ip': ip}, timeout=2)
