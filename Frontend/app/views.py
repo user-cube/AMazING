@@ -898,26 +898,7 @@ def processAP(request, nodeID):
 
 def registerTest(request):
     if request.user.is_authenticated:
-        
-        token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + 'template', headers={'Authorization': 'Bearer ' + token})
-
-        if r.status_code != 200:
-            print(r.status_code)
-            logging.debug("API ERROR: " + str(r.status_code))
-            messages.error(request, "Something went wrong.")
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-        
-        json = r.json()
-
-        lista = []
-
-        for i in json:
-            lista.append(i['template']['id'])
-        
-        lista.sort()
-
-        return render(request, 'calendar/registerTest.html', {'database':lista, 'year': datetime.now().year })
+        return render(request, 'calendar/registerTest.html', {'year': datetime.now().year })
     else:
         return redirect('login')
 
