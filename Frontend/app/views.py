@@ -884,7 +884,7 @@ def processAP(request, nodeID):
             'DFGateway' : DFGateway,
             'Netmask': Netmask
         }
-        r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg)
+        r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg, headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             print(r.status_code)
