@@ -1208,3 +1208,20 @@ def adminStatistics(request):
         return render(request, 'statistics/user.html', {'year': datetime.now().year})
     else:
         return redirect('login')
+
+def interfaceScan(request, nodeID, interface):
+    if request.user.is_authenticated:
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "node/" + str(nodeID) + "/" + str(interface) + "/scan",
+                         headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            json = r.json()
+            messages.error(request, json['msg'])
+            return redirect('nodestatus', nodeID=nodeID)
+
+        json = r.json()
+        print(json)
+        return redirect('nodestatus', nodeID=nodeID, )
+    else:
+        return redirect('login')

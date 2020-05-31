@@ -22,7 +22,7 @@ from app.views import profile, home, checkTests, checkTestInfo, editProfile, upd
     searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, \
     checkTestsAdmin, searchTestAdmin, createAcessPoint, processAP, registerTestSave, listTemplates, \
     templateInfo, interfaceUP, interfaceDown, openFileTest, iperfServer, iperfClient, processIpServer, \
-    processIpClient, userStatistics, adminStatistics
+    processIpClient, userStatistics, adminStatistics, interfaceScan
 
 
 urlpatterns = [
@@ -57,6 +57,7 @@ urlpatterns = [
     path('calendar/', calendar, name='calendar'),
     path('calendar/test', registerTest, name='registertest'),
     path('calendar/test/save', registerTestSave, name='registertestsave'),
+    path('network/interface/<int:node>/<str:iName>/scan', interfaceScan, name = 'interfacescan'),
     path('network/interface/<int:node>/<str:iName>/up', interfaceUP, name = 'interfaceup'),
     path('network/interface/<int:node>/<str:iName>/down', interfaceDown, name = 'interfacedown'),
     path('network/createIpServer/<int:nodeID>', iperfServer, name="iperfserver"),
