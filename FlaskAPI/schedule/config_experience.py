@@ -1,14 +1,14 @@
 import requests
 from flask_api import status
 
-from models import APU_Config, APU, ExperienceStatus
+from models import APU_Config, APU, ExperienceStatus, Experience
 from views.base import FailedExperienceException
 
 
 
-def start_experience(experience, app, db):
+def start_experience(experience_id, app, db):
     with app.app_context():
-
+        experience = db.session.query(Experience).get(experience_id)
         config_query = db.session.query(APU_Config, APU) \
             .filter(APU_Config.experience == experience.id) \
             .filter(APU_Config.apu == APU.id).all()
@@ -34,8 +34,9 @@ def start_experience(experience, app, db):
         experience.update()
 
 
-def finish_experience(experience, app, db):
+def finish_experience(experience_id, app, db):
     with app.app_context():
+        experience = db.session.query(Experience).get(experience_id)
         config_query = db.session.query(APU_Config, APU) \
             .filter(APU_Config.experience == experience.id) \
             .filter(APU_Config.apu == APU.id).all()

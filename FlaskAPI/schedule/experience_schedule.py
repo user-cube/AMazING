@@ -59,7 +59,7 @@ class ExperienceSchedulerManager:
     def running_next_experience(self, experience):
         try:
             self.app.logger.info(f'Starting to run Experience {experience.id} - {experience.name}')
-            start_experience(experience, self.app, self.db)
+            start_experience(experience.id, self.app, self.db)
             self.starting_experience_mail(experience)
 
         except FailedExperienceException as err:
@@ -72,7 +72,7 @@ class ExperienceSchedulerManager:
 
     def ending_experience(self, experience):
         try:
-            response = finish_experience(experience, self.app, self.db)
+            response = finish_experience(experience.id, self.app, self.db)
             self.app.logger.info(f'ExperienceSchedule: Finished Experience {experience.id}, APUs: {[apu_response for apu_response in response]}')
             self.finishing_experience_mail(experience, response)
         except NoResultFound:
