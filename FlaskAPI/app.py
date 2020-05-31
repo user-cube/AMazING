@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_mail import Mail
 from flask_swagger_ui import get_swaggerui_blueprint
 
 from schedule.experience_schedule import experience_scheduler_manager
@@ -32,6 +33,7 @@ app.register_blueprint(nodes_blueprint)
 app.register_blueprint(profiles_blueprint)
 app.register_blueprint(roles_blueprint)
 app.register_blueprint(users_blueprint)
+
 
 """
             Swagger
