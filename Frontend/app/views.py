@@ -567,9 +567,6 @@ def networkStatus(request):
 def processNode(request, nodeID, content=None):
     if request.user.is_authenticated:
 
-        if content != None:
-            print(content)
-
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
@@ -639,6 +636,9 @@ def processNode(request, nodeID, content=None):
         isAdmin = 0
         if request.user.is_superuser: isAdmin = 1
 
+        if content == None:
+            content = []
+
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
@@ -650,7 +650,8 @@ def processNode(request, nodeID, content=None):
             'hostname': hostname,
             'username': 'amazing',
             'password': password.decode("utf-8"),
-            'nodeID' : nodeID
+            'nodeID' : nodeID,
+            'aps' : content
         }
 
         return render(request, "network/nodeInfo.html", tparms)

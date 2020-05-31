@@ -82,6 +82,43 @@
         </tbody>
     </table>
 
+    {% if content|length > 0 %}
+        <h1>Scan Results</h1>
+        <hr>
+        <table class="table table-responsive-lg table-hover" style="text-align: center; table-layout: fixed">
+            <thead class="thead-dark">
+            <tr>
+                <th>Cell Number</th>
+                <th>Channel</th>
+                <th>Encryption</th>
+                <th>ESSID</th>
+                <th>Frequency</th>
+                <th>MAC</th>
+                <th>MODE</th>
+                <th>Signal Level</th>
+                <th>Signal Quality</th>
+                <th>Signal Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                {% for i in content %}
+                    <td>{{i.cellnumber}}</td>
+                    <td>{{i.channel}}</td>
+                    <td>{{i.essid}}</td>
+                    <td>{{i.frequency}} {{i.frequency_units}}</td>
+                    <td>{{i.mac}}</td>
+                    <td>{{i.mode}}</td>
+                    <td>{{i.signal_level_dBm}}</td>
+                    <td>{{i.signal_quality}}</td>
+                    <td>{{i.signal_total}}</td>
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+
+    {% endif %}
+
     {% if database2|length > 0 %}
         <h1>Down interfaces</h1>
         <hr>
@@ -111,7 +148,6 @@
                 {% endfor %}
             </tbody>
         </table>
-
     {% endif %}
     {% if ongoing == 1 %}
         {% if access == 1 %}
