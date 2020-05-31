@@ -1229,6 +1229,6 @@ def interfaceScan(request, node, iName):
         json = r.json()
         dictionary = json['msg']
 
-        return request.POST(dictionary, processNode(node))
+        return request.POST(dictionary, processNode(nodeID=node))
     else:
         return redirect('login')
