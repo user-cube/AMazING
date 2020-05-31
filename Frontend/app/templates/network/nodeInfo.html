@@ -87,7 +87,6 @@
         <table class="table table-responsive-lg table-hover" style="text-align: center; table-layout: fixed">
             <thead class="thead-dark">
                 <tr>
-                    <th>Cell Number</th>
                     <th>Channel</th>
                     <th>Encryption</th>
                     <th>ESSID</th>
@@ -103,7 +102,6 @@
             <tbody>
             {% for i in aps %}
                 <tr>
-                    <td>{{i.cellnumber}}</td>
                     <td>{{i.channel}}</td>
                     <td>{{i.encryption}}</td>
                     <td>{{i.essid}}</td>
