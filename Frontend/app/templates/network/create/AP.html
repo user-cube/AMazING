@@ -54,7 +54,7 @@
         </div>
         <br>
         <div class="form-row">
-            <div class="col-lg-4">
+            <div class="col-lg-3">
                 <label for="Netmask">Network Mask</label>
                 <select id="Netmask" name="Netmask" class="form-control" required>
                     <option value="255.0.0.0">/8</option>
@@ -81,39 +81,39 @@
                     <option value="255.255.255.248">/29</option>
                     <option value="255.255.255.252">/30</option>
                 </select>
-
-                <div class="col-lg-4">
-                    <label for="Channel">Channel</label>
-                    <select id="Channel" name="Channel" class="form-control" required>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                    </select>
-                </div>
-                <div class="col-lg-4">
-                    <label for="hw_mode">Operation Mode</label>
-                    <select id="hw_mode" name="hw_mode" class="form-control" required>
-                        <option value="g">G</option>
-                        <option value="h">H</option>
-                    </select>
-                </div>
-                <div class="col-lg-4" hidden>
-                    <label for="nodeID">Node ID</label>
-                    <input id="nodeID" name="nodeID" type="text"
-                           value="{{ nodeID }}" class="form-control input-lg" required hidden>
-                </div>
             </div>
+            <div class="col-lg-3">
+                <label for="Channel">Channel</label>
+                <select id="Channel" name="Channel" class="form-control" required>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    <option>7</option>
+                    <option>8</option>
+                    <option>9</option>
+                    <option>10</option>
+                    <option>11</option>
+                    <option>12</option>
+                    <option>13</option>
+                    <option>14</option>
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <label for="hw_mode">Operation Mode</label>
+                <select id="hw_mode" name="hw_mode" class="form-control" required>
+                    <option value="g">G</option>
+                    <option value="h">H</option>
+                </select>
+            </div>
+            <div class="col-lg-3" hidden>
+                <label for="nodeID">Node ID</label>
+                <input id="nodeID" name="nodeID" type="text"
+                       value="{{ nodeID }}" class="form-control input-lg" required hidden>
+            </div>
+        </div>
         </div>
 
         <br>
