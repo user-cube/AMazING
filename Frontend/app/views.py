@@ -566,6 +566,10 @@ def networkStatus(request):
 # API
 def processNode(request, nodeID):
     if request.user.is_authenticated:
+
+        if request.method == 'POST':
+            print(request.POST)
+
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
@@ -1037,6 +1041,7 @@ def templateInfo(request, templateID):
     else:
         return redirect('login')
 
+
 def interfaceUP(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
@@ -1053,10 +1058,11 @@ def interfaceUP(request, node, iName):
     else:
         return redirect('login')
 
+
 def interfaceDown(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + "node/" + str(node) + "/" + str(iName)  + "/down", headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/down", headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             json = r.json()
@@ -1221,7 +1227,8 @@ def interfaceScan(request, node, iName):
             return redirect('nodestatus', nodeID=node)
 
         json = r.json()
-        print(json)
-        return redirect('nodestatus', nodeID=node)
+        dictionary = json['msg']
+
+        return request.POST(dictionary, 'nodestatus')
     else:
         return redirect('login')
