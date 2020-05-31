@@ -81,8 +81,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <p>Content: {{content}}</p>
-    {% if content|length > 0 %}
+    {% if aps|length > 0 %}
         <h1>Scan Results</h1>
         <hr>
         <table class="table table-responsive-lg table-hover" style="text-align: center; table-layout: fixed">
@@ -102,7 +101,7 @@
             </thead>
             <tbody>
             <tr>
-                {% for i in content %}
+                {% for i in aps %}
                     <td>{{i.cellnumber}}</td>
                     <td>{{i.channel}}</td>
                     <td>{{i.essid}}</td>
