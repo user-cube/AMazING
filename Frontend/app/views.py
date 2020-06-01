@@ -1214,7 +1214,7 @@ def processIpClient(request, nodeID):
 def userStatistics(request):
     if request.user.is_authenticated:
         token = tokenizer.gerateEmailToken(request.user.email)
-        r = requests.get(API + "users",  headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "user",  headers={'Authorization': 'Bearer ' + token})
         if r.status_code != 200:
             print(r.status_code)
             messages.error(request, "Something went wrong.")
@@ -1247,7 +1247,7 @@ def userStatistics(request):
 def adminStatistics(request):
     if request.user.is_authenticated:
         token = tokenizer.gerateEmailToken(request.user.email)
-        r = requests.get(API + "users", headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "user", headers={'Authorization': 'Bearer ' + token})
         if r.status_code != 200:
             print(r.status_code)
             messages.error(request, "Something went wrong.")
