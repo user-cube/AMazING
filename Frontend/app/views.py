@@ -1211,6 +1211,30 @@ def processIpClient(request, nodeID):
 
 def userStatistics(request):
     if request.user.is_authenticated:
+        token = tokenizer.gerateEmailToken(request.user.email)
+        r = requests.get(API + "/users",  headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            print(r.status_code)
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        """
+        [
+          {
+            "id": 0,
+            "name": "string",
+            "email": "user@example.com",
+            "num_test": 0,
+            "register_date": "string",
+            "picture": "string",
+            "last_login": 0,
+            "role": 0
+          }
+        ]
+        """
+        lista = []
+        for i in r.json():
+            pass
         return render(request, 'statistics/admin.html', {'year': datetime.now().year})
     else:
         return redirect('login')
