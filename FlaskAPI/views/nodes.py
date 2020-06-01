@@ -161,7 +161,7 @@ def send_node_command_to_interface(id, interface, command):
         return results
 
 
-@nodes_blueprint.route('/node/<int:id>/<interface>/<command>', methods=['PUT'], strict_slashes=False)
+@nodes_blueprint.route('/node/<int:id>/<interface>/<command>', methods=['PUT', 'POST'], strict_slashes=False)
 @jwt_required
 def send_node_command__to_interface_as_post(id, interface, command):
     apu = db.session.query(APU).get(id)
@@ -173,13 +173,28 @@ def send_node_command__to_interface_as_post(id, interface, command):
         return results
 
     apu_request = f'http://{apu.ip}:{apu.port}/{interface}/{command}'
-    try:
-        ip = raw_data['ip']
-        response = requests.post(url=apu_request, json={'ip': ip}, timeout=2)
-        results = jsonify(response.json())
-        results.status_code = response.status_code
-        return results
-    except requests.exceptions.ConnectionError:
-        results = jsonify({"ERROR": f"{apu.name}: not founded"})
-        results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
-        return results
+
+    if command == "connect":
+        try:
+            ssid = raw_data['SSID']
+            password = raw_data['password']
+            netwc = raw_data['netwc']
+            response = requests.post(url=apu_request, json={'SSID': ssid, 'PASS' : password, 'NetwC' : netwc}, timeout=2)
+            results = jsonify(response.json())
+            results.status_code = response.status_code
+            return results
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
+    else:   
+        try:
+            ip = raw_data['ip']
+            response = requests.post(url=apu_request, json={'ip': ip}, timeout=2)
+            results = jsonify(response.json())
+            results.status_code = response.status_code
+            return results
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
