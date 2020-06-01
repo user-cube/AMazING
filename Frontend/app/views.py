@@ -1172,13 +1172,19 @@ def processIpClient(request, nodeID):
             protocol = 'tcp'
 
         try:
+            reverse = request.POST['reverse']
+        except:
+            reverse = 'reverse'
+
+        try:
             ip = request.POST['ip']
             port = request.POST['port']
             bandwidth = request.POST['bandwidth']
             mtu = request.POST['mtu']
         except Exception as e:
             print(e)
-            return redirect('networkstatus')
+            messages.error(request, "Unable to process request.")
+            return processNode(request, nodeID)
 
         msg = {
             'ip': ip,
@@ -1186,17 +1192,19 @@ def processIpClient(request, nodeID):
             'protocol': protocol,
             'time': time,
             'bandwidth': bandwidth,
-            'mtu': mtu
+            'mtu': mtu,
+            'reverse' : reverse
         }
         token = tokenizer.nodeToken(request.user.email)
-        r = requests.post(API + "" + str(nodeID) + "", json=msg,  headers={'Authorization': 'Bearer ' + token})
+        r = requests.post(API + "node/"  + str(nodeID) + "/iperf/iperfclient", json=msg,  headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             print(r.status_code)
-            messages.error(request, "Something went wrong.")
+            json = r.json()
+            messages.error(request, json['msg'])
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        return redirect('networkstatus')
+        return processNode(request, nodeID=nodeID)
     else:
         return redirect('login')
 
