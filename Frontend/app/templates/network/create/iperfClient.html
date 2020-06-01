@@ -16,15 +16,10 @@
         <div class="form-row justify-content-center">
             <div class="col-md-5">
                 <label>Protocol</label>
-                <br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="protocol" id="tcp" value="TCP">
-                    <label class="form-check-label" for="tcp">TCP</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="protocol" id="udp" value="UDP">
-                    <label class="form-check-label" for="udp">UDP</label>
-                </div>
+                <select id="protocol" name="protocol" required>
+                    <option value="TCP">TCP</option>
+                    <option value="UDP">UDP</option>
+                </select>
             </div>
         </div>
         <br>
@@ -64,21 +59,17 @@
             <div class="col-md-5">
                 <label for="bandwidth">Bandwidth</label>
                 <input id="bandwidth" name="bandwidth" type="text"
-                       placeholder="Bandwidth to send at (Required for UDP, default 1Mbit/sec)" class="form-control input-lg" value="">
+                       placeholder="Bandwidth to send at (Required for UDP, default 1Mbit/sec)"
+                       class="form-control input-lg" value="">
             </div>
         </div>
         <div class="form-row justify-content-center">
             <div class="col-md-5">
                 <label>Reverse</label>
-                <br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="protocol" id="reverse" value="on">
-                    <label class="form-check-label" for="reverse">On</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="protocol" id="reverse" value="">
-                    <label class="form-check-label" for="reverse">Off</label>
-                </div>
+                <select id="protocol" name="protocol" required>
+                    <option value="on">On</option>
+                    <option value="">Off</option>
+                </select>
             </div>
         </div>
         <br>

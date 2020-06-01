@@ -1171,7 +1171,7 @@ def processIpClient(request, nodeID):
         try:
             protocol = request.POST['protocol']
         except:
-            protocol = 'tcp'
+            protocol = 'TCP'
 
         try:
             reverse = request.POST['reverse']
