@@ -1,0 +1,28 @@
+{% extends 'structure/layout.html' %}
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags %}
+                <script>alert("{{ message }}")</script> {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="/network/interface/{{ node }}/{{iName}}/{{ssid}}/on/connect/save" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="col-lg-6">
+                <label for="pw">Password</label>
+                <input id="pw" name="pw" type="password" placeholder="Password"
+                       class="form-control input-lg"
+                       required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-wifi"></i> Connect</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

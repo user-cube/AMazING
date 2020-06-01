@@ -1,0 +1,39 @@
+{% extends 'structure/layout.html' %}
+
+{% block content %}
+
+    <h1>Create Iperf Server</h1>
+    <hr>
+    <form method="post" action="/network/create/Iperf/Server/save/{{ nodeID }}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-row justify-content-center">
+            <div class="col-md-5">
+                <label for="ip">IP</label>
+                <input id="ip" name="ip" type="text"
+                       placeholder="IP, eg, 192.168.0.1" class="form-control input-lg">
+            </div>
+        </div>
+        <br>
+        <div class="form-row justify-content-center">
+            <div class="col-md-5">
+                <label for="port">Port</label>
+                <input id="por" name="port" type="text"
+                       placeholder="Port, eg, 5000" class="form-control input-lg">
+            </div>
+        </div>
+        <br>
+        <div class="form-row justify-content-center">
+            <div class="col-md-5">
+                <label for="mtu">MTU</label>
+                <input id="mtu" name="mtu" type="text"
+                       placeholder="Length of the buffer, default 8Kb" class="form-control input-lg">
+            </div>
+        </div>
+
+        <br>
+        <div class="col-lg-12" style="text-align: center">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-wifi"></i> Create Iperf Server</button>
+        </div>
+    </form>
+
+{% endblock %}

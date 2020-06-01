@@ -21,8 +21,8 @@ from app.views import profile, home, checkTests, checkTestInfo, editProfile, upd
     createUser, userCreation, validateUser, saveUser, rankUp, listUsers, editUser, processUser, \
     searchUser, networkStatus, processNode, searchTest, calendar, registerTest, checkTestInfoAdmin, \
     checkTestsAdmin, searchTestAdmin, createAcessPoint, processAP, registerTestSave, listTemplates, \
-    templateInfo, interfaceUP, interfaceDown, openFileTest
-
+    templateInfo, interfaceUP, interfaceDown, openFileTest, iperfServer, iperfClient, processIpServer, \
+    processIpClient, userStatistics, adminStatistics, interfaceScan, interfaceConnect
 
 
 urlpatterns = [
@@ -57,7 +57,15 @@ urlpatterns = [
     path('calendar/', calendar, name='calendar'),
     path('calendar/test', registerTest, name='registertest'),
     path('calendar/test/save', registerTestSave, name='registertestsave'),
+    path('network/interface/<int:node>/<str:iName>/scan', interfaceScan, name = 'interfacescan'),
     path('network/interface/<int:node>/<str:iName>/up', interfaceUP, name = 'interfaceup'),
     path('network/interface/<int:node>/<str:iName>/down', interfaceDown, name = 'interfacedown'),
-    path('openfile/<int:file>/<int:testID>', openFileTest, name = 'openfile')
+    path('network/interface/<int:node>/<str:iName>/<str:ssid>/<str:state>/connect/<str:store>', interfaceConnect, name = 'interfaceconn'),
+    path('network/createIpServer/<int:nodeID>', iperfServer, name="iperfserver"),
+    path('network/createIpClient/<int:nodeID>', iperfClient, name="iperfclient"),
+    path('network/create/Iperf/Server/save/<int:nodeID>', processIpServer, name="saveipserver"),
+    path('network/create/Iperf/Client/save/<int:nodeID>', processIpClient, name="saveipclient"),
+    path('openfile/<int:file>/<int:testID>', openFileTest, name = 'openfile'),
+    path('statistics/user/', userStatistics, name='userStatistics'),
+    path('statistics/admin', adminStatistics, name='adminStatistics'),
 ]
