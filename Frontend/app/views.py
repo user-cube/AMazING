@@ -286,7 +286,6 @@ def checkTestInfo(request, testID):
 
             json = r.json()
 
-            register_date = datetime.fromtimestamp(json['register_date'])
             begin_date = datetime.fromtimestamp(json['begin_date'])
             end_date = datetime.fromtimestamp(json['end_date'])
 
