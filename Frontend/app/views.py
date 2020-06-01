@@ -1124,10 +1124,6 @@ def processIpServer(request, nodeID):
         if r.status_code != 200:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '')) # preencher se necessario
         '''
-        try:
-            protocol = request.POST['protocol']
-        except:
-            protocol = 'tcp'
 
         try:
             ip = request.POST['ip']
@@ -1140,7 +1136,6 @@ def processIpServer(request, nodeID):
         msg = {
             'ip': ip,
             'port': port,
-            'protocol': protocol,
             'mtu': mtu
         }
         r = requests.post(API + "iperfsv" + str(nodeID) + "", json=msg)

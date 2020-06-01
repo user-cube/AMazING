@@ -8,21 +8,6 @@
         {% csrf_token %}
         <div class="form-row justify-content-center">
             <div class="col-md-5">
-                <label>Protocol</label>
-                <br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="protocol" id="tcp" value="tcp">
-                    <label class="form-check-label" for="tcp">TCP</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="protocol" id="udp" value="udp">
-                    <label class="form-check-label" for="udp">UDP</label>
-                </div>
-            </div>
-        </div>
-        <br>
-        <div class="form-row justify-content-center">
-            <div class="col-md-5">
                 <label for="ip">IP</label>
                 <input id="ip" name="ip" type="text"
                        placeholder="IP, eg, 192.168.0.1" class="form-control input-lg">
