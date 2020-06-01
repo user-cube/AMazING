@@ -1236,8 +1236,10 @@ def userStatistics(request):
         """
         lista = []
         for i in r.json():
-            pass
-        return render(request, 'statistics/admin.html', {'year': datetime.now().year})
+            tests = i['num_test']
+            name = i['name']
+            lista.append([name, tests])
+        return render(request, 'statistics/admin.html', {'year': datetime.now().year, 'lista' : lista})
     else:
         return redirect('login')
 
