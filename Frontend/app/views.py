@@ -1138,14 +1138,16 @@ def processIpServer(request, nodeID):
             'port': port,
             'mtu': mtu
         }
-        r = requests.post(API + "iperfsv" + str(nodeID) + "", json=msg)
-
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.post(API + "node/"  + str(nodeID) + "/iperf/iperfsv3", json=msg, headers={'Authorization': 'Bearer ' + token})
+        json = r.json()
         if r.status_code != 200:
             print(r.status_code)
-            messages.error(request, "Something went wrong.")
+            messages.error(request, json['msg'])
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        return redirect('networkstatus')
+        messages.info(request, json['msg'])
+        return processNode(request, nodeID)
     else:
         return redirect('login')
 
@@ -1186,7 +1188,8 @@ def processIpClient(request, nodeID):
             'bandwidth': bandwidth,
             'mtu': mtu
         }
-        r = requests.post(API + "" + str(nodeID) + "", json=msg)
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.post(API + "" + str(nodeID) + "", json=msg,  headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             print(r.status_code)
