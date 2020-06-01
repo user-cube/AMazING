@@ -1246,7 +1246,33 @@ def userStatistics(request):
 
 def adminStatistics(request):
     if request.user.is_authenticated:
-        return render(request, 'statistics/user.html', {'year': datetime.now().year})
+        token = tokenizer.gerateEmailToken(request.user.email)
+        r = requests.get(API + "/users", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            print(r.status_code)
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        """
+        [
+          {
+            "id": 0,
+            "name": "string",
+            "email": "user@example.com",
+            "num_test": 0,
+            "register_date": "string",
+            "picture": "string",
+            "last_login": 0,
+            "role": 0
+          }
+        ]
+        """
+        lista = []
+        for i in r.json():
+            tests = i['num_test']
+            name = i['name']
+            lista.append([name, tests])
+        return render(request, 'statistics/admin.html', {'year': datetime.now().year, 'lista': lista})
     else:
         return redirect('login')
 
