@@ -1161,6 +1161,8 @@ def processIpClient(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         '''
 
+        print(request.POST)
+
         try:
             time = request.POST['time']
         except:
