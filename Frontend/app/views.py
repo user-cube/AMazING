@@ -1138,8 +1138,8 @@ def processIpServer(request, nodeID):
             'port': port,
             'mtu': mtu
         }
-        r = requests.post(API + "iperfsv3", json=msg)
-
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.post(API + "iperfsv3", json=msg, headers={'Authorization': 'Bearer ' + token})
         if r.status_code != 200:
             print(r.status_code)
             messages.error(request, "Something went wrong.")
