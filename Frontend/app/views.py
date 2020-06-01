@@ -939,23 +939,49 @@ def registerTest(request):
     else:
         return redirect('login')
 
+
 def registerTestSave(request):
     if request.user.is_authenticated:
         try:
             name = request.POST['name']
             begin_date = request.POST['begin_date']
             end_date = request.POST['end_date']
-            template = int(request.POST['template'])
-            num_test = int(request.POST['num_test'])
         except Exception as e:
             logging.debug("Parsing exception: " + e)
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-        
+
+        try:
+            apu3 = requests.FILES['node_3']
+        except:
+            apu3 = None
+
+        try:
+            apu7 = requests.FILES['node_7']
+        except:
+            apu7 = None
+
+        try:
+            apu8 = requests.FILES['node_8']
+        except:
+            apu8 = None
+
+        try:
+            apu10 = requests.FILES['node_10']
+        except:
+            apu10 = None
+
         begin_date = begin_date.split("T")[0] + " " + begin_date.split("T")[1] + ":00"
         end_date = end_date.split("T")[0] + " " + end_date.split("T")[1] + ":00"
 
-        msg = {'name' : name, 'begin_date' : begin_date, 'end_date' : end_date, 'template' : template, 'num_test' : num_test}
+        msg = {'name': name, 'begin_date': begin_date, 'end_date': end_date,
+               'config_node': [
+                   {'apu': 3, 'file': apu3},
+                   {'apu': 7, 'file': apu7},
+                   {'apu': 8, 'file': apu8},
+                   {'apu': 10, 'file': apu10}
+               ]
+               }
 
         token = tokenizer.simpleToken(request.user.email)
         r = requests.post(API + "experience", json=msg, headers={'Authorization': 'Bearer ' + token})
