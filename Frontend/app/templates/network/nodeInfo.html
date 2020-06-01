@@ -111,9 +111,15 @@
                     <td>{{i.signal_level_dBm}}</td>
                     <td>{{i.signal_quality}}</td>
                     <td>{{i.signal_total}}</td>
-                    <td><a href="/network/interface/{{ nodeID }}/{{ i.name }}/up"
+                    {% if i.encryption == 'off' %}
+                        <td><a href="/network/interface/{{ nodeID }}/{{ i.name }}/{{ i.essid }}/off/connect"
                                    class="btn btn-success"><i class="fa fa-power-off"></i><span> Connect</span></a>
-                    </td>
+                        </td>
+                    {% else %}
+                        <td><a href="/network/interface/{{ nodeID }}/{{ i.name }}/{{ i.essid }}/on/connect"
+                                   class="btn btn-success"><i class="fa fa-power-off"></i><span> Connect</span></a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>

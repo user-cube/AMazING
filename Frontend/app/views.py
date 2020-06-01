@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 import requests
 import logging
 
+from app.forms import ConnectionForm
 
 logging.config.dictConfig({
     'version': 1,
@@ -1232,5 +1233,27 @@ def interfaceScan(request, node, iName):
         json = r.json()
         dictionary = json['msg']
         return processNode(request=request, nodeID=node, content=dictionary)
+    else:
+        return redirect('login')
+
+
+def interfaceConnect(request, node, iName, ssid, state, store=None):
+    if request.user.is_authenticated:
+
+        token = tokenizer.gerateEmailToken(request.user.email)
+
+        if state == 'off':
+            r = requests.post(API + '/' + node + '/' + iName + "/connect", json={'SSID': ssid, 'password': ''}, headers={'Authorization': 'Bearer ' + token})
+            if r.status_code != 200:
+                messages.error(request, 'Unable to connect')
+        else:
+            if store == 'save':
+                r = requests.post(API + '/' + node + '/' + iName + "/connect", json={'SSID': ssid, 'password': request.POST['pw']}, headers={'Authorization': 'Bearer ' + token})
+                if r.status_code != 200:
+                    messages.error(request, 'Unable to connect')
+                return processNode(request=request, nodeID=node)
+            else:
+                return render(request, 'network/connect.html', {'year': datetime.now().year, 'iName': iName, 'node': node, 'ssid': ssid})
+
     else:
         return redirect('login')
