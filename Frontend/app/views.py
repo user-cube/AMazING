@@ -1199,13 +1199,13 @@ def processIpClient(request, nodeID):
         }
         token = tokenizer.nodeToken(request.user.email)
         r = requests.post(API + "node/"  + str(nodeID) + "/iperf/iperfclient", json=msg,  headers={'Authorization': 'Bearer ' + token})
-
+        json = r.json()
         if r.status_code != 200:
             print(r.status_code)
-            json = r.json()
             messages.error(request, json['msg'])
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+        messages.INFO(request, json['msg'])
         return processNode(request, nodeID=nodeID)
     else:
         return redirect('login')
@@ -1214,7 +1214,7 @@ def processIpClient(request, nodeID):
 def userStatistics(request):
     if request.user.is_authenticated:
         token = tokenizer.gerateEmailToken(request.user.email)
-        r = requests.get(API + "/users",  headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "users",  headers={'Authorization': 'Bearer ' + token})
         if r.status_code != 200:
             print(r.status_code)
             messages.error(request, "Something went wrong.")
