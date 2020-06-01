@@ -112,11 +112,11 @@
                     <td>{{i.signal_quality}}</td>
                     <td>{{i.signal_total}}</td>
                     {% if i.encryption == 'off' %}
-                        <td><a href="/network/interface/{{ nodeID }}/{{ iName }}/{{ i.essid }}/off/connect"
+                        <td><a href="/network/interface/{{ nodeID }}/{{ iName }}/{{ i.essid }}/off/connect/save"
                                    class="btn btn-success"><i class="fa fa-power-off"></i><span> Connect</span></a>
                         </td>
                     {% else %}
-                        <td><a href="/network/interface/{{ nodeID }}/{{ iName }}/{{ i.essid }}/on/connect"
+                        <td><a href="/network/interface/{{ nodeID }}/{{ iName }}/{{ i.essid }}/on/connect/nonsave"
                                    class="btn btn-success"><i class="fa fa-power-off"></i><span> Connect</span></a>
                         </td>
                     {% endif %}
