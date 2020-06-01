@@ -178,8 +178,7 @@ def send_node_command__to_interface_as_post(id, interface, command):
         try:
             ssid = raw_data['SSID']
             password = raw_data['password']
-            netwc = raw_data['netwc']
-            response = requests.post(url=apu_request, json={'SSID': ssid, 'PASS' : password, 'NetwC' : netwc}, timeout=2)
+            response = requests.post(url=apu_request, json={'SSID': ssid, 'PASS' : password}, timeout=2)
             results = jsonify(response.json())
             results.status_code = response.status_code
             return results
