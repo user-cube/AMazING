@@ -15,7 +15,6 @@ END_HOST = os.getenv('END_HOST')
 
 TESTING = os.getenv('TESTING') == 'True'
 
-
 """
                         DataBase Session
 """
@@ -56,6 +55,20 @@ JWT_DECODE_ALGORITHMS = ['RS256']
 JWT_IDENTITY_CLAIM = 'email'
 
 
+"""
+                        Mail session
+"""
+
+MAIL_SERVER = os.getenv('MAIL_HOST')
+MAIL_PORT = os.getenv('MAIL_PORT')
+MAIL_USE_TLS = True
+MAIL_USE_SSL = False
+MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+MAIL_PASSWORD = os.getenv('MAIL_PASS')
+MAIL_DEFAULT_SENDER = os.getenv('MAIL_SENDER')
+MAIL_DEBUG = True
+MAIL_SUPPRESS_SEND = False
+
 
 """
                         Swagger Session
@@ -63,3 +76,6 @@ JWT_IDENTITY_CLAIM = 'email'
 SWAGGER_URL = ''
 API_URL = '/static/swagger.json'
 APP_NAME = 'AMazING api Documentation'
+
+
+
