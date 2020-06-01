@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 import requests
 import logging
 
-from app.forms import ConnectionForm
-
 logging.config.dictConfig({
     'version': 1,
     'disable_existing_loggers': False,
