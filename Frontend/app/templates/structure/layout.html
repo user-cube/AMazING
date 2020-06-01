@@ -53,13 +53,6 @@
                                 {% endif %}>
                                     <a class="nav-link" href="{% url 'calendar' %}">Reservations</a>
                                 </li>
-                                <li {% if request.resolver_match.url_name == 'userStatistics' %}
-                                    class="nav-item active"
-                                {% else %}
-                                    class="nav-item"
-                                {% endif %}>
-                                    <a class="nav-link" href="{% url 'userStatistics' %}">Test Result</a>
-                                </li>
                                 <li {% if request.resolver_match.url_name == 'tests' %}
                                     class="nav-item active" {% endif %}
                                         {% if request.resolver_match.url_name == 'testinfo' %}
