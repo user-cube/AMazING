@@ -1131,6 +1131,7 @@ def processIpServer(request, nodeID):
 
         try:
             ip = request.POST['ip']
+            port = request.POST['port']
             mtu = request.POST['mtu']
         except Exception as e:
             print(e)
@@ -1138,10 +1139,11 @@ def processIpServer(request, nodeID):
 
         msg = {
             'ip': ip,
+            'port': port,
             'protocol': protocol,
             'mtu': mtu
         }
-        r = requests.post(API + "" + str(nodeID) + "", json=msg)
+        r = requests.post(API + "iperfsv" + str(nodeID) + "", json=msg)
 
         if r.status_code != 200:
             print(r.status_code)
@@ -1174,6 +1176,7 @@ def processIpClient(request, nodeID):
 
         try:
             ip = request.POST['ip']
+            port = request.POST['port']
             bandwidth = request.POST['bandwidth']
             mtu = request.POST['mtu']
         except Exception as e:
@@ -1182,6 +1185,7 @@ def processIpClient(request, nodeID):
 
         msg = {
             'ip': ip,
+            'port': port,
             'protocol': protocol,
             'time': time,
             'bandwidth': bandwidth,
