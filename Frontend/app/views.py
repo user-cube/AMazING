@@ -296,7 +296,6 @@ def checkTestInfo(request, testID):
                 'num_test': json['num_test'],
                 'template': json['template'],
                 'name': json['name'],
-                'register_date': str(register_date),
                 'year': datetime.now().year
             }
 
