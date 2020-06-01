@@ -1138,7 +1138,7 @@ def processIpServer(request, nodeID):
             'port': port,
             'mtu': mtu
         }
-        r = requests.post(API + "iperfsv" + str(nodeID) + "", json=msg)
+        r = requests.post(API + "iperfsv3", json=msg)
 
         if r.status_code != 200:
             print(r.status_code)
@@ -1186,7 +1186,8 @@ def processIpClient(request, nodeID):
             'bandwidth': bandwidth,
             'mtu': mtu
         }
-        r = requests.post(API + "" + str(nodeID) + "", json=msg)
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.post(API + "" + str(nodeID) + "", json=msg,  headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             print(r.status_code)
