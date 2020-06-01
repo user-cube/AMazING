@@ -1242,7 +1242,7 @@ def interfaceConnect(request, node, iName, ssid, state, store=None):
         token = tokenizer.gerateEmailToken(request.user.email)
 
         if state == 'off':
-            r = requests.post(API + str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': ''}, headers={'Authorization': 'Bearer ' + token})
+            r = requests.post(API + "node/"+ str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': ''}, headers={'Authorization': 'Bearer ' + token})
             if r.status_code != 200:
                 messages.error(request, 'Unable to connect')
                 return processNode(request=request, nodeID=node)
@@ -1250,7 +1250,7 @@ def interfaceConnect(request, node, iName, ssid, state, store=None):
             return processNode(request=request, nodeID=node)
         else:
             if store == 'save':
-                r = requests.post(API + str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': request.POST['pw']}, headers={'Authorization': 'Bearer ' + token})
+                r = requests.post(API + "node/" + str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': request.POST['pw']}, headers={'Authorization': 'Bearer ' + token})
                 if r.status_code != 200:
                     messages.error(request, 'Unable to connect')
                     return processNode(request=request, nodeID=node)
