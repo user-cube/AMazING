@@ -199,6 +199,19 @@ def send_node_command__to_interface_as_post(id, interface, command):
             results = jsonify({"ERROR": f"{apu.name}: not founded"})
             results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
             return results
+    if command == "iperfclient":
+        try:
+            port = raw_data['port']
+            ip = raw_data['ip']
+            mtu = raw_data['mtu']
+            response = requests.post(url=iperf, json={'port' : port, 'ip' : ip, 'mtu' : mtu}, timeout=60)
+            results = jsonify(response.json())
+            results.status_code = response.status_code
+            return results
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
     else:   
         try:
             ip = raw_data['ip']
