@@ -208,7 +208,9 @@ def send_node_command__to_interface_as_post(id, interface, command):
             bandwidth = raw_data['bandwidth']
             protocol = raw_data['protocol']
             reverse = raw_data['reverse']
-            response = requests.post(url=iperf, json={'port' : port, 'ip' : ip, 'mtu' : mtu}, timeout=60)
+            response = requests.post(url=iperf, 
+            json={'port' : port, 'ip' : ip, 'mtu' : mtu, 'time' : time, 'bandwidth' : bandwidth, 'protocol' : protocol, 'reverse':reverse},
+            timeout=60)
             results = jsonify(response.json())
             results.status_code = response.status_code
             return results
