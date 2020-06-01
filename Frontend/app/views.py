@@ -277,32 +277,32 @@ def checkTestInfo(request, testID):
         404 page.
     """
     if request.user.is_authenticated:
-        if not request.user.is_superuser:
-            token = tokenizer.userToken(request.user.email)
-            r = requests.get(API + "experience/" + str(testID), headers={'Authorization': 'Bearer ' + token})
+        token = tokenizer.gerateEmailToken(request.user.email)
+        r = requests.get(API + "experience/" + str(testID), headers={'Authorization': 'Bearer ' + token})
 
-            if r.status_code != 200:
-                return HttpResponseNotFound()
+        if r.status_code != 200:
+            print(r.status_code)
+            return HttpResponseNotFound()
 
-            json = r.json()
+        json = r.json()
 
-            register_date = datetime.fromtimestamp(json['register_date'])
-            begin_date = datetime.fromtimestamp(json['begin_date'])
-            end_date = datetime.fromtimestamp(json['end_date'])
+        experience = json['experience']
+        config_list = json['config_list']
+        print(config_list)
+        tparms = {
+            'author': json['author'],
+            'begin_date': experience['begin_date'],
+            'end_date': experience['end_date'],
+            'register_date': experience['register_date'],
+            'name': experience['name'],
+            'status': experience['status'],
+            'configs': config_list,
+            'testID': testID,
+            'year': datetime.now().year
+        }
 
-            tparms = {
-                'begin_date': str(begin_date),
-                'end_date': str(end_date),
-                'num_test': json['num_test'],
-                'template': json['template'],
-                'name': json['name'],
-                'register_date': str(register_date),
-                'year': datetime.now().year
-            }
+        return render(request, 'user/admin/experiences/testeInfo.html', tparms)
 
-            return render(request, 'user/nonAdmin/tests/previousTests/testInfo.html', tparms)
-        else:
-            return HttpResponseForbidden()
     else:
         return redirect('login')
 
@@ -330,7 +330,7 @@ def userCreation(request):
             token = tokenizer.gerateEmailToken(email)
 
             message = {'email': email, 'name': name, 'role': role}
-            link = 'http://192.168.85.209:8005/create/user/validate/'
+            link = 'http://localhost:8000/create/user/validate/'
 
             r = requests.post(API + "user", json=message, headers={'Authorization': 'Bearer ' + token})
 
@@ -435,7 +435,7 @@ def listUsers(request):
             tparms = {
                 'year': datetime.now().year,
                 'database': json,
-                'nopic' : os.environ.get("NO_PIC")
+                'nopic': os.environ.get("NO_PIC")
             }
 
             logger.info(json)
@@ -461,10 +461,12 @@ def searchUser(request):
             token = tokenizer.gerateEmailToken(request.user.email)
 
             if typeID != "" and content != "":
-                if typeID == "0": r = requests.get(API + "user?email=" + content,
-                                 headers={'Authorization': 'Bearer ' + token})
-                else: r = requests.get(API + "user?content=" + content,
-                                 headers={'Authorization': 'Bearer ' + token})
+                if typeID == "0":
+                    r = requests.get(API + "user?email=" + content,
+                                     headers={'Authorization': 'Bearer ' + token})
+                else:
+                    r = requests.get(API + "user?content=" + content,
+                                     headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
@@ -569,7 +571,6 @@ def processNode(request, nodeID, content=None, iName=None):
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
-
         if r.status_code != 200:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -605,7 +606,7 @@ def processNode(request, nodeID, content=None, iName=None):
                 if interfaces[i]['ip'] != None:
                     dic['name'] = i
                     dic['end'] = interfaces[i]['addrs']
-                    dic['ip']= interfaces[i]['ip']
+                    dic['ip'] = interfaces[i]['ip']
                     dic['mac'] = interfaces[i]['mac']
                     dic['logic_state'] = interfaces[i]['logic_state']
                     lista.append(dic)
@@ -643,16 +644,16 @@ def processNode(request, nodeID, content=None, iName=None):
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
             'role': role['role'],
-            'isAdmin' : isAdmin,
-            'access' : access,
-            'database' : lista,
-            'database2' : lista2,
+            'isAdmin': isAdmin,
+            'access': access,
+            'database': lista,
+            'database2': lista2,
             'hostname': hostname,
             'username': 'amazing',
             'password': password.decode("utf-8"),
-            'nodeID' : nodeID,
-            'aps' : content,
-            'iName' : iName
+            'nodeID': nodeID,
+            'aps': content,
+            'iName': iName
         }
 
         return render(request, "network/nodeInfo.html", tparms)
@@ -676,11 +677,12 @@ def searchTest(request):
             print(typeID, content)
 
             if typeID != "" and content != "":
-                if typeID == "0": r = requests.get(API + "experience?begin_date=" + content,
-                                 headers={'Authorization': 'Bearer ' + token})
-                else: r = requests.get(API + "experience?content=" + content,
-                                 headers={'Authorization': 'Bearer ' + token})
-               
+                if typeID == "0":
+                    r = requests.get(API + "experience?begin_date=" + content,
+                                     headers={'Authorization': 'Bearer ' + token})
+                else:
+                    r = requests.get(API + "experience?content=" + content,
+                                     headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
@@ -697,6 +699,7 @@ def searchTest(request):
             return HttpResponseForbidden()
     else:
         return redirect('login')
+
 
 # API
 def checkTestsAdmin(request):
@@ -759,14 +762,14 @@ def checkTestInfoAdmin(request, testID):
             config_list = json['config_list']
             print(config_list)
             tparms = {
-                'author' : json['author'],
+                'author': json['author'],
                 'begin_date': experience['begin_date'],
                 'end_date': experience['end_date'],
                 'register_date': experience['register_date'],
                 'name': experience['name'],
-                'status' : experience['status'],
-                'configs' : config_list,
-                'testID' : testID,
+                'status': experience['status'],
+                'configs': config_list,
+                'testID': testID,
                 'year': datetime.now().year
             }
 
@@ -790,10 +793,12 @@ def searchTestAdmin(request):
             token = tokenizer.gerateEmailToken(request.user.email)
 
             if typeID != "" and content != "":
-                if typeID == "0": r = requests.get(API + "experience?begin_date=" + content,
-                                 headers={'Authorization': 'Bearer ' + token})
-                else: r = requests.get(API + "experience?content=" + content,
-                                 headers={'Authorization': 'Bearer ' + token})
+                if typeID == "0":
+                    r = requests.get(API + "experience?begin_date=" + content,
+                                     headers={'Authorization': 'Bearer ' + token})
+                else:
+                    r = requests.get(API + "experience?content=" + content,
+                                     headers={'Authorization': 'Bearer ' + token})
 
                 if r.status_code != 200:
                     messages.error(request, "Something went wrong.")
@@ -810,6 +815,7 @@ def searchTestAdmin(request):
             return HttpResponseForbidden()
     else:
         return redirect('login')
+
 
 def createAcessPoint(request, nodeID):
     if request.user.is_authenticated:
@@ -863,10 +869,12 @@ def createAcessPoint(request, nodeID):
 
         print(lista)
 
-        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID, 'database' : lista})
+        return render(request, "network/create/AP.html",
+                      {'year': datetime.now().year, 'nodeID': nodeID, 'database': lista})
 
     else:
         return redirect('login')
+
 
 def processAP(request, nodeID):
     if request.user.is_authenticated:
@@ -910,17 +918,18 @@ def processAP(request, nodeID):
             print(e)
             return redirect('networkstatus')
         msg = {
-            'APSSID' : APSSID,
+            'APSSID': APSSID,
             'APPW': APPW,
-            'Channel' : Channel,
-            'RangeStart' : RangeStart,
-            'RangeEnd' : RangeEnd,
-            'hw_mode' : hw_mode,
-            'DFGateway' : DFGateway,
+            'Channel': Channel,
+            'RangeStart': RangeStart,
+            'RangeEnd': RangeEnd,
+            'hw_mode': hw_mode,
+            'DFGateway': DFGateway,
             'Netmask': Netmask,
-            'interface' : interface
+            'interface': interface
         }
-        r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg, headers={'Authorization': 'Bearer ' + token})
+        r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg,
+                          headers={'Authorization': 'Bearer ' + token})
         json = r.json()
         if r.status_code != 200:
             print(r.status_code)
@@ -935,9 +944,10 @@ def processAP(request, nodeID):
 
 def registerTest(request):
     if request.user.is_authenticated:
-        return render(request, 'calendar/registerTest.html', {'year': datetime.now().year })
+        return render(request, 'calendar/registerTest.html', {'year': datetime.now().year})
     else:
         return redirect('login')
+
 
 def registerTestSave(request):
     if request.user.is_authenticated:
@@ -945,17 +955,42 @@ def registerTestSave(request):
             name = request.POST['name']
             begin_date = request.POST['begin_date']
             end_date = request.POST['end_date']
-            template = int(request.POST['template'])
-            num_test = int(request.POST['num_test'])
         except Exception as e:
             logging.debug("Parsing exception: " + e)
             messages.error(request, "Something went wrong.")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-        
+
+        try:
+            apu3 = requests.FILES['node_3']
+        except:
+            apu3 = None
+
+        try:
+            apu7 = requests.FILES['node_7']
+        except:
+            apu7 = None
+
+        try:
+            apu8 = requests.FILES['node_8']
+        except:
+            apu8 = None
+
+        try:
+            apu10 = requests.FILES['node_10']
+        except:
+            apu10 = None
+
         begin_date = begin_date.split("T")[0] + " " + begin_date.split("T")[1] + ":00"
         end_date = end_date.split("T")[0] + " " + end_date.split("T")[1] + ":00"
 
-        msg = {'name' : name, 'begin_date' : begin_date, 'end_date' : end_date, 'template' : template, 'num_test' : num_test}
+        msg = {'name': name, 'begin_date': begin_date, 'end_date': end_date,
+               'config_node': [
+                   {'apu': 3, 'file': apu3},
+                   {'apu': 7, 'file': apu7},
+                   {'apu': 8, 'file': apu8},
+                   {'apu': 10, 'file': apu10}
+               ]
+               }
 
         token = tokenizer.simpleToken(request.user.email)
         r = requests.post(API + "experience", json=msg, headers={'Authorization': 'Bearer ' + token})
@@ -971,6 +1006,7 @@ def registerTestSave(request):
 
     else:
         return redirect('login')
+
 
 def calendar(request):
     if request.user.is_authenticated:
@@ -998,6 +1034,7 @@ def calendar(request):
     else:
         return redirect('login')
 
+
 def listTemplates(request):
     if request.user.is_authenticated:
 
@@ -1008,11 +1045,11 @@ def listTemplates(request):
             print(r.status_code)
             messages.error(request, 'Something went wrong')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-        
+
         json = r.json()
 
         tparms = {
-            'database' : json
+            'database': json
         }
 
         return render(request, 'network/templates/listTemplates.html', tparms)
@@ -1034,9 +1071,9 @@ def templateInfo(request, templateID):
         json = r.json()
 
         tparms = {
-            'author' : json['author'],
-            'config_list' : json['config_list'],
-            'template' : json['template']
+            'author': json['author'],
+            'config_list': json['config_list'],
+            'template': json['template']
         }
 
         return render(request, 'network/templates/templateInfo.html', tparms)
@@ -1048,7 +1085,8 @@ def templateInfo(request, templateID):
 def interfaceUP(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/up", headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/up",
+                         headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             json = r.json()
@@ -1065,7 +1103,8 @@ def interfaceUP(request, node, iName):
 def interfaceDown(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/down", headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/down",
+                         headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             json = r.json()
@@ -1079,6 +1118,7 @@ def interfaceDown(request, node, iName):
     else:
         return redirect('login')
 
+
 def openFileTest(request, file, testID):
     if request.user.is_authenticated:
         token = tokenizer.userToken(request.user.email)
@@ -1089,14 +1129,14 @@ def openFileTest(request, file, testID):
 
         json = r.json()
 
-        json=json['config_list']
+        json = json['config_list']
 
         for i in json:
             if i['experience'] == file:
                 val = i['file']
                 break;
 
-        return render(request, 'user/admin/experiences/openfile.html', {'file' : val})
+        return render(request, 'user/admin/experiences/openfile.html', {'file': val})
 
     else:
         return redirect('login')
@@ -1139,7 +1179,8 @@ def processIpServer(request, nodeID):
             'mtu': mtu
         }
         token = tokenizer.nodeToken(request.user.email)
-        r = requests.post(API + "node/"  + str(nodeID) + "/iperf/iperfsv3", json=msg, headers={'Authorization': 'Bearer ' + token})
+        r = requests.post(API + "node/" + str(nodeID) + "/iperf/iperfsv3", json=msg,
+                          headers={'Authorization': 'Bearer ' + token})
         json = r.json()
         if r.status_code != 200:
             print(r.status_code)
@@ -1161,6 +1202,8 @@ def processIpClient(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         '''
 
+        print(request.POST)
+
         try:
             time = request.POST['time']
         except:
@@ -1169,7 +1212,12 @@ def processIpClient(request, nodeID):
         try:
             protocol = request.POST['protocol']
         except:
-            protocol = 'tcp'
+            protocol = 'TCP'
+
+        try:
+            reverse = request.POST['reverse']
+        except:
+            reverse = 'reverse'
 
         try:
             ip = request.POST['ip']
@@ -1178,7 +1226,8 @@ def processIpClient(request, nodeID):
             mtu = request.POST['mtu']
         except Exception as e:
             print(e)
-            return redirect('networkstatus')
+            messages.error(request, "Unable to process request.")
+            return processNode(request, nodeID)
 
         msg = {
             'ip': ip,
@@ -1186,31 +1235,88 @@ def processIpClient(request, nodeID):
             'protocol': protocol,
             'time': time,
             'bandwidth': bandwidth,
-            'mtu': mtu
+            'mtu': mtu,
+            'reverse': reverse
         }
         token = tokenizer.nodeToken(request.user.email)
-        r = requests.post(API + "" + str(nodeID) + "", json=msg,  headers={'Authorization': 'Bearer ' + token})
-
+        r = requests.post(API + "node/" + str(nodeID) + "/iperf/iperfclient", json=msg,
+                          headers={'Authorization': 'Bearer ' + token})
+        json = r.json()
         if r.status_code != 200:
             print(r.status_code)
-            messages.error(request, "Something went wrong.")
+            messages.error(request, json['msg'])
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        return redirect('networkstatus')
+        messages.INFO(request, json['msg'])
+        return processNode(request, nodeID=nodeID)
     else:
         return redirect('login')
 
 
 def userStatistics(request):
     if request.user.is_authenticated:
-        return render(request, 'statistics/admin.html', {'year': datetime.now().year})
+        token = tokenizer.gerateEmailToken(request.user.email)
+        r = requests.get(API + "user", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            print(r.status_code)
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        """
+        [
+          {
+            "id": 0,
+            "name": "string",
+            "email": "user@example.com",
+            "num_test": 0,
+            "register_date": "string",
+            "picture": "string",
+            "last_login": 0,
+            "role": 0
+          }
+        ]
+        """
+        lista = [['Person', 'Tests']]
+        for i in r.json():
+            tests = i['num_test']
+            name = i['name']
+            lista.append([name, tests])
+        print(lista)
+        return render(request, 'statistics/admin.html', {'year': datetime.now().year, 'lista': lista})
     else:
         return redirect('login')
 
 
 def adminStatistics(request):
     if request.user.is_authenticated:
-        return render(request, 'statistics/user.html', {'year': datetime.now().year})
+        token = tokenizer.gerateEmailToken(request.user.email)
+        r = requests.get(API + "user", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            print(r.status_code)
+            messages.error(request, "Something went wrong.")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        """
+        [
+          {
+            "id": 0,
+            "name": "string",
+            "email": "user@example.com",
+            "num_test": 0,
+            "register_date": "string",
+            "picture": "string",
+            "last_login": 0,
+            "role": 0
+          }
+        ]
+        """
+        lista = [['Person', 'Tests']]
+        for i in r.json():
+            tests = i['num_test']
+            name = i['name']
+            lista.append([name, tests])
+        print(lista)
+        return render(request, 'statistics/admin.html', {'year': datetime.now().year, 'lista': lista})
     else:
         return redirect('login')
 
@@ -1218,7 +1324,8 @@ def adminStatistics(request):
 def interfaceScan(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/scan", headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/scan",
+                         headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             json = r.json()
@@ -1238,7 +1345,8 @@ def interfaceConnect(request, node, iName, ssid, state, store=None):
         token = tokenizer.gerateEmailToken(request.user.email)
 
         if state == 'off':
-            r = requests.post(API + "node/"+ str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': ''}, headers={'Authorization': 'Bearer ' + token})
+            r = requests.post(API + "node/" + str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': ''},
+                              headers={'Authorization': 'Bearer ' + token})
             if r.status_code != 200:
                 messages.error(request, 'Unable to connect')
                 return processNode(request=request, nodeID=node)
@@ -1246,14 +1354,17 @@ def interfaceConnect(request, node, iName, ssid, state, store=None):
             return processNode(request=request, nodeID=node)
         else:
             if store == 'save':
-                r = requests.post(API + "node/" + str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': request.POST['pw']}, headers={'Authorization': 'Bearer ' + token})
+                r = requests.post(API + "node/" + str(node) + '/' + iName + "/connect",
+                                  json={'SSID': ssid, 'password': request.POST['pw']},
+                                  headers={'Authorization': 'Bearer ' + token})
                 if r.status_code != 200:
                     messages.error(request, 'Unable to connect')
                     return processNode(request=request, nodeID=node)
                 messages.info(request, "Successfully connected.")
                 return processNode(request=request, nodeID=node)
             else:
-                return render(request, 'network/connect.html', {'year': datetime.now().year, 'iName': iName, 'node': node, 'ssid': ssid})
+                return render(request, 'network/connect.html',
+                              {'year': datetime.now().year, 'iName': iName, 'node': node, 'ssid': ssid})
 
     else:
         return redirect('login')
