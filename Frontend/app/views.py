@@ -1239,6 +1239,7 @@ def userStatistics(request):
             tests = i['num_test']
             name = i['name']
             lista.append([name, tests])
+        print(lista)
         return render(request, 'statistics/admin.html', {'year': datetime.now().year, 'lista' : lista})
     else:
         return redirect('login')
