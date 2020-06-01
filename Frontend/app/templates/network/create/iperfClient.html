@@ -2,6 +2,13 @@
 
 {% block content %}
 
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags %}
+                <script>alert("{{ message }}")</script> {% endif %}
+        {% endfor %}
+    {% endif %}
+
     <h1>Create Iperf Client</h1>
     <hr>
     <form method="post" action="/network/create/Iperf/Client/save/{{ nodeID }}" enctype="multipart/form-data">
