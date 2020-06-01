@@ -188,7 +188,7 @@ def send_node_command__to_interface_as_post(id, interface, command):
             return results
     if command == "iperfsv3":
         try:
-            port = raw_data['password']
+            port = raw_data['port']
             ip = raw_data['ip']
             mtu = raw_data['mtu']
             response = requests.post(url=iperf, json={'port' : port, 'ip' : ip, 'mtu' : mtu}, timeout=60)
