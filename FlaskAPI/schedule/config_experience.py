@@ -1,26 +1,22 @@
 import requests
 from flask_api import status
 
-from models import Experience, APU_Config, APU, ExperienceStatus
+from models import APU_Config, APU, ExperienceStatus, Experience
 from views.base import FailedExperienceException
 
-from sqlalchemy.orm.exc import NoResultFound
 
 
-def start_experience(id, app, db):
+def start_experience(experience_id, app, db):
     with app.app_context():
-
+        experience = db.session.query(Experience).get(experience_id)
         config_query = db.session.query(APU_Config, APU) \
-            .filter(APU_Config.experience == id) \
+            .filter(APU_Config.experience == experience.id) \
             .filter(APU_Config.apu == APU.id).all()
-        experience = db.session.query(Experience).get(id)
-        if not experience:
-            raise NoResultFound
 
             # if no apu config, those lines wont be executed
         for apu_config, apu in config_query:
 
-            json_req = {'experience': id, 'file': apu_config.file.decode("utf-8")}
+            json_req = {'experience': experience.id, 'file': apu_config.file.decode("utf-8")}
 
             apu_request = f'http://{apu.ip}:{apu.port}/autoStart'
             try:
@@ -38,18 +34,15 @@ def start_experience(id, app, db):
         experience.update()
 
 
-def finish_experience(id, app, db):
+def finish_experience(experience_id, app, db):
     with app.app_context():
+        experience = db.session.query(Experience).get(experience_id)
         config_query = db.session.query(APU_Config, APU) \
-            .filter(APU_Config.experience == id) \
+            .filter(APU_Config.experience == experience.id) \
             .filter(APU_Config.apu == APU.id).all()
-        experience = db.session.query(Experience).get(id)
-        if not experience:
-            raise NoResultFound
 
         experience.status = ExperienceStatus.FINISHED
         experience.update()
-
         # if no apu config, those lines wont be executed
 
         request_response = []

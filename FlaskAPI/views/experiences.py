@@ -244,7 +244,7 @@ def delete_experience(id):
         experience.delete(experience)
         profile.num_test -= 1
         profile.update()
-        results = jsonify(experience.serializable)
+        results = jsonify()
         results.status_code = status.HTTP_200_OK
 
         experience_scheduler_manager.remove_schedule_experience(experience.id)
@@ -410,7 +410,7 @@ def delete_apu_config(experience_id, apu_config_id):
             raise NoResultFound
 
         apu_config.delete(apu_config)
-        results = jsonify(apu_config.serializable)
+        results = jsonify()
 
     except ValidationError as err:
         results = jsonify({"ERROR": err.messages})
