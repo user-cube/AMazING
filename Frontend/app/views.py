@@ -1125,11 +1125,6 @@ def processIpServer(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '')) # preencher se necessario
         '''
         try:
-            time = request.POST['time']
-        except:
-            time = 0
-
-        try:
             protocol = request.POST['protocol']
         except:
             protocol = 'tcp'
@@ -1144,7 +1139,6 @@ def processIpServer(request, nodeID):
         msg = {
             'ip': ip,
             'protocol': protocol,
-            'time': time,
             'mtu': mtu
         }
         r = requests.post(API + "" + str(nodeID) + "", json=msg)
