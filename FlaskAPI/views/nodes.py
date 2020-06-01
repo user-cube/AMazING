@@ -197,3 +197,33 @@ def send_node_command__to_interface_as_post(id, interface, command):
             results = jsonify({"ERROR": f"{apu.name}: not founded"})
             results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
             return results
+@nodes_blueprint.route('/node/<int:id>/<command>', methods=['PUT', 'POST'], strict_slashes=False)
+@jwt_required
+def send_node_iperf__to_interface_as_post(id, interface, command):
+    apu = db.session.query(APU).get(id)
+    # apu = '127.0.0.1'
+    raw_data = request.get_json(force=True)
+    if not apu:
+        results = jsonify({"ERROR": f"APU not found, id {id}"})
+        results.status_code = status.HTTP_404_NOT_FOUND
+        return results
+
+    apu_request = f'http://{apu.ip}:{apu.port}/{interface}/{command}'
+
+    if command == "iperfsv3":
+        try:
+            port = raw_data['password']
+            ip = raw_data['ip']
+            mtu = raw_data['mtu']
+            response = requests.post(url=apu_request, json={'port' : port, 'ip' : ip, 'mtu' : mtu}, timeout=60)
+            results = jsonify(response.json())
+            results.status_code = response.status_code
+            return results
+        except requests.exceptions.ConnectionError:
+            results = jsonify({"ERROR": f"{apu.name}: not founded"})
+            results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+            return results
+    else:
+        results = jsonify({"ERROR": f"{apu.name}: not founded"})
+        results.status_code = status.HTTP_444_CONNECTION_CLOSED_WITHOUT_RESPONSE
+        return results
