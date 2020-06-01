@@ -563,7 +563,7 @@ def networkStatus(request):
 
 
 # API
-def processNode(request, nodeID, content=None):
+def processNode(request, nodeID, content=None, iName=None):
     if request.user.is_authenticated:
 
         token = tokenizer.nodeToken(request.user.email)
@@ -651,7 +651,8 @@ def processNode(request, nodeID, content=None):
             'username': 'amazing',
             'password': password.decode("utf-8"),
             'nodeID' : nodeID,
-            'aps' : content
+            'aps' : content,
+            'iName' : iName
         }
 
         return render(request, "network/nodeInfo.html", tparms)
@@ -1230,7 +1231,7 @@ def interfaceScan(request, node, iName):
 
         json = r.json()
         dictionary = json['msg']
-        return processNode(request=request, nodeID=node, content=dictionary)
+        return processNode(request=request, nodeID=node, content=dictionary, iName=iName)
     else:
         return redirect('login')
 
