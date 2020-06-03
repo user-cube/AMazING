@@ -918,7 +918,7 @@ def processAP(request, nodeID):
             print(e)
             return redirect('networkstatus')
         msg = {
-            'APSSID': APSSID,
+            'APSSID': APSSID.replace(" ", "-"),
             'APPW': APPW,
             'Channel': Channel,
             'RangeStart': RangeStart,
