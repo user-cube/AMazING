@@ -51,33 +51,37 @@ def list_experience():
     parse_data = parser.parse_args()
     experiences_query = db.session.query(Experience, Profile).filter(Experience.profile == Profile.id)
     # Apply filters
-    if parse_data['userID']:
-        experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
+    try :
+        if parse_data['userID']:
+            experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
 
-    if parse_data['date']:
-        date_start = datetime.strptime(parse_data['date'], "%Y-%m-%d").date()
-        date_finish = date_start + timedelta(days=1)
-        experiences_query = experiences_query.filter(Experience.begin_date >= date_start).filter(
-            date_finish >= Experience.end_date)
+        if parse_data['date']:
+            date_start = datetime.strptime(parse_data['date'], "%Y-%m-%d").date()
+            date_finish = date_start + timedelta(days=1)
+            experiences_query = experiences_query.filter(Experience.begin_date >= date_start).filter(
+                date_finish >= Experience.end_date)
 
-    else:
-        if parse_data['begin_date']:
-            date = datetime.strptime(parse_data['begin_date'], "%Y-%m-%d").date()
-            experiences_query = experiences_query.filter(Experience.begin_date >= date)
-        if parse_data['end_date']:
-            date = datetime.strptime(parse_data['end_date'], "%Y-%m-%d").date()
-            experiences_query = experiences_query.filter(Experience.end_date <= date)
-    if parse_data['status']:
-        experiences_query = experiences_query.filter(Experience.status == parse_data['status'])
-    if parse_data['content']:
-        experiences_query = experiences_query.filter(Experience.name.contains(parse_data['content']))
-    q = experiences_query.order_by(Experience.begin_date.asc()).all()
-    response = []
-    for experience, profile in q:
-        experience = experience.serializable
-        profile = profile.serializable
-        experience['author'] = profile['name']
-        response.append(experience)
+        else:
+            if parse_data['begin_date']:
+                date = datetime.strptime(parse_data['begin_date'], "%Y-%m-%d").date()
+                experiences_query = experiences_query.filter(Experience.begin_date >= date)
+            if parse_data['end_date']:
+                date = datetime.strptime(parse_data['end_date'], "%Y-%m-%d").date()
+                experiences_query = experiences_query.filter(Experience.end_date <= date)
+        if parse_data['status']:
+            experiences_query = experiences_query.filter(Experience.status == parse_data['status'])
+        if parse_data['content']:
+            experiences_query = experiences_query.filter(Experience.name.contains(parse_data['content']))
+        q = experiences_query.order_by(Experience.begin_date.asc()).all()
+        response = []
+        for experience, profile in q:
+            experience = experience.serializable
+            profile = profile.serializable
+            experience['author'] = profile['name']
+            response.append(experience)
+    except ValueError as err:
+        response = jsonify({'ERROR': f'Bad format - {err}'})
+        response.status_code = status.HTTP_400_BAD_REQUEST
     return jsonify(response)
 
 
@@ -129,7 +133,7 @@ def insert_experience():
         results.status_code = status.HTTP_400_BAD_REQUEST
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     except ExperienceScheduleException as err:
         experiences = [ex.serializable for ex in err.messages]
@@ -209,7 +213,7 @@ def put(id):
         results.status_code = status.HTTP_400_BAD_REQUEST
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     except UnauthorizedException:
         db.session.rollback()
@@ -319,7 +323,7 @@ def insert_apu_config(experience_id):
         results.status_code = status.HTTP_400_BAD_REQUEST
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     except UnauthorizedException:
         results = jsonify({'Error': f'Unauthorized access to selected content, Experience {id}'})
@@ -382,7 +386,7 @@ def alter_apu_config(experience_id, apu_config_id):
         results.status_code = status.HTTP_400_BAD_REQUEST
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     except UnauthorizedException:
         results = jsonify({'Error': f'Unauthorized access to selected content, Apu_Config {apu_config_id}'})
@@ -421,7 +425,7 @@ def delete_apu_config(experience_id, apu_config_id):
         results.status_code = status.HTTP_400_BAD_REQUEST
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     except UnauthorizedException:
         results = jsonify({'Error': f'Unauthorized access to selected content, Apu_Config {apu_config_id}'})

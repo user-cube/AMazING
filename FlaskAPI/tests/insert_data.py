@@ -6,8 +6,10 @@ from models import Profile, Experience, APU, APU_Config, Role, ExperienceStatus
 def insert_db_info():
     role = Role(role_name='test_role')
     role.add(role)
+    role = Role(role_name='test_role_2')
+    role.add(role)
 
-    profile = Profile(name='TEST_USER', email='testuser@gmail.com', role=1, picture=None, num_test=0,
+    profile = Profile(name='TEST_USER', email='testuser@test.com', role=1, picture=str.encode('This is a Picture File'), num_test=0,
                       register_date=datetime.now())
     profile.add(profile)
 
