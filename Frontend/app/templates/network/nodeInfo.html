@@ -10,12 +10,18 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-10">
+            <div class="col-sm-6">
                 <h1>{{ hostname }} - Information</h1>
             </div>
-            <div class="col-lg-2">
+            <div class="col-sm-2">
+                <a class="btn btn-success btn-sm" href="/network/createIpServer/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Iperf Server</a>
+            </div>
+            <div class="col-sm-2">
+                <a class="btn btn-success btn-sm" href="/network/createIpClient/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Iperf Client</a>
+            </div>
+            <div class="col-sm-2">
                 {% if access == 1 %}
-                    <a class="btn btn-warning" href="/network/createAP/{{ nodeID }}"><i class="fa fa-wifi"> Create Access Point</i></a>
+                    <a class="btn btn-success btn-sm" href="/network/createAP/{{ nodeID }}"><i class="fa fa-wifi"></i> Create Access Point</a>
                 {% endif %}
             </div>
         </div>
@@ -75,6 +81,50 @@
         {% endfor %}
         </tbody>
     </table>
+    {% if aps|length > 0 %}
+        <h1>Scan Results</h1>
+        <hr>
+        <table class="table table-responsive-lg table-hover" style="text-align: center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Channel</th>
+                    <th>Encryption</th>
+                    <th>ESSID</th>
+                    <th>Frequency</th>
+                    <th>MAC</th>
+                    <th>Mode</th>
+                    <th>Signal Level</th>
+                    <th>Signal Quality</th>
+                    <th>Signal Total</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for i in aps %}
+                <tr>
+                    <td>{{i.channel}}</td>
+                    <td>{{i.encryption}}</td>
+                    <td>{{i.essid}}</td>
+                    <td>{{i.frequency}} {{i.frequency_units}}</td>
+                    <td>{{i.mac}}</td>
+                    <td>{{i.mode}}</td>
+                    <td>{{i.signal_level_dBm}}</td>
+                    <td>{{i.signal_quality}}</td>
+                    <td>{{i.signal_total}}</td>
+                    {% if i.encryption == 'off' %}
+                        <td><a href="/network/interface/{{ nodeID }}/{{ iName }}/{{ i.essid }}/off/connect/save"
+                                   class="btn btn-success"><i class="fa fa-power-off"></i><span> Connect</span></a>
+                        </td>
+                    {% else %}
+                        <td><a href="/network/interface/{{ nodeID }}/{{ iName }}/{{ i.essid }}/on/connect/nonsave"
+                                   class="btn btn-success"><i class="fa fa-power-off"></i><span> Connect</span></a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 
     {% if database2|length > 0 %}
         <h1>Down interfaces</h1>
@@ -105,7 +155,6 @@
                 {% endfor %}
             </tbody>
         </table>
-
     {% endif %}
     {% if ongoing == 1 %}
         {% if access == 1 %}

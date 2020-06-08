@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 import requests
 import logging
 
-
 logging.config.dictConfig({
     'version': 1,
     'disable_existing_loggers': False,
@@ -564,8 +563,9 @@ def networkStatus(request):
 
 
 # API
-def processNode(request, nodeID):
+def processNode(request, nodeID, content=None, iName=None):
     if request.user.is_authenticated:
+
         token = tokenizer.nodeToken(request.user.email)
         r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
@@ -635,6 +635,10 @@ def processNode(request, nodeID):
         isAdmin = 0
         if request.user.is_superuser: isAdmin = 1
 
+        if content == None:
+            content = []
+
+        print(content)
         tparms = {
             'current_time': str(datetime.now()),
             'year': datetime.now().year,
@@ -646,7 +650,9 @@ def processNode(request, nodeID):
             'hostname': hostname,
             'username': 'amazing',
             'password': password.decode("utf-8"),
-            'nodeID' : nodeID
+            'nodeID' : nodeID,
+            'aps' : content,
+            'iName' : iName
         }
 
         return render(request, "network/nodeInfo.html", tparms)
@@ -813,9 +819,35 @@ def createAcessPoint(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         ongoing = r.json()
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "node/" + str(nodeID), headers={'Authorization': 'Bearer ' + token})
 
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        json = r.json()
+        interfaces = json['interfaces']
         ongoing = ongoing['current_experience']
 
+        lista = []
+        dic = {}
+        for i in interfaces:
+            if interfaces[i]['logic_state'] != "DOWN":
+                if interfaces[i]['ip'] != None:
+                    dic['name'] = i
+                    dic['end'] = interfaces[i]['addrs']
+                    dic['ip'] = interfaces[i]['ip']
+                    dic['mac'] = interfaces[i]['mac']
+                    dic['logic_state'] = interfaces[i]['logic_state']
+                    lista.append(dic)
+                else:
+                    dic['name'] = i
+                    dic['end'] = [{'addr': '-', 'broadcast': '-', 'netmask': '-', 'peer': '-'}]
+                    dic['ip'] = '127.0.0.1'
+                    dic['mac'] = interfaces[i]['mac']
+                    dic['logic_state'] = interfaces[i]['logic_state']
+                    lista.append(dic)
+                dic = {}
         try:
             uEmail = ongoing['email']
         except:
@@ -829,7 +861,9 @@ def createAcessPoint(request, nodeID):
         if access == 0:
             return HttpResponseForbidden("No access")
 
-        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID})
+        print(lista)
+
+        return render(request, "network/create/AP.html", {'year': datetime.now().year, 'nodeID':nodeID, 'database' : lista})
 
     else:
         return redirect('login')
@@ -871,6 +905,7 @@ def processAP(request, nodeID):
             hw_mode = request.POST['hw_mode']
             DFGateway = request.POST['DFGateway']
             Netmask = request.POST['Netmask']
+            interface = request.POST['interface']
         except Exception as e:
             print(e)
             return redirect('networkstatus')
@@ -882,42 +917,25 @@ def processAP(request, nodeID):
             'RangeEnd' : RangeEnd,
             'hw_mode' : hw_mode,
             'DFGateway' : DFGateway,
-            'Netmask': Netmask
+            'Netmask': Netmask,
+            'interface' : interface
         }
-        r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg)
-
+        r = requests.post(API + "node/" + str(nodeID) + "/accesspoint", json=msg, headers={'Authorization': 'Bearer ' + token})
+        json = r.json()
         if r.status_code != 200:
             print(r.status_code)
-            messages.error(request, "Something went wrong.")
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            messages.error(request, json['msg'])
+            return redirect('nodestatus', nodeID=nodeID)
 
-        return redirect('networkstatus')
+        messages.info(request, json['msg'])
+        return processNode(request=request, nodeID=nodeID)
     else:
         return redirect('login')
 
 
 def registerTest(request):
     if request.user.is_authenticated:
-        
-        token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + 'template', headers={'Authorization': 'Bearer ' + token})
-
-        if r.status_code != 200:
-            print(r.status_code)
-            logging.debug("API ERROR: " + str(r.status_code))
-            messages.error(request, "Something went wrong.")
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-        
-        json = r.json()
-
-        lista = []
-
-        for i in json:
-            lista.append(i['template']['id'])
-        
-        lista.sort()
-
-        return render(request, 'calendar/registerTest.html', {'database':lista, 'year': datetime.now().year })
+        return render(request, 'calendar/registerTest.html', {'year': datetime.now().year })
     else:
         return redirect('login')
 
@@ -973,8 +991,9 @@ def calendar(request):
             t_id = test['id']
             name = test['author'] + ' - ' + test['name']
             data = test['begin_date']
-            tests.append({'name': name, 'date': data, 'id': str(t_id), 'type': 'event'})
-        
+            date_finish = test['end_date']
+            tests.append({'name': name, 'date': data, 'description': date_finish, 'id': str(t_id), 'type': 'event'})
+
         return render(request, 'calendar/calendar.html', {'database': tests, 'year': datetime.now().year})
     else:
         return redirect('login')
@@ -1025,6 +1044,7 @@ def templateInfo(request, templateID):
     else:
         return redirect('login')
 
+
 def interfaceUP(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
@@ -1041,10 +1061,11 @@ def interfaceUP(request, node, iName):
     else:
         return redirect('login')
 
+
 def interfaceDown(request, node, iName):
     if request.user.is_authenticated:
         token = tokenizer.simpleToken(request.user.email)
-        r = requests.get(API + "node/" + str(node) + "/" + str(iName)  + "/down", headers={'Authorization': 'Bearer ' + token})
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/down", headers={'Authorization': 'Bearer ' + token})
 
         if r.status_code != 200:
             json = r.json()
@@ -1052,6 +1073,7 @@ def interfaceDown(request, node, iName):
             return redirect('nodestatus', nodeID=node)
 
         json = r.json()
+
         messages.info(request, json['msg'])
         return redirect('nodestatus', nodeID=node)
     else:
@@ -1075,6 +1097,171 @@ def openFileTest(request, file, testID):
                 break;
 
         return render(request, 'user/admin/experiences/openfile.html', {'file' : val})
+
+    else:
+        return redirect('login')
+
+
+def iperfServer(request, nodeID):
+    if request.user.is_authenticated:
+        return render(request, 'network/create/iperfServer.html', {'year': datetime.now().year, 'nodeID': nodeID})
+    else:
+        return redirect('login')
+
+
+def iperfClient(request, nodeID):
+    if request.user.is_authenticated:
+        return render(request, 'network/create/iperfClient.html', {'year': datetime.now().year, 'nodeID': nodeID})
+    else:
+        return redirect('login')
+
+
+def processIpServer(request, nodeID):
+    if request.user.is_authenticated:
+        '''
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "", headers={'Authorization': 'Bearer ' + token}) # preencher se necessario
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '')) # preencher se necessario
+        '''
+
+        try:
+            ip = request.POST['ip']
+            port = request.POST['port']
+            mtu = request.POST['mtu']
+        except Exception as e:
+            print(e)
+            return redirect('networkstatus')
+
+        msg = {
+            'ip': ip,
+            'port': port,
+            'mtu': mtu
+        }
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.post(API + "node/"  + str(nodeID) + "/iperf/iperfsv3", json=msg, headers={'Authorization': 'Bearer ' + token})
+        json = r.json()
+        if r.status_code != 200:
+            print(r.status_code)
+            messages.error(request, json['msg'])
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        messages.info(request, json['msg'])
+        return processNode(request, nodeID)
+    else:
+        return redirect('login')
+
+
+def processIpClient(request, nodeID):
+    if request.user.is_authenticated:
+        '''
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.get(API + "", headers={'Authorization': 'Bearer ' + token})
+        if r.status_code != 200:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        '''
+
+        try:
+            time = request.POST['time']
+        except:
+            time = 0
+
+        try:
+            protocol = request.POST['protocol']
+        except:
+            protocol = 'tcp'
+
+        try:
+            reverse = request.POST['reverse']
+        except:
+            reverse = 'reverse'
+
+        try:
+            ip = request.POST['ip']
+            port = request.POST['port']
+            bandwidth = request.POST['bandwidth']
+            mtu = request.POST['mtu']
+        except Exception as e:
+            print(e)
+            messages.error(request, "Unable to process request.")
+            return processNode(request, nodeID)
+
+        msg = {
+            'ip': ip,
+            'port': port,
+            'protocol': protocol,
+            'time': time,
+            'bandwidth': bandwidth,
+            'mtu': mtu,
+            'reverse' : reverse
+        }
+        token = tokenizer.nodeToken(request.user.email)
+        r = requests.post(API + "node/"  + str(nodeID) + "/iperf/iperfclient", json=msg,  headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            print(r.status_code)
+            json = r.json()
+            messages.error(request, json['msg'])
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        return processNode(request, nodeID=nodeID)
+    else:
+        return redirect('login')
+
+
+def userStatistics(request):
+    if request.user.is_authenticated:
+        return render(request, 'statistics/admin.html', {'year': datetime.now().year})
+    else:
+        return redirect('login')
+
+
+def adminStatistics(request):
+    if request.user.is_authenticated:
+        return render(request, 'statistics/user.html', {'year': datetime.now().year})
+    else:
+        return redirect('login')
+
+
+def interfaceScan(request, node, iName):
+    if request.user.is_authenticated:
+        token = tokenizer.simpleToken(request.user.email)
+        r = requests.get(API + "node/" + str(node) + "/" + str(iName) + "/scan", headers={'Authorization': 'Bearer ' + token})
+
+        if r.status_code != 200:
+            json = r.json()
+            messages.error(request, json['msg'])
+            return redirect('nodestatus', nodeID=node)
+
+        json = r.json()
+        dictionary = json['msg']
+        return processNode(request=request, nodeID=node, content=dictionary, iName=iName)
+    else:
+        return redirect('login')
+
+
+def interfaceConnect(request, node, iName, ssid, state, store=None):
+    if request.user.is_authenticated:
+
+        token = tokenizer.gerateEmailToken(request.user.email)
+
+        if state == 'off':
+            r = requests.post(API + "node/"+ str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': ''}, headers={'Authorization': 'Bearer ' + token})
+            if r.status_code != 200:
+                messages.error(request, 'Unable to connect')
+                return processNode(request=request, nodeID=node)
+            messages.info(request, "Successfully connected.")
+            return processNode(request=request, nodeID=node)
+        else:
+            if store == 'save':
+                r = requests.post(API + "node/" + str(node) + '/' + iName + "/connect", json={'SSID': ssid, 'password': request.POST['pw']}, headers={'Authorization': 'Bearer ' + token})
+                if r.status_code != 200:
+                    messages.error(request, 'Unable to connect')
+                    return processNode(request=request, nodeID=node)
+                messages.info(request, "Successfully connected.")
+                return processNode(request=request, nodeID=node)
+            else:
+                return render(request, 'network/connect.html', {'year': datetime.now().year, 'iName': iName, 'node': node, 'ssid': ssid})
 
     else:
         return redirect('login')

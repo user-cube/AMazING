@@ -53,12 +53,12 @@
                                 {% endif %}>
                                     <a class="nav-link" href="{% url 'calendar' %}">Reservations</a>
                                 </li>
-                                <li {% if request.resolver_match.url_name == '#' %}
+                                <li {% if request.resolver_match.url_name == 'userStatistics' %}
                                     class="nav-item active"
                                 {% else %}
                                     class="nav-item"
                                 {% endif %}>
-                                    <a class="nav-link" href="#">Test Result</a>
+                                    <a class="nav-link" href="{% url 'userStatistics' %}">Test Result</a>
                                 </li>
                                 <li {% if request.resolver_match.url_name == 'tests' %}
                                     class="nav-item active" {% endif %}
@@ -89,12 +89,12 @@
                             {% endif %}>
                                 <a class="nav-link" href="{% url 'calendar' %}">Reservations</a>
                             </li>
-                            <li {% if request.resolver_match.url_name == '#' %}
+                            <li {% if request.resolver_match.url_name == 'adminStatistics' %}
                                 class="nav-item active"
                             {% else %}
                                 class="nav-item"
                             {% endif %}>
-                                <a class="nav-link" href="#">Statistics</a>
+                                <a class="nav-link" href="{% url 'adminStatistics' %}">Statistics</a>
                             </li>
                             <li {% if request.resolver_match.url_name == 'listusers' %}
                                 class="nav-item active" {% endif %}
@@ -116,13 +116,6 @@
                                 class="nav-item"
                                     {% endif %}>
                                 <a class="nav-link" href="{% url 'testsAdmin' %}">Previous Experiences</a>
-                            </li>
-                            <li {% if request.resolver_match.url_name == '#' %}
-                                class="nav-item active"
-                            {% else %}
-                                class="nav-item"
-                            {% endif %}>
-                                <a class="nav-link" href="{%url 'listtemplates'%}">Templates</a>
                             </li>
                         {% endif %}
                         </li>

@@ -12,16 +12,26 @@
     <form method="post" action="/network/create/AP/save/{{ nodeID }}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row">
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <label for="APSSID">AP SSID</label>
                 <input id="APSSID" name="APSSID" type="text" placeholder="AP SSID, p.e., IT NODE TEST"
                        class="form-control input-lg"
                        required>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <label for="APPW">AP Password</label>
                 <input id="APPW" name="APPW" type="password"
                        placeholder="AP Password" class="form-control input-lg">
+            </div>
+            <div class="col-lg-4">
+                <label for="Interface">Interfaces</label>
+                <select id="interface" name="interface" class="form-control" required>
+                    {% for i in database %}
+                        {% if i.name|first in 'w' %}
+                            <option value="{{ i.name }}">{{ i.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
             </div>
         </div>
         <br>
@@ -94,19 +104,21 @@
             <div class="col-lg-4">
                 <label for="hw_mode">Operation Mode</label>
                 <select id="hw_mode" name="hw_mode" class="form-control" required>
-                    <option>G</option>
-                    <option>H</option>
+                    <option value="g">G</option>
+                    <option value="h">H</option>
                 </select>
             </div>
-            <div class="col-lg-4" hidden>
-                <label for="nodeID">Operation Mode</label>
+            <div class="col-lg-3" hidden>
+                <label for="nodeID">Node ID</label>
                 <input id="nodeID" name="nodeID" type="text"
                        value="{{ nodeID }}" class="form-control input-lg" required hidden>
             </div>
         </div>
+        </div>
+
         <br>
         <div class="col-lg-12" style="text-align: center">
-            <button type="submit" class="btn btn-primary"><i class="fa fa-wifi"> Create Access Point</i></button>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-wifi"></i> Create Access Point</button>
         </div>
     </form>
     <hr>
