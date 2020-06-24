@@ -16,8 +16,13 @@
 
 \addbibresource{bibliography/Bibliography.bib}
 
+
 \begin{document}
 \renewcommand{\chaptername}{Capítulo}
+\renewcommand{\listfigurename}{Índice de Imagens}
+\renewcommand{\contentsname}{Índice}
+\renewcommand{\appendixname}{Anexo}
+
 \prefrontmatter
 \include{prefrontmatter/titlepage}
 \cleartoevenpage
@@ -37,12 +42,13 @@
 \mainmatter
 \include{chapters/Introduction}
 \include{chapters/State_of_the_art}
-\include{chapters/Analysis}
+\include{chapters/Requisitos}
 \include{chapters/Conclusion}
+\include{chapters/TrabalhoFuturo}
 
 \appendix
-\include{appendices/Appendix}
 \include{appendices/Acronyms}
+%\include{appendices/Appendix}
 
 \backmatter
 \printbibliography[title=Referências]
