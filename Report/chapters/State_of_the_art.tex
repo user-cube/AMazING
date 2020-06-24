@@ -1,0 +1,20 @@
+%!TEX root = ../Report.tex
+\chapter{State of the Art}
+Como o nosso projeto aborda um tema não muito comum não é de admirar que não hajam muitas plataformas com o mesmo propósito mas apesar disso ainda há 2 projetos que merecem uma menção.
+\section{Projetos relacionados}
+No que toca a projetos relacionados achamos que estes 2 merecem uma menção sendo que um é o trabalho previamente efetuado na UA por outro grupo e o outro foi um trabalho publicado por estudantes e investigadores do NICTA (National Information and Communications Technology Australia) e da Universidade Rutgers.
+\subsection{NICTA}
+Este estudo/trabalho como mencionado acima foi publicado por estudantes e investigadores do NICTA (National Information and Communications Technology Australia) e da Universidade Rutgers e tem como titulo “OMF: A Control and Management Framework for Networking Testbeds” e procura resolver os mesmos problemas que nós pretendemos resolver.
+\subsection{PEI 2019}
+Este foi o trabalho efetuado previamente na UA por outro grupo de estudantes relativamente a este tópico e foi daqui que adaptamos o nosso projeto, o trabalho realizado por eles está disponível no github porém os focos dos dois projetos divergem ligeiramente.
+\section{Tecnologias Utilizadas}
+Nesta secção apresentamos de forma sucinta as várias tecnologias que foram utilizadas no desenvolvimento do sistema.
+\subsection{PostegreSQL}
+PostgresSQL é um sistema open-source de gestão de bases de dados relacionais (Relational Database Management System, RDBMS) coordenado pelo PostgreSQL Global Development Group. A sua criação teve como objetivo manter uma ferramenta open-source, mas com a mesma fidelidade do MySQL.\newline
+A estrutura funciona tendo como base tabelas que, por sua vez, têm atributos e utiliza Structured Query Language (SQL) para poder manipular os dados nas mesmas.
+Esta tecnologia no contexto deste projeto foi utilizada, essencialmente, para a manutenção de todas as informações associadas à plataforma, isto é, informações sobre as experiências, utilizadores, endereçamento e informações sobre os nós.
+\subsection{SQLite}
+SQLite é uma biblioteca em linguagem C que implementa um banco de dados SQL embutido. Programas que usam a biblioteca SQLite podem ter acesso a banco de dados SQL sem executar um processo SGBD separado. A biblioteca SQLite lê e escreve diretamente no ficheiro de banco de dados no disco.\newline
+A estrutura funciona tendo como base tabelas utilizando a linguagem SQL, tal como a Base de Dados PostgreSQL.\newline
+No caso do backend a utilização desta ferramenta teve em vista a testagem das features desenvolvida uma vez que, devido ao covid, o desenvolvimento do projeto foi afetado, foi necessário arranjarmos formas de armazenar informações de testes sem que fosse necessário configurar ambientes de desenvolvimento tão pesados e que pudessem ser facilmente replicados no computador de quem possui os nós, uma vez que os SQLite é um ficheiro de texto, bastava ao membro ter esse ficheiro sem que fossem necessárias configurações extra evitando, assim, de cada vez que fosse necessário mudar tabelas de base de dados tivesse que existir um nosso processo de deployment das mesmas.\newline
+No caso do Frontend esta ferramenta foi essencialmente usada para a gestão de logs por parte do administrador do sistema.
