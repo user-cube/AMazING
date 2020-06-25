@@ -12,40 +12,27 @@ from selenium import webdriver
 EMAIL = os.getenv('LOGIN_EMAIL')
 PASSWORD = os.getenv('LOGIN_PASSWORD')
 
+site = ""
+cmd_exec = ''
 class TestLogin():
     def setUp(self) -> None:
         # mudar link
         self.driver = webdriver.Remote(
-            command_executor='http://localhost:4444/wd/hub', desired_capabilities=DesiredCapabilities.CHROME)
+            command_executor=cmd_exec, desired_capabilities=DesiredCapabilities.CHROME)
         self.vars = {}
 
     def tearDown(self) -> None:
         self.driver.quit()
-
-    def test_untitled(self):
-        # Test name: Untitled
-        load_dotenv()
-        # Step # | name | target | value
-        # 1 | open | / |
-        self.driver.get("")     # place the website link
-        # 2 | setWindowSize | 1552x849 |
-        self.driver.set_window_size(1552, 849)
-        # 3 | click | id=navbarDefault |
-        self.driver.find_element(By.ID, "navbarDefault").click()
-        # 4 | click | id=navbarDefault |
-        self.driver.find_element(By.ID, "navbarDefault").click()
-        # 5 | click | id=navbarDefault |
-        self.driver.find_element(By.ID, "navbarDefault").click()
 
     def test_loginTest(self):
         load_dotenv()
         # Test name: LoginTest
         # Step # | name | target | value
         # 1 | open | / |
-        self.driver.get("")     # place the website link
+        self.driver.get(site)     # place the website link
         # 2 | setWindowSize | 1552x849 |
         self.driver.set_window_size(1552, 849)
-        # 3 | click | linkText=Log in |
+        # 3 | click | linkText=Log in |30'
         self.driver.find_element(By.LINK_TEXT, "Log in").click()
         # 4 | type | id=id_username | EMAIL
         self.driver.find_element(By.ID, "id_username").send_keys(
@@ -55,9 +42,188 @@ class TestLogin():
             PASSWORD)
         # 6 | click | css=.btn |
         self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
-        '''# 11 | assertConfirmation | Are you sure? |
-        assert self.driver.switch_to.alert.text == "Are you sure?"
-        # 12 | webdriverChooseCancelOnVisibleConfirmation |  |
-        self.driver.switch_to.alert.dismiss()
-        # 13 | click | css=.fa-envelope |
-        self.driver.find_element(By.CSS_SELECTOR, ".fa-envelope").click()'''
+        # 7 | click | id=navbarDropdown |
+        self.driver.find_element(By.ID, "navbarDropdown").click()
+        # 8 | click | linkText=Logout |
+        self.driver.find_element(By.LINK_TEXT, "Logout").click()
+
+class TestNetworkStatus():
+    def setUp(self) -> None:
+        # mudar link
+        self.driver = webdriver.Remote(
+            command_executor=cmd_exec, desired_capabilities=DesiredCapabilities.CHROME)
+        self.vars = {}
+
+    def tearDown(self) -> None:
+        self.driver.quit()
+
+    def test_loginTest(self):
+        load_dotenv()
+        # Test name: LoginTest
+        # Step # | name | target | value
+        # 1 | open | / |
+        self.driver.get(site)     # place the website link
+        # 2 | setWindowSize | 1552x849 |
+        self.driver.set_window_size(1552, 849)
+        # 3 | click | linkText=Log in |30'
+        self.driver.find_element(By.LINK_TEXT, "Log in").click()
+        # 4 | type | id=id_username | EMAIL
+        self.driver.find_element(By.ID, "id_username").send_keys(
+            EMAIL)
+        # 5 | type | id=id_password | PASSWORD
+        self.driver.find_element(By.ID, "id_password").send_keys(
+            PASSWORD)
+        # 6 | click | css=.btn |
+        self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
+        # 7 | click | linkText=APU 3 |
+        self.driver.find_element(By.LINK_TEXT, "APU 3").click()
+        # 8 | click | id=navbarDefault |
+        self.driver.find_element(By.ID, "navbarDefault").click()
+        # 9 | click | id=navbarDropdown |
+        self.driver.find_element(By.ID, "navbarDropdown").click()
+        # 10 | click | linkText=Logout |
+        self.driver.find_element(By.LINK_TEXT, "Logout").click()
+
+
+class TestNodeStatus():
+    def setUp(self) -> None:
+        # mudar link
+        self.driver = webdriver.Remote(
+            command_executor=cmd_exec, desired_capabilities=DesiredCapabilities.CHROME)
+        self.vars = {}
+
+    def tearDown(self) -> None:
+        self.driver.quit()
+
+    def test_loginTest(self):
+        load_dotenv()
+        # Test name: LoginTest
+        # Step # | name | target | value
+        # 1 | open | / |
+        self.driver.get(site)     # place the website link
+        # 2 | setWindowSize | 1552x849 |
+        self.driver.set_window_size(1552, 849)
+        # 3 | click | linkText=Log in |30'
+        self.driver.find_element(By.LINK_TEXT, "Log in").click()
+        # 4 | type | id=id_username | EMAIL
+        self.driver.find_element(By.ID, "id_username").send_keys(
+            EMAIL)
+        # 5 | type | id=id_password | PASSWORD
+        self.driver.find_element(By.ID, "id_password").send_keys(
+            PASSWORD)
+        # 6 | click | css=.btn |
+        self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
+        # 7 | click | linkText=APU 3 |
+        self.driver.find_element(By.LINK_TEXT, "APU 3").click()
+        # 7 | click | linkText=Create Iperf Server |
+        self.driver.find_element(By.LINK_TEXT, "Create Iperf Server").click()
+        # 8 | click | id=navbarDefault |
+        self.driver.find_element(By.ID, "navbarDefault").click()
+        # 9 | click | id=navbarDropdown |
+        self.driver.find_element(By.ID, "navbarDropdown").click()
+        # 10 | click | linkText=Logout |
+        self.driver.find_element(By.LINK_TEXT, "Logout").click()
+
+
+class TestCreateIperfServer():
+    def setUp(self) -> None:
+        # mudar link
+        self.driver = webdriver.Remote(
+            command_executor=cmd_exec, desired_capabilities=DesiredCapabilities.CHROME)
+        self.vars = {}
+
+    def tearDown(self) -> None:
+        self.driver.quit()
+
+    def test_loginTest(self):
+        load_dotenv()
+        # Test name: LoginTest
+        # Step # | name | target | value
+        # 1 | open | / |
+        self.driver.get(site)  # place the website link
+        # 2 | setWindowSize | 1552x849 |
+        self.driver.set_window_size(1552, 849)
+        # 3 | click | linkText=Log in |30'
+        self.driver.find_element(By.LINK_TEXT, "Log in").click()
+        # 4 | type | id=id_username | EMAIL
+        self.driver.find_element(By.ID, "id_username").send_keys(
+            EMAIL)
+        # 5 | type | id=id_password | PASSWORD
+        self.driver.find_element(By.ID, "id_password").send_keys(
+            PASSWORD)
+        # 6 | click | css=.btn |
+        self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
+        # 7 | click | linkText=APU 3 |
+        self.driver.find_element(By.LINK_TEXT, "APU 3").click()
+        # 8 | click | linkText=Create Iperf Server |
+        self.driver.find_element(By.LINK_TEXT, "Create Iperf Server").click()
+        # 9 | type | id=id_password | 1234
+        self.driver.find_element(By.ID, "ip").click()
+        # 10 | type | id=id_password | 1234
+        self.driver.find_element(By.ID, "ip").send_keys("192.168.0.1")
+        # 11 | type | id=id_password | 1234
+        self.driver.find_element(By.ID, "port").click()
+        # 12 | type | id=id_password | 1234
+        self.driver.find_element(By.ID, "port").send_keys("5000")
+        # 13 | click | css=.btn |
+        self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
+        # 14 | click | id=navbarDefault |
+        self.driver.find_element(By.ID, "navbarDefault").click()
+        # 15 | click | id=navbarDefault |
+        self.driver.find_element(By.ID, "navbarDefault").click()
+        # 16 | click | id=navbarDropdown |
+        self.driver.find_element(By.ID, "navbarDropdown").click()
+        # 17 | click | linkText=Logout |
+        self.driver.find_element(By.LINK_TEXT, "Logout").click()
+
+
+class TestCreateIperfClient():
+    def setUp(self) -> None:
+        # mudar link
+        self.driver = webdriver.Remote(
+            command_executor=cmd_exec, desired_capabilities=DesiredCapabilities.CHROME)
+        self.vars = {}
+
+    def tearDown(self) -> None:
+        self.driver.quit()
+
+    def test_loginTest(self):
+        load_dotenv()
+        # Test name: LoginTest
+        # Step # | name | target | value
+        # 1 | open | / |
+        self.driver.get(site)  # place the website link
+        # 2 | setWindowSize | 1552x849 |
+        self.driver.set_window_size(1552, 849)
+        # 3 | click | linkText=Log in |30'
+        self.driver.find_element(By.LINK_TEXT, "Log in").click()
+        # 4 | type | id=id_username | EMAIL
+        self.driver.find_element(By.ID, "id_username").send_keys(
+            EMAIL)
+        # 5 | type | id=id_password | PASSWORD
+        self.driver.find_element(By.ID, "id_password").send_keys(
+            PASSWORD)
+        # 6 | click | css=.btn |
+        self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
+        # 7 | click | linkText=APU 3 |
+        self.driver.find_element(By.LINK_TEXT, "APU 3").click()
+        # 8 | click | linkText=Create Iperf Server |
+        self.driver.find_element(By.LINK_TEXT, "Create Iperf Client").click()
+        # 9 | type | id=id_password | 1234
+        self.driver.find_element(By.ID, "ip").click()
+        # 10 | type | id=id_password | 1234
+        self.driver.find_element(By.ID, "ip").send_keys("192.168.0.1")
+        # 11 | type | id=id_password | 1234
+        self.driver.find_element(By.ID, "port").click()
+        # 12 | type | id=id_password | 1234
+        self.driver.find_element(By.ID, "port").send_keys("5000")
+        # 13 | click | css=.btn |
+        self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
+        # 14 | click | id=navbarDefault |
+        self.driver.find_element(By.ID, "navbarDefault").click()
+        # 15 | click | id=navbarDefault |
+        self.driver.find_element(By.ID, "navbarDefault").click()
+        # 16 | click | id=navbarDropdown |
+        self.driver.find_element(By.ID, "navbarDropdown").click()
+        # 17 | click | linkText=Logout |
+        self.driver.find_element(By.LINK_TEXT, "Logout").click()
