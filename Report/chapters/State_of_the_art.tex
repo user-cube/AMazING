@@ -1,20 +1,71 @@
 %!TEX root = ../Report.tex
 \chapter{State of the Art}
-Como o nosso projeto aborda um tema não muito comum não é de admirar que não hajam muitas plataformas com o mesmo propósito mas apesar disso ainda há 2 projetos que merecem uma menção.
-\section{Projetos relacionados}
-No que toca a projetos relacionados achamos que estes 2 merecem uma menção sendo que um é o trabalho previamente efetuado na UA por outro grupo e o outro foi um trabalho publicado por estudantes e investigadores do NICTA (National Information and Communications Technology Australia) e da Universidade Rutgers.
+Devido ao facto de a temática deste projeto se inserir num nicho de mercado, é natural que não existam muitas soluções semelhantes. No entanto, no decorrer do processo de investigação associado ao projeto foi possível encontrar duas plataformas dignas de menção.
+Tal como já foi referido, foram encontrados 2 projetos dignos de menção, sendo que um deles é um projeto previamente desenvolvido na UA. O segundo projeto encontrado é um trabalho desenvolvido e publicado numa parceria entre estudantes e investigadores do NICTA (National Information and Communications Technology Australia) e da Universidade Rutgers, na Austrália.
 \subsection{NICTA}
-Este estudo/trabalho como mencionado acima foi publicado por estudantes e investigadores do NICTA (National Information and Communications Technology Australia) e da Universidade Rutgers e tem como titulo “OMF: A Control and Management Framework for Networking Testbeds” e procura resolver os mesmos problemas que nós pretendemos resolver.
-\subsection{PEI 2019}
-Este foi o trabalho efetuado previamente na UA por outro grupo de estudantes relativamente a este tópico e foi daqui que adaptamos o nosso projeto, o trabalho realizado por eles está disponível no github porém os focos dos dois projetos divergem ligeiramente.
+Conforme o referido acima, este projeto foi desenvolvido por uma parceria entre estudantes e investigadores australianos. O paper publicado por esta parceria tem como titulo “OMF: A Control and Management Framework for Networking Testbeds”. A partir da leitura do paper foi possível entender que este projeto procura resolver o mesmo problema que o AMazING, tendo adotado uma arquitetura bastante semelhante à da solução presente neste relatório.
+\subsection{AMazING 2019}
+Este projeto foi desenvolvido anteriormente na UA por um grupo de estudantes da universidade, no contexto da unidade curricular de Projeto em Informática que decorreu no ano letivo de 2018/19. O trabalho anteriormente realizado por este grupo encontra-se disponível no github. Embora o projeto base, entenda-se o AMazING, seja o mesmo que o apresentado neste relatório, os focos dos dois projetos divergem ligeiramente.\newline
+A nível de trabalho realizado anteriormente, a edição do AMazING do ano letivo 2018/19 focou-se maioritariamente na construção da rede de nós em si (incluindo o “robô” mencionado previamente), deixando a interface e a plataforma web para segundo plano. Em contraste, a edição de 2019/20 do AMazING tem como um dos objetivos a melhoria da plataforma web, de modo a torná-la mais acessível e intuitiva.
+
 \section{Tecnologias Utilizadas}
 Nesta secção apresentamos de forma sucinta as várias tecnologias que foram utilizadas no desenvolvimento do sistema.
-\subsection{PostegreSQL}
-PostgresSQL é um sistema open-source de gestão de bases de dados relacionais (Relational Database Management System, RDBMS) coordenado pelo PostgreSQL Global Development Group. A sua criação teve como objetivo manter uma ferramenta open-source, mas com a mesma fidelidade do MySQL.\newline
-A estrutura funciona tendo como base tabelas que, por sua vez, têm atributos e utiliza Structured Query Language (SQL) para poder manipular os dados nas mesmas.
-Esta tecnologia no contexto deste projeto foi utilizada, essencialmente, para a manutenção de todas as informações associadas à plataforma, isto é, informações sobre as experiências, utilizadores, endereçamento e informações sobre os nós.
+
+\subsection{Máquina Virtual}
+Na ciência da computação, uma máquina virtual consiste num software de ambiente computacional, capaz de executar programas como um computador real. Este processo é comumente referido como virtualização.\newline
+Foi disponibilizada uma Máquina Virtual no IT, acessível apenas na rede interna do departamento. Isto implica que o acesso à VM só possível dentro da rede do departamento ou através de uma VPN. Esta máquina virtual possibilitou a instalação de todas as instâncias utilizadas para o projeto em um ambiente único e disponível a todos os integrantes.
+
+
+\subsection{PostgreSQL}
+PostgreSQL é um sistema open-source de gestão de bases de dados relacionais (Relational Database Management System, RDBMS) coordenado pelo PostgreSQL Global Development Group. A sua criação teve como objetivo manter uma ferramenta open-source com a mesma fidelidade que o MySQL.\newline
+A estrutura funciona tendo como base tabelas que, por sua vez, têm atributos e recorre à Structured Query Language (SQL) de modo a permitir a manipulação dos dados armazenados nas tabelas.\newline
+No contexto deste projeto, o PostegreSQL foi utilizado para a manutenção de todas as informações associadas à plataforma, isto é, informações sobre as experiências, utilizadores, endereçamento e informações sobre os nós.
+
 \subsection{SQLite}
-SQLite é uma biblioteca em linguagem C que implementa um banco de dados SQL embutido. Programas que usam a biblioteca SQLite podem ter acesso a banco de dados SQL sem executar um processo SGBD separado. A biblioteca SQLite lê e escreve diretamente no ficheiro de banco de dados no disco.\newline
-A estrutura funciona tendo como base tabelas utilizando a linguagem SQL, tal como a Base de Dados PostgreSQL.\newline
-No caso do backend a utilização desta ferramenta teve em vista a testagem das features desenvolvida uma vez que, devido ao covid, o desenvolvimento do projeto foi afetado, foi necessário arranjarmos formas de armazenar informações de testes sem que fosse necessário configurar ambientes de desenvolvimento tão pesados e que pudessem ser facilmente replicados no computador de quem possui os nós, uma vez que os SQLite é um ficheiro de texto, bastava ao membro ter esse ficheiro sem que fossem necessárias configurações extra evitando, assim, de cada vez que fosse necessário mudar tabelas de base de dados tivesse que existir um nosso processo de deployment das mesmas.\newline
+SQLite é um RDBMS embutido dentro de uma biblioteca escrita na linguagem C. Isto significa que não existe a necessidade de instalar software adicional de modo a interagir com a base de dados criada, visto que o SQLite cria o ficheiro de base de dados diretamente no disco.\newline
+A estrutura funciona tendo por base tabelas que fazem uso da linguagem SQL, tal como no RDBMS PostgreSQL.\newline
+Esta ferramenta teve foi utilizada em dois níveis distintos, o backend (na sua API Flask) e no Frontend.\newline
+No caso do backend a utilização desta ferramenta teve em vista o teste das features desenvolvida uma vez que, devido ao covid, o desenvolvimento do projeto foi afetado. Tendo em vista isto, foi necessário arranjarmos formas de armazenar informações de testes sem que fosse necessário configurar ambientes de desenvolvimento tão pesados e que pudessem ser facilmente replicados no computador do membro do grupo que possui os nós. Uma vez que os SQLite é um ficheiro de texto, bastava ao membro ter esse ficheiro no seu ambiente de desenvolvimento sem que fossem necessárias configurações extra evitando, assim, de cada vez que fosse necessário efetuar alterações nas tabelas de base de dados que fosse necessário este processo de deployment associado. 
 No caso do Frontend esta ferramenta foi essencialmente usada para a gestão de logs por parte do administrador do sistema.
+
+\subsection{Python}
+Python é uma linguagem de programação de alto nível criada por Guido van Rossum em 1991. De entre as suas características, destaca-se o facto de ser interpretada ao invés de ser compilada. \newline
+A sua simplicidade, bem como a facilidade de aprender a sintaxe, leva a que os programadores possam escrever código lógico e claro tanto para projetos de pequena como grande dimensão. Para além disso, o facto não existir a etapa de compilação leva a que o seu ciclo edição-teste-debug seja muito mais rápido. \newline
+Esta linguagem foi utilizada em 3 camadas do sistema, na camada de apresentação, a framework Django 2.2.6, e em dois níveis da camada de lógica utilizando a framework Flask 2.2.5.
+
+\subsection{Flask}
+Flask é uma framework web escrita em Python e baseada nas bibliotecas WSGI Werkzeug e  Jinja2. O Flask possui a flexibilidade do Python e fornece um modelo simples para desenvolvimento web.\newline
+Esta framework foi utilizada em duas camadas lógicas do projeto, nas quais foram criadas:
+\begin{itemize}
+    \item Uma REST API nos servidores disponibilizados. Permite a gestão do sistema, acesso à Base de dados, além de funcionar como um proxy de comunicação com as APUs;
+    \item Uma REST API de controlo em cada um dos nós (APUs) utilizados nos projeto.
+\end{itemize}
+
+\section{Django}
+Django é uma framework para desenvolvimento rápido para web, escrito em Python, que utiliza o padrão model-template-view (MTV). \newline
+O WebSite do projeto foi construído com recurso a esta framework. A plataforma web  consome os dados da API Flask e acede às APUs através de SSH (com recurso ao WebSSH). Para além disso possui uma  base de dados própria em SQLite para realizar a gestão de acesso dos utilizadores.
+
+\subsection{SSH}
+Secure Shell (SSH) é um protocolo criptográfico que permite estabelecer uma conexão segura sobre uma rede insegura. Este protocolo é capaz de criar canais seguros através de uma arquitetura cliente-servidor, em que o cliente SSH estabelece uma ligação ao servidor SSH pretendido. A sua utilização mais comum é na autenticação remota numa máquina, de modo a ser possível executar comandos no terminal.\newline
+No contexto deste projeto, o SSH foi utilizado de modo a permitir que um utilizador da plataforma consiga estabelecer uma ligação a uma APU através do seu browser. Para tal, foi utilizada a biblioteca de Python, WebSSH. 
+
+\subsection{OpenStack}
+O OpenStack é uma plataforma de computação em nuvem open source, implantada principalmente como Infraestrutura como Serviço (IaaS). A plataforma de software consiste num conjunto componentes inter-relacionados capazes de controlar pools de hardware de processamento, armazenamento e rede num único data center. A sua gestão é feita através de uma dashboard Web, por ferramentas de linha de comando ou por serviços Web RESTful.\newline
+Esta ferramenta foi utilizada para a criação de uma VM capaz de fazer deployment de todo o projeto permitindo, assim, a exposição da base de dados, API e Frontend. É de salientar que o deployment não foi completamente efetuado nesta máquina uma vez que o mesmo exige a utilização de nós e, neste momento, não existem nós disponíveis no edifício do IT. Deste modo, apenas a API Flask, o Frontend e o WebSSH se encontram deployed na VM.
+
+\subsection{Preboot Execution Environment}
+O Preboot Execution Environment (PXE ou pixie) é um ambiente para inicializar computadores através da Interface da Placa de Rede, sem a dependência da disponibilidade de dispositivos de armazenamento (como Disco Rígidos) ou algum Sistema Operativo instalado. Desta forma, o Sistema Operativo do equipamento é carregado pela interface de rede toda vez que o mesmo é ligado, evitando assim o uso de unidades de armazenamento local e ou ação de atualização para cada equipamento.\newline
+Para o projeto, após a realização de uma experiência, o ambiente do de todas as APUs seria reciclado, evitando que experiências realizadas anteriormente afetem a realização de outras.\newline
+Para este projeto, não foi possível carregar os ambientes para as APUs através do PXE devido às dificuldades de acesso a BIOS das APUs, o que era necessário para a inicializar as APUS com o sistema operacional alocado no servidor PXE.
+
+\subsection{Docker}
+Docker é um software contêiner da empresa Docker, Inc, que fornece uma camada de abstração e automação para virtualização de sistema operacional no Windows e no Linux, usando isolamento de recurso do núcleo do Linux como cgroups e espaços de nomes do núcleo, e um sistema de arquivos com recursos de união, como OverlayFS criando contêineres independentes para executar dentro de uma única instância do sistema operacional, evitando a sobrecarga de manter máquinas virtuais.\newline
+Foram criadas várias instâncias do docker para os distintos serviços a disponibilizar, isto é, foi criada uma instância para a Base de Dados PostgreSQL, uma para a API Flask que serve o Frontend, uma instância de Django no qual é executado o frontend e uma outra instância que disponibiliza o serviço de WebSSH serviço este que é baseado num container que corre uma instância de Python 3.7 com a devida instalação dos requisitos via Pip3.
+
+\subsection{APU}
+\subsection{Switch Aruba}
+\subsection{Github}
+O versionamento do código do projeto foi feito através do serviço disponibilizado pelo GitHub, que é uma plataforma de hosting de código-fonte com controle de versão usando o Git. \newline
+Optou-se por ter apenas um repositório central uma vez que neste caso específico, estando o grupo dependente de um hardware específico para o projeto funcionar, não seria possível instalar processos de CI/CD não se justificando, assim, a utilização de vários repositórios como indicam as boas práticas do mesmo. Deste modo, todo o código escrito encontra-se nesse repositório central separado em diferentes diretórios sendo cada um destes diretórios um serviço. É de salientar que cada serviço foi desenvolvido no seu branch específico e após validação do mesmo o código seria colocado na master.
+
+

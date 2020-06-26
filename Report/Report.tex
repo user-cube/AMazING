@@ -20,8 +20,15 @@
 \begin{document}
 \renewcommand{\chaptername}{Capítulo}
 \renewcommand{\listfigurename}{Índice de Imagens}
+\renewcommand{\listtablename}{Índice de Tabelas}
 \renewcommand{\contentsname}{Índice}
 \renewcommand{\appendixname}{Anexo}
+\renewcommand{\figurename}{Figura}
+\renewcommand{\tablename}{Tabela}
+
+\newcommand{\SubItem}[1]{
+    {\setlength\itemindent{15pt} \item[-] #1}
+}
 
 \prefrontmatter
 \include{prefrontmatter/titlepage}
@@ -37,14 +44,13 @@
 \clearforchapter
 \listoffigures
 \clearforchapter
-\mylistoftodos
+\listoftables
 
 \mainmatter
 \include{chapters/Introduction}
 \include{chapters/State_of_the_art}
 \include{chapters/Requisitos}
 \include{chapters/Conclusion}
-\include{chapters/TrabalhoFuturo}
 
 \appendix
 \include{appendices/Acronyms}
