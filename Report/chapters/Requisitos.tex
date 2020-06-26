@@ -36,7 +36,7 @@ Nas imagens seguintes, apresentamos os modelos de casos de uso(CaU) da solução
         \centering
         \includegraphics[height=0.4\textheight]{images/CaU1.png}
         \caption{Casos de uso do utilizador/Tester}
-        \label{fig:usage}
+        \label{fig:cau1}
     \end{figure}
     Os casos de usos consoante a sua prioridade podem sintetizados de acordo com a seguinte tabela:
     \begin{table}[ht]
@@ -65,7 +65,7 @@ Nas imagens seguintes, apresentamos os modelos de casos de uso(CaU) da solução
     \centering
     \includegraphics[height=0.4\textheight]{images/CaU2.png}
     \caption{Casos de uso do Administrador}
-    \label{fig:usage}
+    \label{fig:cau2}
 \end{figure}
 Os casos de usos consoante a sua prioridade podem sintetizados de acordo com a seguinte tabela:
 \begin{table}[ht]
@@ -102,3 +102,58 @@ Abaixo, apresentamos os requisitos não funcionais do sistema.
     \item \textbf{Dados:} Os utilizadores do sistema deve conseguir aceder aos dados da experiência realizada.
 
 \end{itemize}
+
+\subsubsection{Suposições e Dependências}
+Para o funcionamento completo do sistema, é necessário que sejam configurados os seguintes:
+\begin{table}[ht]
+    \centering
+        \begin{tabular}{|p{.30\textwidth}|p{.60\textwidth}|}
+            \hline
+            \textbf{Hardware} &	\textbf{Software}\\ 
+            \hline
+            \begin{itemize}
+                \item APUs
+            \end{itemize}
+            & 
+            \begin{itemize}
+                \item Base de Dados Relacional de linguagem SQL
+                \item Flask
+                    \SubItem{No servidor principal}
+                    \SubItem{Em cada uma das APUs}
+                \item Django + SQLite
+                \item Web SSH server
+            \end{itemize}
+            \\
+        \hline
+        \end{tabular}
+    \caption{Componentes necessárias para o funcionamento}
+    \label{myTable}
+\end{table}
+
+\subsection{Arquitetura do sistema}
+Esta secção apresenta uma vista geral da arquitetura do sistema: os seus modelos de domínio, físico e tecnológico e a relação entre as componentes de cada um.
+\subsection{Modelo Físico}
+O modelo físico, representado na Figura 4, apresenta uma vista de alto nível da arquitetura física do sistema, as suas componentes, as suas interações e implementação. \newline
+Do lado do utilizador, através de um navegador o utilizador vai aceder à plataforma que está hospedada no servidor utilizando protocolos HTTP.\newline
+O servidor que está a hospedar a plataforma, este servidor seria uma VM localizada no IT, conecta-se então por LAN ao switch Aruba (componente descrito no capítulo 2), que por sua vez comunica com os nós presentes na rede de testes em causa, sendo que no nosso caso são as APUs que nos foram disponibilizadas.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[height=0.4\textheight]{images/modeloFisico.png}
+    \caption{Modelo Físico}
+    \label{fig:fisico}
+\end{figure}
+
+\newpage
+
+\subsection{Modelo Tecnológico}
+O modelo tecnológico fornece uma vista sobre as tecnologias utilizadas pelo sistema. A figura seguinte demonstra como estas se relacionam entre si.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[height=0.3\textheight]{images/tecnologias.png}
+    \caption{Modelo Tecnológico}
+    \label{fig:tecno}
+\end{figure}
+No lado do frontend, foi utilizada a framework Django que funciona sob a linguagem Python juntamente com HTML, JavaScript e CSS o que nos permitiu o desenvolvimento de uma plataforma web intuitiva e responsiva. \newline
+No que toca ao armazenamento de dados, este é feito do lado do servidor e através do PostgreSQL - projeto open-source baseado em MySQL. \newline
+Todas as ferramentas visíveis na imagem foram apresentadas e discutidas no capítulo 2. No que toca à sua implementação, razão de utilidade e a forma como interagem umas com as outras, no caso particular do projeto, serão discutidas abaixo.
