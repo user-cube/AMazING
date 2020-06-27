@@ -1,0 +1,47 @@
+%!TEX root = ../Report.tex
+\chapter{Introdução}
+\label{chp:introduction}
+O desenvolvimento de plataformas que facilitem as operações de utilizadores de um dado sistema não é um conceito novo.  A plataforma desenvolvida no decorrer deste projeto tem como público alvo utilizadores com experiência na área de redes e telecomunicações. \newline
+Embora o contexto em que este projeto se insere seja bastante específico, é possível encontrar plataformas semelhantes à desenvolvida neste projeto. No entanto, a grande maioria das soluções encontradas são específicas à infraestrutura sobre a qual assentam e as restantes são demasiado generalistas, não considerando todos os detalhes necessários à realização de experiências sobre redes. \newline
+Deste modo, tornou-se necessário o desenvolvimento de uma plataforma capaz de responder às necessidades destes utilizadores, surgindo assim o AMazING.
+
+\section{Contexto}
+Este projeto foi desenvolvido no âmbito da unidade curricular de Projeto em Informática, inserido na Licenciatura em Engenharia Informática (LEI) da Universidade de Aveiro (UA). O foco do projeto é criação de uma interface que permita fazer o agendamento e gestão de experiências na plataforma de testes, sendo possível consultar os resultados após o término das mesmas. O presente trabalho foi desenvolvido durante o segundo semestre do ano letivo de 2019/2020.
+
+\section{Motivação}
+A plataforma AMazING constitui uma mais valia para qualquer pessoa que pretenda realizar testes sobre redes móveis dado que esta permite simular situações reais.\newline
+A motivação para este projeto é o desenvolvimento de uma plataforma que ajude essas mesmas pessoas a agendar e gerir as suas experiências e a obter os dados resultantes das mesmas, desse modo, facilitando todo o processo através de um GUI que lhes fornece tudo o que necessitam de forma fácil e intuitiva.
+
+\section{Objetivos}
+Este projeto teve como principal objetivo desenvolver uma plataforma intuitiva e de fácil utilização que permita aos seus utilizadores realizar as suas experiências com um nível menor de esforço no que toca à preparação  e  visualização destas.\newline
+Após uma reunião com os orientadores do projeto procedeu-se à definição de uma lista de objetivos na qual o desenvolvimento deste projeto se focou. Os objetivos definidos podem ser enunciados da seguinte forma:
+\begin{itemize}
+    \item Criação de uma plataforma web que agrega todo o trabalho já existente;
+    \item Tornar a plataforma intuitiva e fácil de usar como foi mencionado anteriormente;
+    \item Tornar a plataforma de testes reconfigurável de modo a que esta se adapte às necessidades de cada utilizador.
+    \item Desenvolvimento de uma ferramenta que permite a visualização de informação de cada nó existente na infraestrutura bem como recolher estatísticas e informações importantes numa dada experiência;
+    \item A plataforma deve ser capaz de gerir ambientes de diferentes tipos de testes.
+\end{itemize}
+
+\section{Impactos do Covid-19}
+Durante o desenvolvimento deste projeto houve a clara interferência causada pela situação do Covid-19 e como tal nós reunimos e delineamos não só os impactos mas também as soluções de modo a melhor nos prevenirmos e de modo a que o desenvolvimento não fosse afetado.
+Deste modo consideramos que os maiores impactos seriam:
+\begin{itemize}
+    \item A não existência de reuniões presenciais o que dificulta a comunicação e interação do grupo;
+    \item A impossibilidade de reuniões presenciais com os nosso orientadores, tornando todo o processo de transmissão de informação e esclarecimento de dúvidas mais complicado;
+    \item A impossibilidade de aceder fisicamente ao IT o que impede as experiências com os equipamento lá presentes, nomeadamente o Switch onde estão conectados os nós, assim como acesso à rede privada de testes;
+    \item Devido à impossibilidade de acesso à rede privada de testes foram disponibilizadas 5 APUs para nos possibilitar o avanço do trabalho sem a necessidade de deslocamento ao IT. Seria um para cada membro do grupo no entanto com a divisão de tarefas apenas dois membros do grupo ficaram com APUs - 3 e 2 para os 2 membros encarregues desta parte do projeto;
+    \item Impacto da moral e motivação da equipa uma vez que não era possível reunirmo-nos presencialmente e ver os resultados da solução tão claramente.
+\end{itemize}
+
+Dado os impactos acima referidos, e após alguma deliberação, foram implementadas as seguintes soluções:
+\begin{itemize}
+    \item Reuniões semanais presenciais foram substituídas por videoconferências de modo a manter o contacto com os orientadores mais “real”;
+    \item O contacto com os orientadores foi feito através de videoconferências e também através canal de slack mais ativo. Em alternativa, caso estes meios não estivessem a funcionar/disponíveis, o contacto foi mantido com a troca de emails;
+    \item Os equipamentos foram enviados por correio e apenas quando absolutamente necessário foi feito um deslocamento com as devidas precauções para entrega e troca de algum material;
+    \item Utilização de um switch comercial, de modo a substituir o switch Aruba apenas disponível no IT.
+
+\end{itemize}
+
+\subsection{Estrutura do Documento}
+O restante documento possui uma estrutura dividida por cinco capítulos. O \textbf{capítulo 2} apresenta uma índole mais analítica, no qual são apresentados os trabalhos existentes nesta área identificando, assim, bases que poderão ser utilizadas para o presente projeto. São, ainda, discutidas as tecnologias que foram utilizadas bem como a explicação da sua utilização no âmbito do projeto. No \textbf{capítulo 3} é realizada uma análise e discussão da arquitetura do sistema bem como dos requisitos fundamentais para o seu bom funcionamento. No \textbf{capítulo 4} é realizada uma análise detalhada da implementação da plataforma abordando os vários pontos, isto é, explicação do frontend, da API de ligação entre o Frontend e a base de dados bem como a comunicação com os APUs e, por fim, a discussão da implementação do módulo de comunicação dos APUs (API Rest). Finalmente, no \textbf{capítulo 5} são enunciadas as conclusões tiradas do projeto bem como toda a aprendizagem associada ao mesmo, apontando ainda possível trabalho futuro que o grupo pensa fazer sentido no contexto do projeto.
