@@ -80,7 +80,8 @@ Selenium foi utilizado para realizar testes automatizados sobre a aplicação We
 
 \subsubsection{SSH}
 Secure Shell (SSH) é um protocolo criptográfico que permite estabelecer uma conexão segura sobre uma rede insegura. Este protocolo é capaz de criar canais seguros através de uma arquitetura cliente-servidor, em que o cliente SSH estabelece uma ligação ao servidor SSH pretendido. A sua utilização mais comum é na autenticação remota numa máquina, de modo a ser possível executar comandos no terminal.\newline
-No contexto deste projeto, o SSH foi utilizado de modo a permitir que um utilizador da plataforma consiga estabelecer uma ligação a uma APU através do seu browser. Para tal, foi utilizada a biblioteca de Python, WebSSH. 
+No contexto deste projeto, o SSH foi utilizado de modo a permitir que um utilizador da plataforma consiga estabelecer uma ligação a uma APU através do seu browser. Para tal, foi utilizada a biblioteca de Python, WebSSH.\newline
+Esta biblioteca permite criar um SSH client ao qual o browser do utilizador se liga utilizando o protocolo HTTP e websockets e por sua vez esse mesmo cliente ligar-se-á através de SSH ao servidor que for pretendido.
 
 
 \subsection{OpenStack}
@@ -133,3 +134,5 @@ Optou-se por ter apenas um repositório central uma vez que, estando o grupo dep
 \subsection{Conclusão}
 A utilização destas ferramentas fornece um conjunto de características que foram vistas como vantajosas ao desenvolvimento do projeto, tendo como principal vantagem a familiaridade do grupo com as mesmas. É de salientar que a facilidade de desenvolvimento, dando especial ênfase às frameworks executadas sobre o código Python, também se revelou um fator decisivo aquando da escolha das tecnologias.\newline
 Todos os serviços utilizados no desenvolvimento do projeto foram hospedados numa máquina virtual localizada no IT. Recorreu-se ao Docker para a criação e execução dos containers contendo os serviços necessários, alcançando assim o isolamento pretendido. Este isolamento facilitou o desenvolvimento dos diversos serviços,  bastando estar conectado ao ambiente da rede do departamento, através de, por exemplo, uma VPN, para poder consultar e utilizar o trabalho realizado pelos integrantes do grupo.
+\newpage
+\hfill\break

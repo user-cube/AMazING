@@ -8,7 +8,8 @@
 \newcommand{\papersizeswitch}[3]{\ifnum\strcmp{\papersize}{#1}=0#2\else#3\fi}
 \papersizeswitch{b5paper}{\def\classfontsize{10pt}}{\def\classfontsize{12pt}}
 
-\documentclass[openany,\classfontsize,\papersize,twoside,showtrims,extrafontsizes]{memoir}
+%openany,
+\documentclass[openany, \classfontsize,\papersize,twoside,showtrims,extrafontsizes]{memoir}
 
 \input{preamble/general}
 \input{preamble/fonts}
@@ -50,7 +51,9 @@
 \include{chapters/Introduction}
 \include{chapters/State_of_the_art}
 \include{chapters/Requisitos}
+\include{chapters/Implementacao}
 \include{chapters/Conclusion}
+
 
 \appendix
 \include{appendices/Acronyms}
