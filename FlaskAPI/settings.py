@@ -45,7 +45,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS') == 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # JWT Decode CERT
-with open(os.path.join(BASE_DIR, 'FlaskAPI/certificates/publicKey.pem'), 'rb') as reader:
+with open('certificates/publicKey.pem', 'rb') as reader:
     JWT_SECRET_KEY = reader.read()
 
 # These info are common between all environment
