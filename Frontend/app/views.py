@@ -1256,7 +1256,7 @@ def processIpClient(request, nodeID):
         return redirect('login')
 
 def printIperf(request, information):
-    return (request, 'statistics/admin.html', {'year': datetime.now().year, 'result': information})
+    return (request, 'network/printInfo.html', {'year': datetime.now().year, 'result': information})
 
 def userStatistics(request):
     if request.user.is_authenticated:
