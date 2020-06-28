@@ -16,6 +16,7 @@
     <!-- Custom icons for this template -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <link rel="icon" href="{% static 'img/router_inverted.png' %}">
 
 
     {% block headers %} {% endblock %}
@@ -52,13 +53,6 @@
                                     class="nav-item"
                                 {% endif %}>
                                     <a class="nav-link" href="{% url 'calendar' %}">Reservations</a>
-                                </li>
-                                <li {% if request.resolver_match.url_name == 'userStatistics' %}
-                                    class="nav-item active"
-                                {% else %}
-                                    class="nav-item"
-                                {% endif %}>
-                                    <a class="nav-link" href="{% url 'userStatistics' %}">Test Result</a>
                                 </li>
                                 <li {% if request.resolver_match.url_name == 'tests' %}
                                     class="nav-item active" {% endif %}

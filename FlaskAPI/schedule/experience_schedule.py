@@ -129,7 +129,7 @@ class ExperienceSchedulerManager:
             msg.body = f"""\
             Dear {author.name}, 
             
-            'Your scheduled experience {experience.id} - '{experience.name}' has finished, you can check the results on this link: (insert link here).
+            'Your scheduled experience {experience.id} - '{experience.name}' has finished, you can check the results on this link: http://localhost:8000/checkTests/{experience.id}.
                 
             Kind regards,"""
 
@@ -144,7 +144,7 @@ class ExperienceSchedulerManager:
             msg.body = f"""\
             Dear {author.name}, 
             
-            Your scheduled experience {experience.id} - '{experience.name}' failed runing, you can verify the details on this link: (insert link here).
+            Your scheduled experience {experience.id} - '{experience.name}' failed runing, you can verify the details on this link: http://localhost:8000/checkTests/{experience.id}.
 
             Kind regards,"""
 
