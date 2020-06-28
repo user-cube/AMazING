@@ -1251,7 +1251,7 @@ def processIpClient(request, nodeID):
 
         print(r.text)
         messages.info(request, "Success")
-        return printIperf(r.text)
+        return printIperf(request, r.text)
     else:
         return redirect('login')
 
