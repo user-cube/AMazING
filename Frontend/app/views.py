@@ -1251,12 +1251,12 @@ def processIpClient(request, nodeID):
 
         print(r.text)
         messages.info(request, "Success")
-        return printIperf(request, r.text)
+        return printIperf(request=request, infor=str(r.text))
     else:
         return redirect('login')
 
-def printIperf(request, information):
-    return (request, 'network/printInfo.html', {'year': datetime.now().year, 'result': information})
+def printIperf(request, infor):
+    return (request, 'network/printInfo.html', {'year': datetime.now().year, 'result': infor})
 
 def userStatistics(request):
     if request.user.is_authenticated:
