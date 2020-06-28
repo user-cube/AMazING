@@ -1247,7 +1247,6 @@ def processIpClient(request, nodeID):
             messages.error(request, "Erro")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        print(r.text)
         messages.info(request, "Success")
         return iperfResult(request=request, infor=str(r.text))
     else:
@@ -1255,8 +1254,10 @@ def processIpClient(request, nodeID):
 
 def iperfResult(request, infor):
     lista = []
+    o = 0
     for i in infor.split('\n'):
         lista.append(i)
+        print(str(o), i)
     return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': lista})
 
 def userStatistics(request):
