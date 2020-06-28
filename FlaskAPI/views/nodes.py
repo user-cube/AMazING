@@ -211,7 +211,7 @@ def send_node_command__to_interface_as_post(id, interface, command):
             response = requests.post(url=iperf, 
             json={'port' : port, 'ip' : ip, 'mtu' : mtu, 'time' : time, 'bandwidth' : bandwidth, 'protocol' : protocol, 'reverse':reverse},
             timeout=60)
-            results = jsonify(response.json())
+            results = jsonify(response.text)
             results.status_code = response.status_code
             return results
         except requests.exceptions.ConnectionError:
