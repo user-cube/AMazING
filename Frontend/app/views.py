@@ -653,7 +653,7 @@ def processNode(request, nodeID, content=None, iName=None):
             'password': password.decode("utf-8"),
             'nodeID': nodeID,
             'aps': content,
-            'iName': iName
+            'iName': iName,
         }
 
         return render(request, "network/nodeInfo.html", tparms)

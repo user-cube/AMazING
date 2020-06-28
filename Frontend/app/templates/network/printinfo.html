@@ -7,9 +7,6 @@
         {% endfor %}
     {% endif %}
 
-    {% for key, value in result %}
-        {{ value }}
-    {% endfor %}
-    <h2>Scan Result</h2>
-    <p>{{result}}</p>
+    <h1>Iperf Results</h1>
+    <pre>{{ inform | pprint }}</pre>
 {% endblock %}
