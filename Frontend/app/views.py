@@ -1246,7 +1246,7 @@ def processIpClient(request, nodeID):
             print(r.status_code)
             print(r.text)
             #messages.error(request, json['msg'])
-            messages.erro(request, "Erro")
+            messages.error(request, "Erro")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         print(r.text)
         messages.INFO(request, "Success")
