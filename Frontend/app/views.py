@@ -1256,7 +1256,10 @@ def iperfResult(request, infor):
     lista = []
     o = 0
     for i in infor.split('\n'):
-        lista.append(i)
+        if (i.startswith("[")):
+            lista.append(i.replace(" ", "\t"))
+        else:
+            lista.append(i)
         print(str(o), i)
     return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': lista})
 
