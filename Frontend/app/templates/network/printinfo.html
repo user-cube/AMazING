@@ -1,4 +1,11 @@
 {% extends 'structure/layout.html' %} 
+{% load prettyjson %}
+
+{% block headers %}
+  {{ block.super }}
+  {% prettyjson_setup %}
+{% endblock %}
+
 {% block content %}
     {% if messages %}
         {% for message in messages %}
@@ -8,7 +15,5 @@
     {% endif %}
 
     <h1>Iperf Results</h1>
-    {% for i in result%}
-        <p>{{i}}</p>
-    {% endfor %}
+    {% prettyjson result %}
 {% endblock %}
