@@ -1242,6 +1242,8 @@ def processIpClient(request, nodeID):
         r = requests.post(API + "node/" + str(nodeID) + "/iperf/iperfclient", json=msg,
                           headers={'Authorization': 'Bearer ' + token})
 
+        print(r)
+
         if r.status_code != 200:
             print(r.status_code)
             print(r.text)
