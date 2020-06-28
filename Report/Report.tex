@@ -3,28 +3,30 @@
 %!TEX TS-program = xelatex
 %!TEX root = Report.tex
 \RequirePackage[l2tabu,orthodox]{nag} % Old habits die hard
- 
 
 \newcommand{\papersizeswitch}[3]{\ifnum\strcmp{\papersize}{#1}=0#2\else#3\fi}
 \papersizeswitch{b5paper}{\def\classfontsize{10pt}}{\def\classfontsize{12pt}}
 
-\documentclass[openany,\classfontsize,\papersize,twoside,showtrims,extrafontsizes]{memoir}
+%openany,
+\documentclass[openany, \classfontsize,\papersize,twoside,showtrims,extrafontsizes]{memoir}
 
 \input{preamble/general}
 \input{preamble/fonts}
 \input{preamble/etc}
-
-\addbibresource{bibliography/Bibliography.bib}
 
 
 \begin{document}
 \renewcommand{\chaptername}{Capítulo}
 \renewcommand{\listfigurename}{Índice de Imagens}
 \renewcommand{\listtablename}{Índice de Tabelas}
+\renewcommand{\lstlistlistingname}{Índice de snippets}
 \renewcommand{\contentsname}{Índice}
 \renewcommand{\appendixname}{Anexo}
 \renewcommand{\figurename}{Figura}
 \renewcommand{\tablename}{Tabela}
+\renewcommand{\lstlistingname}{Snippet}
+\renewcommand{\bibname}{Referências}
+
 
 \newcommand{\SubItem}[1]{
     {\setlength\itemindent{15pt} \item[-] #1}
@@ -45,18 +47,36 @@
 \listoffigures
 \clearforchapter
 \listoftables
+\clearforchapter
+\lstlistoflistings
+
+
+\lstdefinelanguage{docker}{
+  keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+  keywordstyle=\color{orange} \bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{\#},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{teal}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
 
 \mainmatter
 \include{chapters/Introduction}
 \include{chapters/State_of_the_art}
 \include{chapters/Requisitos}
+\include{chapters/Implementacao}
+%\include{chapters/Deployment}
 \include{chapters/Conclusion}
+
 
 \appendix
 \include{appendices/Acronyms}
-%\include{appendices/Appendix}
+\include{appendices/Appendix}
 
 \backmatter
-\printbibliography[title=Referências]
+\input{references/references}
 
 \end{document}
