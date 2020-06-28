@@ -1257,7 +1257,8 @@ def iperfResult(request, infor):
     o = 0
     for i in infor.split('\n'):
         if (i.startswith("[")):
-            lista.append(i.replace(" ", "\t"))
+            print("start")
+            lista.append(i.replace(' ', "\t"))
         else:
             lista.append(i)
         print(str(o), i)
