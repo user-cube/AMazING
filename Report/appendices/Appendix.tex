@@ -1,3 +1,75 @@
 %!TEX root = ../Report.tex
 
 %==============================================================================================================================================
+\chapter{Instanciação de containers}
+\label{app:deploybash}
+\begin{lstlisting}[language=bash,caption={Script de instânciação de containers},breaklines=true,label={code:postgre}]
+#!/bin/bash
+
+echo "Building container $1:latest" &&
+docker build -t $1:latest . &&
+echo "Running $1:latest on port $2" &&
+docker run -d -p $2:$2 \$1:latest
+\end{lstlisting}
+
+%==============================================================================================================================================
+\chapter{PostgreSQL}
+\label{app:postgre}
+\begin{lstlisting}[language=bash,caption={Script de instalação de PostgreSQL},breaklines=true,label={code:postgre}]
+#!/bin/bash
+
+echo "Pulling PostgreSQL Image" &&
+docker pull postgres &&
+echo "Install PostgreSQL Image" &&
+docker run --name some-postgres -e POSTGRES_PASSWORD=amazingPI2020 -p 5432:5432 -d postgres
+\end{lstlisting}
+
+%==============================================================================================================================================
+\chapter{Flask API}
+\label{app:flask}
+\begin{lstlisting}[language=docker,caption={Flask Dockerfile},breaklines=true,label={code:flask}]
+FROM python:3.7
+ADD ./ /app
+WORKDIR /app
+RUN apt-get update
+RUN python -m pip install --upgrade pip
+RUN pip install -r requirements.txt
+ENV TZ=Europe/Lisbon
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+CMD python app.py
+\end{lstlisting}
+
+%==============================================================================================================================================
+\chapter{Django}
+\label{app:django}
+\begin{lstlisting}[language=docker,caption={Django Dockerfile},breaklines=true,label={code:django}]
+FROM python:3.7
+
+RUN mkdir /code
+WORKDIR /code
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+#Uncomment for test version
+#CMD ["python", "manage.py", "runserver", "0.0.0.0:8005"]
+CMD ["gunicorn", "SwitchController.wsgi", "--bind", "0.0.0.0:8001"]
+
+\end{lstlisting}
+
+%==============================================================================================================================================
+\chapter{WebSSH}
+\label{app:webssh}
+\begin{lstlisting}[language=docker,caption={WebSSH Dockerfile},breaklines=true,label={code:webssh}]
+FROM python:3.7
+ 
+RUN mkdir /code
+WORKDIR /code
+ 
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+CMD ["wssh"]
+\end{lstlisting}

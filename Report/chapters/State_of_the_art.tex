@@ -6,11 +6,11 @@ Devido ao facto de a temática deste projeto se inserir num nicho de mercado, é
 Tal como já foi referido, foram encontrados 2 projetos dignos de menção, sendo que um deles é um projeto previamente desenvolvido na UA. O segundo projeto encontrado é um trabalho desenvolvido e publicado numa parceria entre estudantes e investigadores do NICTA (National Information and Communications Technology Australia) e da Universidade Rutgers, na Austrália.
 
 \subsubsection{NICTA}
-Conforme o referido acima, este projeto foi desenvolvido por uma parceria entre estudantes e investigadores australianos. O paper publicado por esta parceria tem como titulo “OMF: A Control and Management Framework for Networking Testbeds”. A partir da leitura do paper foi possível entender que este projeto procura resolver o mesmo problema que o AMazING, tendo adotado uma arquitetura bastante semelhante à da solução presente neste relatório.
+Conforme o referido acima, este projeto foi desenvolvido por uma parceria entre estudantes e investigadores australianos. O paper publicado por esta parceria tem como titulo “OMF: A Control and Management Framework for Networking Testbeds”. A partir da leitura do paper foi possível entender que este projeto procura resolver o mesmo problema que o AMazING, tendo adotado uma arquitetura bastante semelhante à da solução presente neste relatório.\cite{nicta}
 
-\subsubsection{AMazING 2019}
-O projeto AMazING foi iniciado em 2010, tendo sofrido várias atualizações ao longo dos anos, e tem como objetivo base uma plataforma de testes para redes sem fios em ambiente real que permita não só a gestão e monitorização de experiências em ambientes de redes sem fios, mas também a reprodutibilidade dos mesmos.\newline
-Este projeto foi abordado mais recentemente por um grupo de estudantes da universidade, no contexto da unidade curricular de Projeto em Informática que decorreu no ano letivo de 2018/19. O trabalho anteriormente realizado por este grupo encontra-se disponível no github. Embora a infraestrutura base, entenda-se o AMazING, seja a mesmo que a apresentada neste relatório, os focos dos dois projetos divergem ligeiramente. \newline
+\subsubsection{AMazING}
+O projeto AMazING foi iniciado em 2010, tendo sofrido várias atualizações ao longo dos anos, e tem como objetivo base uma plataforma de testes para redes sem fios em ambiente real que permita não só a gestão e monitorização de experiências em ambientes de redes sem fios, mas também a reprodutibilidade dos mesmos.\newline\\
+Este projeto foi abordado mais recentemente por um grupo de estudantes da universidade, no contexto da unidade curricular de Projeto em Informática que decorreu no ano letivo de 2018/19. O trabalho anteriormente realizado por este grupo encontra-se disponível no github. Embora a infraestrutura base, entenda-se o AMazING, seja a mesmo que a apresentada neste relatório, os focos dos dois projetos divergem ligeiramente.\newline\\
 A nível de trabalho realizado anteriormente, a edição do AMazING do ano letivo 2018/19 focou-se maioritariamente na construção da rede de nós em si (incluindo o “robô” mencionado previamente), deixando a interface e a plataforma web para segundo plano, o que levou a que essa mesma plataforma tivesse uma interface com o utilizador reduzida em funcionalidades. Em contraste, a edição de 2019/20 do AMazING tem como um dos objetivos a melhoria da plataforma web, de modo a torná-la mais acessível, intuitiva e com mais funcionalidades do que o projeto antecedente.
 
 
@@ -18,30 +18,30 @@ A nível de trabalho realizado anteriormente, a edição do AMazING do ano letiv
 Nesta secção apresentamos de forma sucinta as várias tecnologias que foram utilizadas no desenvolvimento do sistema.
 
 \subsection{Máquina Virtual}
-Na ciência da computação, uma máquina virtual consiste num software de ambiente computacional, capaz de executar programas como um computador real. Este processo é comumente referido como virtualização.\newline
+Na ciência da computação, uma máquina virtual consiste num software de ambiente computacional, capaz de executar programas como um computador real. Este processo é comumente referido como virtualização. \cite{virtual}\newline\\
 Foi disponibilizada uma Máquina Virtual no IT, acessível apenas na rede interna do departamento. Isto implica que o acesso à VM só possível dentro da rede do departamento ou através de uma VPN. Esta máquina virtual possibilitou a instalação de todas as instâncias utilizadas para o projeto em um ambiente único e disponível a todos os integrantes.
 
 
 \subsection{PostgreSQL}
-PostgreSQL é um sistema open-source de gestão de bases de dados relacionais (Relational Database Management System, RDBMS) coordenado pelo PostgreSQL Global Development Group. A sua criação teve como objetivo manter uma ferramenta open-source com a mesma fidelidade que o MySQL.\newline
-A estrutura funciona tendo como base tabelas que, por sua vez, têm atributos e recorre à Structured Query Language (SQL) de modo a permitir a manipulação dos dados armazenados nas tabelas.\newline
+PostgreSQL é um sistema open-source de gestão de bases de dados relacionais (Relational Database Management System, RDBMS) coordenado pelo PostgreSQL Global Development Group. A sua criação teve como objetivo manter uma ferramenta open-source com a mesma fidelidade que o MySQL.\cite{postgre}\newline
+A estrutura funciona tendo como base tabelas que, por sua vez, têm atributos e recorre à Structured Query Language (SQL) de modo a permitir a manipulação dos dados armazenados nas tabelas.\newline\\
 No contexto deste projeto, o PostegreSQL foi utilizado para a manutenção de todas as informações associadas à plataforma, isto é, informações sobre as experiências, utilizadores, endereçamento e informações sobre os nós.
 
 \subsection{SQLite}
-SQLite é um RDBMS embutido dentro de uma biblioteca escrita na linguagem C. Isto significa que não existe a necessidade de instalar software adicional de modo a interagir com a base de dados criada, visto que o SQLite cria o ficheiro de base de dados diretamente no disco. \newline
-A estrutura funciona tendo por base tabelas que fazem uso da linguagem SQL, tal como no RDBMS PostgreSQL. \newline
+SQLite é um RDBMS embutido dentro de uma biblioteca escrita na linguagem C. Isto significa que não existe a necessidade de instalar software adicional de modo a interagir com a base de dados criada, visto que o SQLite cria o ficheiro de base de dados diretamente no disco.\cite{sqlite}\newline
+A estrutura funciona tendo por base tabelas que fazem uso da linguagem SQL, tal como no RDBMS PostgreSQL. \newline\\
 Esta ferramenta foi utilizada em dois níveis distintos, o backend (na sua API Flask) e no Frontend. \newline
 No caso do backend a utilização desta ferramenta teve em vista o teste das features desenvolvidas uma vez que, devido ao covid, o desenvolvimento do projeto foi afetado. Tomando isto em consideração, foi necessário arranjar formas de armazenar informações de testes sem que fosse necessário configurar ambientes de desenvolvimento tão pesados e que pudessem ser facilmente replicados no computador do membro do grupo que possui os nós. Uma vez que o SQLite é um ficheiro de texto, bastava ao membro ter esse ficheiro no seu ambiente de desenvolvimento sem que fossem necessárias configurações extra evitando, assim, de cada vez que fosse necessário efetuar alterações nas tabelas de base de dados que fosse necessário este processo de implementação associado. \newline
 No caso do Frontend esta ferramenta foi essencialmente usada para a gestão de logs por parte do administrador do sistema.
 
 
 \subsection{Python}
-Python é uma linguagem de programação de alto nível criada por Guido van Rossum em 1991. De entre as suas características, destaca-se o facto de ser interpretada ao invés de ser compilada.\newline
+Python é uma linguagem de programação de alto nível criada por Guido van Rossum em 1991. De entre as suas características, destaca-se o facto de ser interpretada ao invés de ser compilada.\cite{python}\newline
 A sua simplicidade, bem como a facilidade de aprender a sintaxe, leva a que os programadores possam escrever código lógico e claro tanto para projetos de pequena como grande dimensão. Para além disso, o facto de não existir a etapa de compilação leva a que o seu ciclo edição-teste-debug seja muito mais rápido.\newline
 Esta linguagem foi utilizada em 3 camadas do sistema, na camada de apresentação, a framework Django 2.2.6, e em dois níveis da camada de lógica utilizando a framework Flask 2.2.5. 
 
 \subsection{Flask}
-Flask é uma framework web escrita em Python e baseada nas bibliotecas WSGI Werkzeug e  Jinja2. O Flask possui a flexibilidade do Python e fornece um modelo simples para desenvolvimento web. \newline
+Flask é uma framework web escrita em Python e baseada nas bibliotecas WSGI Werkzeug e  Jinja2. O Flask possui a flexibilidade do Python e fornece um modelo simples para desenvolvimento web.\cite{flask}\newline
 Esta framework foi utilizada em duas camadas lógicas do projeto, nas quais foram criadas:
 \begin{itemize}
     \item Uma REST API nos servidores disponibilizados. Permite a gestão do sistema, acesso à Base de dados, além de funcionar como um proxy de comunicação com as APUs;
@@ -49,67 +49,67 @@ Esta framework foi utilizada em duas camadas lógicas do projeto, nas quais fora
 \end{itemize}
 
 \subsubsection{Flask Mail}
-O Flask Mail é uma ferramenta que fornece uma interface de configuração SMTP para a aplicação. Esta ferramenta permite o envio de emails através de views e scripts desta interface.\newline
+O Flask Mail é uma ferramenta que fornece uma interface de configuração SMTP para a aplicação. Esta ferramenta permite o envio de emails através de views e scripts desta interface.\cite{flaskmail}\newline
 Esta ferramenta foi amplamente utilizada para o envio de emails de notificação acerca da realização das experiências. Estes emails são enviados no início e no fim da execução de uma experiência, independentemente dos resultados da mesma. 
 
 \subsubsection{SQLAlchemy}
-SQLAlchemy é uma framework open source que fornece um conjunto de ferramentas que permitem mapear uma base de dados relacional em objetos na linguagem de programação Python.\newline
+SQLAlchemy é uma framework open source que fornece um conjunto de ferramentas que permitem mapear uma base de dados relacional em objetos na linguagem de programação Python.\cite{sqlalc}\newline
 Esta framework evita a escrita de queries SQL para aceder à base de dados, usando-se no seu lugar a interface do SQLAlchemy. Isto possibilita a migração entre diferentes bases de dados relacionais sem alteração do código fonte.\newline
 Esta framework revelou-se bastante útil no ambiente de testes, uma vez que facilita a utilização de uma base de dados secundária para a realização dos mesmos.
+
 \subsubsection{Swagger}
-O Swagger é uma framework open source apoiada por um grande ecossistema de ferramentas que ajuda os desenvolvedores a projetar, criar, documentar e consumir serviços da Web RESTful. O conjunto de ferramentas do Swagger inclui suporte para documentação automatizada, geração de código e geração de casos de teste. \newline
+O Swagger é uma framework open source apoiada por um grande ecossistema de ferramentas que ajuda os desenvolvedores a projetar, criar, documentar e consumir serviços da Web RESTful. O conjunto de ferramentas do Swagger inclui suporte para documentação automatizada, geração de código e geração de casos de teste.\cite{swagger}\newline\\
 A documentação da API foi construída com recurso ao Swagger, onde foram especificados todos os caminhos da API, exemplos de entrada e retorno de dados, para além de conter os possíveis status code de retorno. \newline
 Visto que a framework Swagger permite a realização de pedidos HTTP, é possível realizar pedidos ao servidor Flask através da mesma, inclusivé a caminhos que necessitem de JWT.
 
 \subsubsection{PyTest}
-A framework Pytest facilita a criação de pequenos testes em código Python, no entanto, também é capaz de suportar  testes funcionais complexos para aplicações e bibliotecas.\newline
+A framework Pytest facilita a criação de pequenos testes em código Python, no entanto, também é capaz de suportar  testes funcionais complexos para aplicações e bibliotecas.\cite{pytest}\newline
 O Pytest foi utilizado na API afim de se realizarem testes de integração sobre todos os caminhos existentes.  Esta framework foi escolhida pois facilita a escrita de testes do tipo test client, de modo a testar os endpoints. 
 
 \subsubsection{APScheduler}
-O Advanced Python Scheduler (APScheduler) é um programa que permite agendar pequenas tarefas (funções ou chamadas em código Python), de modo a serem executadas em ocasiões pré-determinadas.\newline
+O Advanced Python Scheduler (APScheduler) é um programa que permite agendar pequenas tarefas (funções ou chamadas em código Python), de modo a serem executadas em ocasiões pré-determinadas.\cite{apscheduler}\newline\\
 Esta ferramenta foi utilizada para o arranque automático de experiências nos horários agendados pelos utilizadores. Esta ferramenta permite também auto-agendamento, isto é, após o término uma experiência, a seguinte é agendada automaticamente, independentemente do resultado da experiência.
 
 \subsection{Django}
-Django é uma framework para desenvolvimento rápido para web, escrito em Python, que utiliza o padrão model-template-view (MTV).\newline
+Django é uma framework para desenvolvimento rápido para web, escrito em Python, que utiliza o padrão model-template-view (MTV).\cite{django}\newline
 O WebSite do projeto foi construído com recurso a esta framework. A plataforma web  consome os dados da API Flask e acede às APUs através de SSH (com recurso ao WebSSH). Para além disso possui uma  base de dados própria em SQLite para realizar a gestão de acesso dos utilizadores.
 
 
 \subsubsection{Selenium}
-Selenium é uma framework utilizada para testes em aplicações WEB. O Selenium fornece uma ferramenta de reprodução que permite criar testes funcionais sem a necessidade de aprender uma linguagem de script de teste (Selenium IDE). Ele também fornece uma linguagem específica de domínio de teste (Selenese) para escrever testes em várias linguagens de programação, incluindo Groovy, Java, Perl, PHP, Python, Ruby e Scala. Os testes podem ser executados nos browsers mais comumente utilizados. O Selenium pode ser executado em Windows, Linux e macOS.\newline
+Selenium é uma framework utilizada para testes em aplicações WEB. O Selenium fornece uma ferramenta de reprodução que permite criar testes funcionais sem a necessidade de aprender uma linguagem de script de teste (Selenium IDE). Ele também fornece uma linguagem específica de domínio de teste (Selenese) para escrever testes em várias linguagens de programação, incluindo C\#, Groovy, Java, Perl, PHP, Python, Ruby e Scala. Os testes podem ser executados nos browsers mais comumente utilizados. O Selenium pode ser executado em Windows, Linux e macOS.\cite{selenium}\newline\\
 Selenium foi utilizado para realizar testes automatizados sobre a aplicação Web escrita em Django, garantindo que todas as funcionalidades das diversas partes da aplicação se encontram em conformidade com o esperado.
 
 \subsubsection{SSH}
-Secure Shell (SSH) é um protocolo criptográfico que permite estabelecer uma conexão segura sobre uma rede insegura. Este protocolo é capaz de criar canais seguros através de uma arquitetura cliente-servidor, em que o cliente SSH estabelece uma ligação ao servidor SSH pretendido. A sua utilização mais comum é na autenticação remota numa máquina, de modo a ser possível executar comandos no terminal.\newline
+Secure Shell (SSH) é um protocolo criptográfico que permite estabelecer uma conexão segura sobre uma rede insegura. Este protocolo é capaz de criar canais seguros através de uma arquitetura cliente-servidor, em que o cliente SSH estabelece uma ligação ao servidor SSH pretendido. A sua utilização mais comum é na autenticação remota numa máquina, de modo a ser possível executar comandos no terminal.\cite{ssh}\newline\\
 No contexto deste projeto, o SSH foi utilizado de modo a permitir que um utilizador da plataforma consiga estabelecer uma ligação a uma APU através do seu browser. Para tal, foi utilizada a biblioteca de Python, WebSSH.\newline
 Esta biblioteca permite criar um SSH client ao qual o browser do utilizador se liga utilizando o protocolo HTTP e websockets e por sua vez esse mesmo cliente ligar-se-á através de SSH ao servidor que for pretendido.
 
 
 \subsection{OpenStack}
-O OpenStack é uma plataforma de cloud computing, open source, implantada principalmente como Infraestrutura como Serviço (IaaS). A plataforma de software consiste num conjunto componentes inter-relacionados capazes de controlar pools de hardware de processamento, armazenamento e rede num único data center. A sua gestão é feita através de uma dashboard Web, por ferramentas de linha de comando ou por serviços Web RESTful.\newline
+O OpenStack é uma plataforma de cloud computing, open source, implantada principalmente como Infraestrutura como Serviço (IaaS). A plataforma de software consiste num conjunto componentes inter-relacionados capazes de controlar pools de hardware de processamento, armazenamento e rede num único data center. A sua gestão é feita através de uma dashboard Web, por ferramentas de linha de comando ou por serviços Web RESTful.\cite{openstack}\newline\\
 Esta ferramenta foi utilizada para a criação de uma VM capaz de fazer deployment de todo o projeto permitindo, assim, a exposição da base de dados, API e Frontend. É de salientar que o deployment não foi completamente efetuado nesta máquina uma vez que o mesmo exige a utilização de nós e, neste momento, não existem nós disponíveis no edifício do IT. Deste modo, apenas a API Flask, o Frontend e o WebSSH se encontram deployed na VM.
 
 
 \subsection{Preboot Execution Environment}
-O Preboot Execution Environment (PXE ou pixie) é um ambiente que permite inicializar computadores através da Interface da Placa de Rede, independentemente da existência de dispositivos de armazenamento (como Disco Rígidos) ou de um Sistema Operativo. Deste modo, o Sistema Operativo do equipamento é carregado pela interface de rede sempre que o mesmo é ligado, evitando assim o uso de unidades de armazenamento local e a atualização dos equipamentos de forma individual.\newline
+O Preboot Execution Environment (PXE ou pixie) é um ambiente que permite inicializar computadores através da Interface da Placa de Rede, independentemente da existência de dispositivos de armazenamento (como Disco Rígidos) ou de um Sistema Operativo. Deste modo, o Sistema Operativo do equipamento é carregado pela interface de rede sempre que o mesmo é ligado, evitando assim o uso de unidades de armazenamento local e a atualização dos equipamentos de forma individual.\cite{pxe}\newline\\
 No contexto do projeto, após a realização de uma experiência, o ambiente de todas as APUs deveria ser reciclado, evitando que experiências realizadas anteriormente afetem a realização e/ou resultados de experiências futuras.\newline
 Apesar dos esforços, não foi possível carregar os ambientes para as APUs através do PXE devido às dificuldades associadas à montagem de um servidor de PXE, ao acesso à BIOS de forma a alterar a ordem do boot e à dificuldade adicionar novas imagens com as configurações necessárias ao servidor. Estes impedimentos tornaram impossível inicializar as APUs com o sistema operativo alocado no servidor PXE.
 
 
 
 \subsection{Docker}
-Docker é um software container da empresa Docker, Inc, que fornece uma camada de abstração e automação para a virtualização de sistemas operacionais em Windows, Linux e macOS. Isto é alcançado através do isolamento de recursos do núcleo do Linux, tais como cgroups e namespaces, e da utilização de um sistema de arquivos com recursos de união, como o OverlayFS. Deste modo, o Docker é capaz de criar containers independentes que executam dentro de uma única instância do sistema operativo, evitando assim a sobrecarga de manter máquinas virtuais. 
-
+Docker é um software container da empresa Docker, Inc, que fornece uma camada de abstração e automação para a virtualização de sistemas operacionais em Windows, Linux e macOS. Isto é alcançado através do isolamento de recursos do núcleo do Linux, tais como cgroups e namespaces, e da utilização de um sistema de arquivos com recursos de união, como o OverlayFS. Deste modo, o Docker é capaz de criar containers independentes que executam dentro de uma única instância do sistema operativo, evitando assim a sobrecarga de manter máquinas virtuais.\cite{docker}\newline\\
 Foram criadas várias instâncias do Docker para os distintos serviços a disponibilizar. Tendo em vista este objetivo foram lançados containers para:
 \begin{itemize}
-    \item A instância da base de dados do projeto - PostgreSQL
-    \item Uma instância de Python 3.7 para a API Flask que serve o Frontend
-    \item Uma instância de Python 3.7 para o Frontend
-    \item Uma instância de Python 3.7 para o serviço de SSH over Browser (WebSSH)
+    \item A instância da base de dados do projeto - PostgreSQL;
+    \item Uma instância de Python 3.7 para a API Flask que serve o Frontend;
+    \item Uma instância de Python 3.7 para o Frontend;
+    \item Uma instância de Python 3.7 para o serviço de SSH over Browser (WebSSH).
 \end{itemize}
 
 
 \subsection{APU}
-Unidade de Processamento Acelerado ou APU do inglês. Cada nó da plataforma AMazING é uma APU, uma unidade versátil e compacta capaz de desempenhar as funções de diferentes hardwares na área de redes e comunicações. O mesmo hardware pode comportar-se, por exemplo, como router, AP (Access Point), Switch, cliente e servidor.\newline
+Unidade de Processamento Acelerado ou APU do inglês. Cada nó da plataforma AMazING é uma APU, uma unidade versátil e compacta capaz de desempenhar as funções de diferentes hardwares na área de redes e comunicações. O mesmo hardware pode comportar-se, por exemplo, como router, AP (Access Point), Switch, cliente e servidor.\cite{apu}\newline\\
 Cada APU é constituída por duas placas de rede wireless e três entradas ethernet, sendo duas delas usadas como interface de dados e outra usada como interface de controlo. Todo a configuração associada a cada APU é realizada através desta interface de controlo.\newline
 As APUs utilizadas no projeto são do modelo APU2C4, fabricado pela PC Engines. Estas APUs possuem as seguintes especificações:
 \begin{itemize}
@@ -121,18 +121,18 @@ As APUs utilizadas no projeto são do modelo APU2C4, fabricado pela PC Engines. 
 \end{itemize}
 
 \subsection{Switch Aruba}
-O Switch Aruba é o switch onde todos os nós da plataforma AMazING se encontram ligados. Este Switch suporta SDN (Software-defined networking), o que permite configurações dinâmicas e eficientes melhorando o desempenho e a monitorização de redes.\newline
-Como descrito anteriormente, cada APU possui uma interface de dados, esta é ligada entre ao Switch Aruba. Isto quer dizer que qualquer configuração proveniente do servidor é redirecionada para o switch que por sua vez encaminha para o determinado nó.\newline
-É importante mencionar que relacionadas a este switch estão as funcionalidades de PXE e de POE também descritas no documento presente.\newline
+O Switch Aruba é o switch onde todos os nós da plataforma AMazING se encontram ligados. Este Switch suporta SDN (Software-defined networking), o que permite configurações dinâmicas e eficientes melhorando o desempenho e a monitorização de redes.\cite{switch}\newline\\
+Como descrito anteriormente, cada APU possui uma interface de dados, esta é ligada entre ao Switch Aruba. Isto quer dizer que qualquer configuração proveniente do servidor é redirecionada para o switch que por sua vez encaminha para o determinado nó.\newline\\
+É importante mencionar que relacionadas a este switch estão as funcionalidades de PXE e de POE também descritas no documento presente.\newline\\
 Devido aos constrangimentos causados pelo Covid-19, o switch Aruba teve que ser substituído por um de grau comercial.
 
 
 \subsection{Github}
-O controlo de versões do código do projeto foi feito através do serviço disponibilizado pelo GitHub, que é uma plataforma de hosting de código-fonte com controle de versão usando o Git.\newline
+O controlo de versões do código do projeto foi feito através do serviço disponibilizado pelo GitHub, que é uma plataforma de hosting de código-fonte com controle de versão usando o Git.\cite{github}\newline\\
 Optou-se por ter apenas um repositório central uma vez que, estando o grupo dependente de um hardware específico para o projeto funcionar, não seria possível instalar processos de CI/CD, não se justificando, assim, a utilização de vários repositórios como indicam as boas práticas do mesmo. Deste modo, todo o código escrito encontra-se nesse repositório central separado em diretórios diferentes, sendo cada um destes diretórios um serviço. É de salientar que cada serviço foi desenvolvido no seu branch específico e só após a validação do mesmo é que o código foi colocado na master.
 
 \subsection{Conclusão}
-A utilização destas ferramentas fornece um conjunto de características que foram vistas como vantajosas ao desenvolvimento do projeto, tendo como principal vantagem a familiaridade do grupo com as mesmas. É de salientar que a facilidade de desenvolvimento, dando especial ênfase às frameworks executadas sobre o código Python, também se revelou um fator decisivo aquando da escolha das tecnologias.\newline
+A utilização destas ferramentas fornece um conjunto de características que foram vistas como vantajosas ao desenvolvimento do projeto, tendo como principal vantagem a familiaridade do grupo com as mesmas. É de salientar que a facilidade de desenvolvimento, dando especial ênfase às frameworks executadas sobre o código Python, também se revelou um fator decisivo aquando da escolha das tecnologias.\newline\\
 Todos os serviços utilizados no desenvolvimento do projeto foram hospedados numa máquina virtual localizada no IT. Recorreu-se ao Docker para a criação e execução dos containers contendo os serviços necessários, alcançando assim o isolamento pretendido. Este isolamento facilitou o desenvolvimento dos diversos serviços,  bastando estar conectado ao ambiente da rede do departamento, através de, por exemplo, uma VPN, para poder consultar e utilizar o trabalho realizado pelos integrantes do grupo.
 \newpage
 \hfill\break
