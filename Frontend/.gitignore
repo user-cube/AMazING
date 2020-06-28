@@ -5,3 +5,4 @@ venv/
 AMazING.log
 debug.log
 info.log
+.DS_Store
