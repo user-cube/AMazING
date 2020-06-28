@@ -4,7 +4,6 @@ from django.http import HttpResponseNotFound, HttpResponseForbidden, HttpRespons
 from django.contrib.auth.models import User
 import requests
 import logging
-import json
 
 logging.config.dictConfig({
     'version': 1,
@@ -1250,12 +1249,12 @@ def processIpClient(request, nodeID):
 
         #print(r.text)
         messages.info(request, "Success")
-        return iperfResult(request=request, infor=r.json())
+        return iperfResult(request=request, infor=r.text)
     else:
         return redirect('login')
 
 def iperfResult(request, infor):
-    return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': json.dumps(infor, sort_keys=True, indent=4)})
+    return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': infor})
 
 def userStatistics(request):
     if request.user.is_authenticated:
