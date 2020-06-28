@@ -1,0 +1,15 @@
+1593370465426	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/_l/6yn52l4165j2hbxlxj7ct8640000gn/T/rust_mozprofileqtT2zo"
+1593370470345	Marionette	INFO	Listening on port 51075
+1593370470439	Marionette	WARN	TLS certificate errors will be ignored for this session
+1593370471406	Marionette	INFO	Stopped listening on port 51075
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0xD,name=PAPZ::Msg_Destroy) Channel error: cannot send/recv
+
+1593370522612	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "-marionette" "-foreground" "-no-remote" "-profile" "/var/folders/_l/6yn52l4165j2hbxlxj7ct8640000gn/T/rust_mozprofileHAlC8T"
+1593370527152	Marionette	INFO	Listening on port 51159
+1593370527192	Marionette	WARN	TLS certificate errors will be ignored for this session
+1593370528390	Marionette	INFO	Stopped listening on port 51159
+console.warn: services.settings: main/whats-new-panel sync interrupted by shutdown
+
+###!!! [Parent][MessageChannel] Error: (msgtype=0xD,name=PAPZ::Msg_Destroy) Channel error: cannot send/recv
+
