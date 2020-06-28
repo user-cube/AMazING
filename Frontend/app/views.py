@@ -1249,7 +1249,7 @@ def processIpClient(request, nodeID):
 
         #print(r.text)
         messages.info(request, "Success")
-        return iperfResult(request=request, infor=r.text)
+        return iperfResult(request=request, infor=str(r.text))
     else:
         return redirect('login')
 
