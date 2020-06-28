@@ -1248,13 +1248,15 @@ def processIpClient(request, nodeID):
             #messages.error(request, json['msg'])
             messages.error(request, "Erro")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-            
+
         print(r.text)
         messages.info(request, "Success")
-        return processNode(request, nodeID=nodeID)
+        return printIperf(r.text)
     else:
         return redirect('login')
 
+def printIperf(request, information):
+    return (request, 'statistics/admin.html', {'year': datetime.now().year, 'result': information})
 
 def userStatistics(request):
     if request.user.is_authenticated:
