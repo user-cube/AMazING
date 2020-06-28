@@ -1247,13 +1247,14 @@ def processIpClient(request, nodeID):
             messages.error(request, "Erro")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        #print(r.text)
+        print(r.text)
         messages.info(request, "Success")
         return iperfResult(request=request, infor=str(r.text))
     else:
         return redirect('login')
 
 def iperfResult(request, infor):
+    print(infor)
     return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': infor})
 
 def userStatistics(request):
