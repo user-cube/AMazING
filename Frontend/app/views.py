@@ -1202,8 +1202,6 @@ def processIpClient(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         '''
 
-        print(request.POST)
-
         try:
             time = request.POST['time']
         except:
@@ -1251,12 +1249,12 @@ def processIpClient(request, nodeID):
 
         print(r.text)
         messages.info(request, "Success")
-        return printIperf(request=request, infor=str(r.text))
+        return iperfResult(request=request, infor=str(r.text))
     else:
         return redirect('login')
 
-def printIperf(request, infor):
-    return (request, 'network/printInfo.html', {'year': datetime.now().year, 'result': infor})
+def iperfResult(request, infor):
+    return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': infor})
 
 def userStatistics(request):
     if request.user.is_authenticated:
