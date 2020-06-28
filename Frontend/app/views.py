@@ -1241,13 +1241,15 @@ def processIpClient(request, nodeID):
         token = tokenizer.nodeToken(request.user.email)
         r = requests.post(API + "node/" + str(nodeID) + "/iperf/iperfclient", json=msg,
                           headers={'Authorization': 'Bearer ' + token})
-        json = r.json()
+
         if r.status_code != 200:
             print(r.status_code)
-            messages.error(request, json['msg'])
+            print(r.text)
+            #messages.error(request, json['msg'])
+            messages.erro(request, "Erro")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
-        messages.INFO(request, json['msg'])
+        print(r.text)
+        messages.INFO(request, "Success")
         return processNode(request, nodeID=nodeID)
     else:
         return redirect('login')
