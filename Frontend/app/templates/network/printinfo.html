@@ -1,10 +1,12 @@
-{% extends 'structure/layout.html' %} {% block content %} {% if messages %} {%
-for message in messages %} {% if message.tags %}
-<script>
-  alert("{{ message }}");
-</script>
-{% endif %} {% endfor %} {% endif %}
+{% extends 'structure/layout.html' %} 
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags %}
+                <script>alert("{{ message }}")</script> {% endif %}
+        {% endfor %}
+    {% endif %}
 
-<h2>Scan Result</h2>
-<p>{{result}}</p>
+    <h2>Scan Result</h2>
+    <p>{{result}}</p>
 {% endblock %}
