@@ -8,5 +8,7 @@
     {% endif %}
 
     <h1>Iperf Results</h1>
-    {{result}}
+    {% for i in result%}
+    {{i}}
+    {% endfor %}
 {% endblock %}

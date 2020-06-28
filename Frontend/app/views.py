@@ -1254,8 +1254,10 @@ def processIpClient(request, nodeID):
         return redirect('login')
 
 def iperfResult(request, infor):
-    print(infor)
-    return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': infor})
+    lista = []
+    for i in infor.split('\n'):
+        lista.append(i)
+    return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': lista})
 
 def userStatistics(request):
     if request.user.is_authenticated:
