@@ -12,6 +12,6 @@ $ python manage.py runserver
 ## Setup (docker)
 
 ```shell
-$ docker pull ruicoelho43/apipi:latest
+$ docker pull ruicoelho43/frontendpi:latest
 $ docker run -d -p 8005:8005 ruicoelho43/frontendpi:latest
 ```
