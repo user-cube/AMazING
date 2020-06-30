@@ -22,3 +22,12 @@ Additionally, the rail allows the robot to move around the nodes, mimicking the 
 * [Milestone II - Lifecycle architecture](https://docs.google.com/presentation/d/1TiSYKdFZprZgLgzNozsZ94KSTo3ZsHfNEcVFtLFnxHY/edit?usp=sharing)
 * [Milestone III - Prototype; mid-term presentation with supervisors; peer evaluation.](https://github.com/user-cube/AMazING/releases/tag/v1.0)
 * [Milestone IV - Project presentation; all functionality has been developed](https://github.com/user-cube/AMazING/releases/tag/v2.0)
+* [Milestone V - Final presentation](https://docs.google.com/presentation/d/1qsMIhfvxXvctTWwT4FyiB0nXJrnT7hIQImLlrHTZL40/edit?usp=sharing)
+
+## Report
+
+* [Technical Report](https://drive.google.com/file/d/14KktM3J7PlRw489eqxCtSY7pesxssmtE/view?usp=sharing)
+
+## Public Content
+* [Public website](https://user-cube.github.io/AMazING_Page/)
+* [Promotional video](https://www.youtube.com/watch?v=jB2fOlZWWHw)
