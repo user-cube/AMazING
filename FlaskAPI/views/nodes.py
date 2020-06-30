@@ -46,7 +46,7 @@ def insert_node():
 
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     return results
 
@@ -97,7 +97,7 @@ def alter_node(id):
         results.status_code = status.HTTP_400_BAD_REQUEST
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     return results
 
@@ -212,7 +212,6 @@ def send_node_command__to_interface_as_post(id, interface, command):
             response = requests.post(url=iperf, 
             json=json,
             timeout=60)
-            print(json)
             results = jsonify(response.json())
             results.status_code = response.status_code
             return results

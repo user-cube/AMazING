@@ -39,7 +39,7 @@ def insert_role():
 
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     return results
 
@@ -81,7 +81,7 @@ def alter_role(id):
 
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
 
     except NoResultFound:
@@ -113,7 +113,7 @@ def delete_role(id):
 
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
 
     except NoResultFound:

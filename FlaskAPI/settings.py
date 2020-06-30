@@ -42,8 +42,10 @@ SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS') == 
                         Json Web Token Session
 """
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # JWT Decode CERT
-with open("certificates/publicKey.pem", 'rb') as reader:
+with open('certificates/publicKey.pem', 'rb') as reader:
     JWT_SECRET_KEY = reader.read()
 
 # These info are common between all environment

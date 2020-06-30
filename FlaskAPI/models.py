@@ -43,7 +43,7 @@ class Profile(db.Model, CRUD):
     register_date = db.Column(db.TIMESTAMP, nullable=False)
     picture = db.Column(db.LargeBinary, nullable=True)
     last_login = db.Column(db.TIMESTAMP, nullable=True)
-    role = db.Column(db.Integer, db.ForeignKey('role.id'))
+    role = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False,)
 
     def __init__(self, name, email, register_date, role, num_test=None, picture=None, last_login=None):
         self.name = name

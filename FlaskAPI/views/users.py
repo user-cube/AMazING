@@ -57,12 +57,12 @@ def insert_user():
 
     except SQLAlchemyError as err:
         db.session.rollback()
-        results = jsonify({"error": str(err)})
+        results = jsonify({"ERROR": str(err)})
         results.status_code = status.HTTP_400_BAD_REQUEST
 
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     return results
 
@@ -87,19 +87,24 @@ def get(id):
 def put(id):
     raw_data = request.get_json(force=True)
     try:
-        message = raw_data['role']
+        role = raw_data['role']
         profile = db.session.query(Profile).get(id)
         if not profile:
             raise NoResultFound
-        profile.role = message
+        profile.role = role
         profile.update()
         results = jsonify(profile.serializable)
         results.status_code = status.HTTP_202_ACCEPTED
     except KeyError as err:
         db.session.rollback()
-        results = jsonify({"ERROR": f" Missing key {err}"})
+        results = jsonify({"ERROR": f"Missing key {err}"})
         results.status_code = status.HTTP_400_BAD_REQUEST
     except NoResultFound:
         results = jsonify({'ERROR': f'Item not found {id}'})
         results.status_code = status.HTTP_404_NOT_FOUND
+
+    except SQLAlchemyError as err:
+        db.session.rollback()
+        results = jsonify({"ERROR": f"this error {err._message}"})
+        results.status_code = status.HTTP_400_BAD_REQUEST
     return results
