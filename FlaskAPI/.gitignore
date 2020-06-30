@@ -3,3 +3,4 @@ venv/
 .idea/
 .cert
 __pycache__/
+.DS_Store
