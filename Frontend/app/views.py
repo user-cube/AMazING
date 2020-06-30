@@ -4,6 +4,7 @@ from django.http import HttpResponseNotFound, HttpResponseForbidden, HttpRespons
 from django.contrib.auth.models import User
 import requests
 import logging
+import json
 
 logging.config.dictConfig({
     'version': 1,
@@ -653,7 +654,7 @@ def processNode(request, nodeID, content=None, iName=None):
             'password': password.decode("utf-8"),
             'nodeID': nodeID,
             'aps': content,
-            'iName': iName
+            'iName': iName,
         }
 
         return render(request, "network/nodeInfo.html", tparms)
@@ -1202,8 +1203,6 @@ def processIpClient(request, nodeID):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         '''
 
-        print(request.POST)
-
         try:
             time = request.POST['time']
         except:
@@ -1241,17 +1240,20 @@ def processIpClient(request, nodeID):
         token = tokenizer.nodeToken(request.user.email)
         r = requests.post(API + "node/" + str(nodeID) + "/iperf/iperfclient", json=msg,
                           headers={'Authorization': 'Bearer ' + token})
-        json = r.json()
+
         if r.status_code != 200:
-            print(r.status_code)
-            messages.error(request, json['msg'])
+            #messages.error(request, json['msg'])
+            messages.error(request, "Erro")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-        messages.INFO(request, json['msg'])
-        return processNode(request, nodeID=nodeID)
+        #print(r.text)
+        messages.info(request, "Success")
+        return iperfResult(request=request, infor=r.json())
     else:
         return redirect('login')
 
+def iperfResult(request, infor):
+    return render(request, 'network/printInfo.html', {'year': datetime.now().year, 'result': json.dumps(infor, sort_keys=True, indent=4)})
 
 def userStatistics(request):
     if request.user.is_authenticated:
