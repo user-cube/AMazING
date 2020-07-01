@@ -58,6 +58,6 @@ def test_profile_update_no_content():
         '/profile',
         data=json.dumps({'name': 'insert_user', 'pic': 'picture file'}),
         content_type='application/json',
-        headers={'Authorization': f'Bearer {encoded_admin}'}
+        headers={'Authorization': f'Bearer {encoded_admin}'} #This email is not inserted in database
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT

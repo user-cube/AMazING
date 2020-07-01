@@ -2,7 +2,6 @@ import os, jwt
 
 from app import app
 
-
 with open(os.path.join(app.config['BASE_DIR'], 'FlaskAPI/certificates/privateKey.pem'), 'rb') as reader:
     private_key = reader.read()
 
