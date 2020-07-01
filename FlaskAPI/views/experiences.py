@@ -50,8 +50,8 @@ def return_experince_in_range_datetime(begin_date, end_date):
 def list_experience():
     parse_data = parser.parse_args()
     experiences_query = db.session.query(Experience, Profile).filter(Experience.profile == Profile.id)
-    # Apply filters
     try :
+        # Apply filters
         if parse_data['userID']:
             experiences_query = experiences_query.filter(Experience.profile == parse_data['userID'])
 

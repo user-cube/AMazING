@@ -21,7 +21,7 @@ class CRUD:
 class Role(db.Model, CRUD):
     __tablename__ = 'role'
     id = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.String(20))
+    role_name = db.Column(db.String(20), unique=True)
 
     def __init__(self, role_name):
         self.role_name = role_name
@@ -121,8 +121,7 @@ class APU(db.Model, CRUD):
     ip = db.Column(db.String(20))
     port = db.Column(db.Integer)
     name = db.Column(db.String(10))
-
-    db.UniqueConstraint('ip', 'port', name='apu_ip_port_key')
+    db.UniqueConstraint(ip, port, name='apu_ip_port_key')
 
     def __init__(self, ip, port, name):
         self.ip = ip
@@ -145,24 +144,22 @@ class APU_Config(db.Model, CRUD):
     apu = db.Column(db.Integer, db.ForeignKey('apu.id'))
     file = db.Column(db.LargeBinary, nullable=True)
     experience = db.Column(db.Integer, db.ForeignKey('experience.id'))
-    db.UniqueConstraint('apu', 'experience', name='apu_config_experience_apu_key')
+    db.UniqueConstraint(apu, experience, name='apu_config_experience_apu_key')
 
     def __init__(self, apu, file, experience):
         self.apu = apu
         self.file = file
         self.experience = experience
 
-    # def __repr__(self):
-    #     return f'<apu = {self.apu}, ip = {self.ip}, protocol = {self.protocol}, base_template = {self.base_template}, template = {self.template}>'
     @property
     def serializable(self):
         if self.file:
-            f = self.file.decode("utf-8")
+            file = self.file.decode("utf-8")
         else:
-            f = None
+            file = None
         return {
             "id": self.id,
             "apu": self.apu,
             "experience": self.experience,
-            "file": f
+            "file": file
         }

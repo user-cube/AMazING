@@ -26,7 +26,7 @@ def test_user_list():
     data = json.loads(response.get_data(as_text=True))
     app.logger.info(data)
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert isinstance(data, list)
     assert len(data) > 0
 

@@ -18,6 +18,20 @@ def list_roles():
     return results
 
 
+@roles_blueprint.route('/role/<int:id>', methods=['GET'], strict_slashes=False)
+def get_role(id):
+    try:
+        roles_query = db.session.query(Role).get(id)
+        if not roles_query:
+            raise NoResultFound
+        results = jsonify(roles_query.serializable)
+
+    except NoResultFound:
+        results = jsonify({'ERROR': f'Item not found {id}'})
+        results.status_code = status.HTTP_204_NO_CONTENT
+    return results
+
+
 @roles_blueprint.route('/role', methods=['POST'], strict_slashes=False)
 @admin_required
 def insert_role():
@@ -44,20 +58,6 @@ def insert_role():
     return results
 
 
-@roles_blueprint.route('/role/<int:id>', methods=['GET'], strict_slashes=False)
-def get_role():
-    try:
-        roles_query = db.session.query(Role).get(id)
-        if not roles_query:
-            raise NoResultFound
-        results = jsonify(roles_query.serializable)
-
-    except NoResultFound:
-        results = jsonify({'ERROR': f'Item not found {id}'})
-        results.status_code = status.HTTP_404_NOT_FOUND
-    return results
-
-
 @roles_blueprint.route('/role/<int:id>', methods=['PUT'], strict_slashes=False)
 @admin_required
 def alter_role(id):
@@ -69,15 +69,11 @@ def alter_role(id):
         role.role_name = raw_data['name']
         role.update()
         results = jsonify(role.serializable)
+        results.status_code = status.HTTP_202_ACCEPTED
 
     except ValidationError as err:
         results = jsonify({"error": err.messages})
         results.status_code = status.HTTP_403_FORBIDDEN
-
-    except SQLAlchemyError as err:
-        db.session.rollback()
-        results = jsonify({"error": str(err)})
-        results.status_code = status.HTTP_400_BAD_REQUEST
 
     except KeyError as err:
         db.session.rollback()
@@ -85,9 +81,13 @@ def alter_role(id):
         results.status_code = status.HTTP_400_BAD_REQUEST
 
     except NoResultFound:
-        db.session.rollback()
         results = jsonify({"ERROR": f'Item not found role id: {id}'})
-        results.status_code = status.HTTP_404_NOT_FOUND
+        results.status_code = status.HTTP_204_NO_CONTENT
+
+    except SQLAlchemyError as err:
+        db.session.rollback()
+        results = jsonify({"error": str(err)})
+        results.status_code = status.HTTP_400_BAD_REQUEST
 
     return results
 
@@ -106,20 +106,10 @@ def delete_role(id):
         results = jsonify({"error": err.messages})
         results.status_code = status.HTTP_403_FORBIDDEN
 
-    except SQLAlchemyError as err:
-        db.session.rollback()
-        results = jsonify({"error": str(err)})
-        results.status_code = status.HTTP_400_BAD_REQUEST
-
-    except KeyError as err:
-        db.session.rollback()
-        results = jsonify({"ERROR": f"Missing key {err}"})
-        results.status_code = status.HTTP_400_BAD_REQUEST
-
     except NoResultFound:
         db.session.rollback()
         results = jsonify({"ERROR": f'Item not found role id: {id}'})
-        results.status_code = status.HTTP_404_NOT_FOUND
+        results.status_code = status.HTTP_204_NO_CONTENT
 
     return results
 
