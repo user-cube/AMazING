@@ -5,7 +5,7 @@ flask_api==2.0
 marshmallow==3.6.1
 Flask-Cors==3.0.9
 python-dotenv==0.13.0
-pyjwt[crypto]==1.7.1
+pyjwt[crypto]==2.4.0
 requests==2.23.0
 psycopg2==2.8.5
 PyJWT==1.7.1
